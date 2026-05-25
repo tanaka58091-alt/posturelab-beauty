@@ -798,6 +798,327 @@ const DB_SEITAI = [
     cues:{do:'目を閉じる。',dont:'腰に違和感あれば中止。'},
     why:'夕方のむくみ・疲労を10分でリセット。'
   },
+
+  // ============== EXPANSION PACK 1 (30種追加) ==============
+  {
+    id:'st_thumb_release', name:'親指筋膜リリース', courses:['seitai'],
+    targetProblems:['roundedShoulders','general'],
+    category:'selfcare', technique:'release', bodyPart:'arm', intensity:1,
+    equipment:'なし', position:'sitting', duration:'各60秒',
+    illustration: SVG2.handMassage,
+    purpose:'スマホ親指疲労と前腕の張りをリリース。',
+    how:['親指の付け根を反対の手で押さえる。','円を描くようにマッサージ。','痛気持ちいい強さで60秒。'],
+    cues:{do:'呼吸を続ける。',dont:'強く押しすぎない。'},
+    why:'親指の使い過ぎは肩こり・首こりに連動する。'
+  },
+  {
+    id:'st_forearm_release', name:'前腕筋膜リリース', courses:['seitai'],
+    targetProblems:['roundedShoulders'],
+    category:'selfcare', technique:'release', bodyPart:'arm', intensity:1,
+    equipment:'テニスボール', position:'sitting', duration:'各2分',
+    illustration: SVG2.ballRelease,
+    purpose:'デスクワークの前腕の張りをほどく。',
+    how:['前腕をテーブルに置く。','テニスボールで上下に転がす。','痛い箇所は20秒静圧。'],
+    cues:{do:'ゆっくり丁寧に。',dont:'骨の上を圧迫しない。'},
+    why:'前腕の張りは肩の巻き・首こりに直結。'
+  },
+  {
+    id:'st_wrist_extension', name:'手首伸展ストレッチ', courses:['seitai','yoga'],
+    targetProblems:['roundedShoulders'],
+    category:'selfcare', technique:'stretch', bodyPart:'arm', intensity:1,
+    equipment:'なし', position:'kneeling', duration:'各30秒',
+    illustration: SVG2.handMassage,
+    purpose:'手首の屈筋群と前腕内側を伸ばす。',
+    how:['四つ這いで指先を膝向きに置く。','体重を後方にずらして手首前面を伸ばす。','30秒×2セット。'],
+    cues:{do:'肘を伸ばす。',dont:'痛みが出たら戻す。'},
+    why:'タイピング疲労の蓄積を解放。'
+  },
+  {
+    id:'st_pec_minor_release', name:'小胸筋圧迫リリース', courses:['seitai'],
+    targetProblems:['roundedShoulders','forwardHead'],
+    category:'selfcare', technique:'release', bodyPart:'chest', intensity:2,
+    equipment:'テニスボール', position:'standing', duration:'各2分',
+    illustration: SVG2.ballRelease,
+    purpose:'巻き肩の元凶・小胸筋をピンポイントで緩める。',
+    how:['鎖骨の下、肩寄りにテニスボールを当て壁に押し付ける。','腕を上下に動かす。','痛気持ちいい強さで2分。'],
+    cues:{do:'呼吸を続ける。',dont:'痛みを我慢しない。'},
+    why:'小胸筋短縮が改善すると胸が一気に開く。'
+  },
+  {
+    id:'st_glute_med_release', name:'中臀筋テニスボールリリース', courses:['seitai'],
+    targetProblems:['kneeValgus','lateralAsymmetry'],
+    category:'selfcare', technique:'release', bodyPart:'hip', intensity:2,
+    equipment:'テニスボール', position:'sidelying', duration:'各2分',
+    illustration: SVG2.ballRelease,
+    purpose:'骨盤安定の要・中臀筋トリガーポイントを解放。',
+    how:['横向きで骨盤の外側上部にボール。','痛気持ちいい点で静圧2分。','反対側も。'],
+    cues:{do:'呼吸を深く。',dont:'骨の上に当てない。'},
+    why:'中臀筋の硬さは膝痛・腰痛の隠れた原因。'
+  },
+  {
+    id:'st_quad_foam_roll', name:'大腿四頭筋フォームロール', courses:['seitai'],
+    targetProblems:['anteriorPelvicTilt','kneeValgus'],
+    category:'selfcare', technique:'release', bodyPart:'leg', intensity:2,
+    equipment:'フォームローラー', position:'prone', duration:'2分',
+    illustration: SVG2.foamRoll,
+    purpose:'前ももの張りを徹底的にほどき、骨盤前傾を改善。',
+    how:['うつ伏せで前腕で支える。','前ももの下にフォームローラー。','膝〜骨盤付近をゆっくり転がす。'],
+    cues:{do:'痛い点で30秒静止。',dont:'膝の上は避ける。'},
+    why:'前もも短縮は反り腰の主犯。'
+  },
+  {
+    id:'st_it_band_roll', name:'腸脛靭帯フォームロール', courses:['seitai'],
+    targetProblems:['kneeValgus','lateralAsymmetry'],
+    category:'selfcare', technique:'release', bodyPart:'leg', intensity:2,
+    equipment:'フォームローラー', position:'sidelying', duration:'各2分',
+    illustration: SVG2.foamRoll,
+    purpose:'外もも(IT band)の張りで膝の痛みやO脚を改善。',
+    how:['横向きで外ももの下にローラー。','体を支えながらゆっくり上下。','痛い点で20秒静止。'],
+    cues:{do:'ゆっくり。',dont:'勢いで転がさない。'},
+    why:'外もも硬化は膝の外側痛・腸脛靭帯炎の原因。'
+  },
+  {
+    id:'st_hamstring_roll', name:'ハムストリングフォームロール', courses:['seitai'],
+    targetProblems:['posteriorPelvicTilt','swayBack'],
+    category:'selfcare', technique:'release', bodyPart:'leg', intensity:2,
+    equipment:'フォームローラー', position:'sitting', duration:'各2分',
+    illustration: SVG2.foamRoll,
+    purpose:'ハムストリングを解放し腰痛を予防。',
+    how:['長座でローラーを膝裏の下に。','お尻を浮かせて前後に転がす。','痛い点で静圧。'],
+    cues:{do:'ゆっくり。',dont:'膝裏は避ける。'},
+    why:'ハム硬化は骨盤後傾と腰痛に直結。'
+  },
+  {
+    id:'st_glute_foam_roll', name:'臀筋フォームロール', courses:['seitai'],
+    targetProblems:['anteriorPelvicTilt','swayBack'],
+    category:'selfcare', technique:'release', bodyPart:'hip', intensity:2,
+    equipment:'フォームローラー', position:'sitting', duration:'各2分',
+    illustration: SVG2.foamRoll,
+    purpose:'お尻のコリを解放し坐骨神経痛を予防。',
+    how:['ローラーにお尻を乗せ片足を反対の膝に。','体重を傾けゆっくり転がす。','反対も。'],
+    cues:{do:'痛気持ちいい強さで。',dont:'痛みを我慢しない。'},
+    why:'臀筋トリガーポイントは坐骨神経痛の主因。'
+  },
+  {
+    id:'st_lat_roll', name:'広背筋フォームロール', courses:['seitai'],
+    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    category:'selfcare', technique:'release', bodyPart:'back', intensity:2,
+    equipment:'フォームローラー', position:'sidelying', duration:'各2分',
+    illustration: SVG2.foamRoll,
+    purpose:'広背筋を解放し肩可動域を取り戻す。',
+    how:['横向きで腕を伸ばし脇下にローラー。','体重を乗せて前後にゆっくり。','痛い点で静圧。'],
+    cues:{do:'呼吸を続ける。',dont:'肋骨を強く圧迫しない。'},
+    why:'広背筋短縮は猫背と肩可動制限の主因。'
+  },
+  {
+    id:'st_upper_back_roll', name:'胸椎フォームロール', courses:['seitai'],
+    targetProblems:['thoracicKyphosis'],
+    category:'selfcare', technique:'mobility', bodyPart:'back', intensity:1,
+    equipment:'フォームローラー', position:'supine', duration:'2分',
+    illustration: SVG2.foamRoll,
+    purpose:'胸椎の伸展可動域を一気に解放。',
+    how:['仰向けでローラーを肩甲骨の下に横向きに。','頭を支え背中を反らせる。','少しずつ位置を変えて2分。'],
+    cues:{do:'呼吸で深める。',dont:'腰を反らさない。'},
+    why:'毎日3分で猫背が改善。'
+  },
+  {
+    id:'st_calf_roll', name:'ふくらはぎフォームロール', courses:['seitai'],
+    targetProblems:['ankleStiffness','swayBack'],
+    category:'selfcare', technique:'release', bodyPart:'leg', intensity:1,
+    equipment:'フォームローラー', position:'sitting', duration:'各2分',
+    illustration: SVG2.foamRoll,
+    purpose:'ふくらはぎを解放し浮腫みと足首固さを改善。',
+    how:['長座でローラーを片方のふくらはぎ下に。','お尻を浮かせ上下に転がす。','内外側も。'],
+    cues:{do:'痛い点で静圧。',dont:'アキレス腱は避ける。'},
+    why:'ふくらはぎ硬化は冷え・むくみ・腰痛の隠れた原因。'
+  },
+  {
+    id:'st_plantar_release', name:'足裏ボールリリース', courses:['seitai'],
+    targetProblems:['ankleStiffness'],
+    category:'selfcare', technique:'release', bodyPart:'foot', intensity:1,
+    equipment:'テニスボール', position:'standing', duration:'各2分',
+    illustration: SVG2.ballRelease,
+    purpose:'足底筋膜をほどき全身の連動性を改善。',
+    how:['立位で片足の下にボール。','体重を乗せながらゆっくり前後左右に転がす。','2分後反対側。'],
+    cues:{do:'ゆっくり呼吸。',dont:'激痛は無理しない。'},
+    why:'足底筋膜は全身の筋膜と繋がる。'
+  },
+  {
+    id:'st_psoas_stretch', name:'腸腰筋ストレッチ', courses:['seitai','yoga'],
+    targetProblems:['anteriorPelvicTilt','swayBack'],
+    category:'selfcare', technique:'stretch', bodyPart:'hip', intensity:2,
+    equipment:'なし', position:'kneeling', duration:'各30秒',
+    illustration: SVG2.lungeStretch,
+    purpose:'反り腰の主犯・腸腰筋を伸ばす。',
+    how:['片膝立ち、もう片足を前に。','骨盤を後傾させながら前方に体重を移す。','30秒キープ。'],
+    cues:{do:'お尻を締める。',dont:'腰を反らせない。'},
+    why:'腸腰筋短縮は反り腰の最大要因。'
+  },
+  {
+    id:'st_pec_doorway', name:'ドア枠胸開きストレッチ', courses:['seitai','personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'selfcare', technique:'stretch', bodyPart:'chest', intensity:1,
+    equipment:'ドア枠', position:'standing', duration:'各30秒',
+    illustration: SVG2.shoulderOpen,
+    purpose:'大胸筋と小胸筋を同時に伸ばす王道ストレッチ。',
+    how:['ドア枠に肘を90度で当てる。','片足を前に踏み出し胸を開く。','30秒キープ。'],
+    cues:{do:'肩甲骨を寄せる。',dont:'肩がすくまない。'},
+    why:'毎日続けると巻き肩が劇的改善。'
+  },
+  {
+    id:'st_thread_needle', name:'スレッドザニードル', courses:['seitai','yoga'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    category:'selfcare', technique:'stretch', bodyPart:'spine', intensity:1,
+    equipment:'マット', position:'kneeling', duration:'各30秒',
+    illustration: SVG2.spineTwist,
+    purpose:'胸椎回旋と肩関節を同時にケア。',
+    how:['四つ這いから片手を反対脇下に通す。','肩と頭をマットに。','30秒キープ。'],
+    cues:{do:'息を吐いて深める。',dont:'首に痛みあれば中止。'},
+    why:'胸椎回旋制限を解放。'
+  },
+  {
+    id:'st_neck_traction', name:'首牽引リラクゼーション', courses:['seitai'],
+    targetProblems:['forwardHead'],
+    category:'selfcare', technique:'release', bodyPart:'neck', intensity:1,
+    equipment:'タオル', position:'supine', duration:'3分',
+    illustration: SVG2.neckTilt,
+    purpose:'頸椎の自然なカーブを取り戻す。',
+    how:['仰向けでタオルを丸めて後頭部の付け根に。','両端を握り頭を軽く引き上げる。','3分静止。'],
+    cues:{do:'ゆっくり呼吸。',dont:'強く引っ張らない。'},
+    why:'頸椎の自然なカーブを回復させる。'
+  },
+  {
+    id:'st_levator_stretch', name:'肩甲挙筋ストレッチ', courses:['seitai'],
+    targetProblems:['forwardHead','roundedShoulders'],
+    category:'selfcare', technique:'stretch', bodyPart:'neck', intensity:1,
+    equipment:'なし', position:'sitting', duration:'各30秒',
+    illustration: SVG2.neckSide,
+    purpose:'肩こりの主犯・肩甲挙筋をピンポイントで伸ばす。',
+    how:['椅子に座る。','顔を斜め下45度に向け、同側の手で頭頂を引く。','30秒キープ。'],
+    cues:{do:'肩を下げる。',dont:'強く引かない。'},
+    why:'肩甲挙筋は慢性肩こりの真の原因。'
+  },
+  {
+    id:'st_rib_breathing', name:'肋骨呼吸エクササイズ', courses:['seitai','pilates'],
+    targetProblems:['thoracicKyphosis','general'],
+    category:'breath', technique:'breath', bodyPart:'breath', intensity:1,
+    equipment:'なし', position:'supine', duration:'5分',
+    illustration: SVG2.breathing,
+    purpose:'胸郭の可動性を高め、呼吸を深くする。',
+    how:['仰向けで両手を肋骨に置く。','鼻から吸い肋骨を360度に広げる。','口から長く吐く。10呼吸×5セット。'],
+    cues:{do:'肩を動かさない。',dont:'お腹だけで呼吸しない。'},
+    why:'胸郭可動性が姿勢全体に影響。'
+  },
+  {
+    id:'st_jaw_release', name:'顎関節リリース', courses:['seitai'],
+    targetProblems:['forwardHead'],
+    category:'selfcare', technique:'release', bodyPart:'neck', intensity:1,
+    equipment:'なし', position:'sitting', duration:'2分',
+    illustration: SVG2.handMassage,
+    purpose:'顎関節の緊張を解放し頭痛・首こりを改善。',
+    how:['指で顎関節(耳前)を円を描きほぐす。','続いて咬筋(頬骨下)も。','深呼吸しながら2分。'],
+    cues:{do:'ゆっくり。',dont:'痛みを我慢しない。'},
+    why:'食いしばりが頭痛・首こりの隠れた原因。'
+  },
+  {
+    id:'st_eye_release', name:'眼周りリリース', courses:['seitai'],
+    targetProblems:['forwardHead'],
+    category:'selfcare', technique:'release', bodyPart:'neck', intensity:1,
+    equipment:'なし', position:'sitting', duration:'2分',
+    illustration: SVG2.handMassage,
+    purpose:'眼精疲労と前頭部緊張をリセット。',
+    how:['目を閉じ眉毛の下を指で押し上げる。','こめかみを円マッサージ。','頬骨下も。'],
+    cues:{do:'目を閉じてリラックス。',dont:'眼球を直接押さない。'},
+    why:'眼精疲労は頭痛・首こりに直結。'
+  },
+  {
+    id:'st_shoulder_circles', name:'肩甲骨サークル', courses:['seitai','yoga','pilates'],
+    targetProblems:['roundedShoulders','forwardHead'],
+    category:'selfcare', technique:'mobility', bodyPart:'shoulder', intensity:1,
+    equipment:'なし', position:'standing', duration:'各方向10回',
+    illustration: SVG2.shoulderRoll,
+    purpose:'肩甲骨の全方向モビリティを取り戻す。',
+    how:['腕を脱力。','肩を前→上→後→下に大きく回す。','逆回転も。'],
+    cues:{do:'大きくゆっくり。',dont:'反動を使わない。'},
+    why:'肩甲骨可動性は姿勢の土台。'
+  },
+  {
+    id:'st_arm_swing', name:'アームスイング', courses:['seitai','personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'selfcare', technique:'mobility', bodyPart:'shoulder', intensity:1,
+    equipment:'なし', position:'standing', duration:'2分',
+    illustration: SVG2.shoulderRoll,
+    purpose:'肩関節を全方向にスムーズに動かす。',
+    how:['立位で両腕を前後に大きくスイング。','上下スイング、左右クロスも。','各30秒。'],
+    cues:{do:'力を抜いて。',dont:'勢いを使いすぎない。'},
+    why:'朝の起床時にも有効。'
+  },
+  {
+    id:'st_hip_circles', name:'股関節サークル', courses:['seitai','yoga'],
+    targetProblems:['anteriorPelvicTilt','kneeValgus'],
+    category:'selfcare', technique:'mobility', bodyPart:'hip', intensity:1,
+    equipment:'なし', position:'standing', duration:'各方向10回',
+    illustration: SVG2.hipOpener,
+    purpose:'股関節の全方向モビリティを取り戻す。',
+    how:['片脚立ち、もう片足を上げて円を描く。','大きく10回、逆回りも。','反対脚も。'],
+    cues:{do:'軸足を安定させる。',dont:'骨盤が動かない。'},
+    why:'股関節可動性は骨盤の動きに直結。'
+  },
+  {
+    id:'st_ankle_circles', name:'足首サークル', courses:['seitai'],
+    targetProblems:['ankleStiffness'],
+    category:'selfcare', technique:'mobility', bodyPart:'foot', intensity:1,
+    equipment:'なし', position:'sitting', duration:'各方向10回',
+    illustration: SVG2.calfStretch,
+    purpose:'足首の可動性を取り戻す。',
+    how:['椅子に座り片足を組む。','足首を大きく回す。','逆回りも。'],
+    cues:{do:'大きく。',dont:'反動なし。'},
+    why:'足首は全身の土台。固さは膝・腰痛の原因に。'
+  },
+  {
+    id:'st_toe_spread', name:'足指グーチョキパー', courses:['seitai'],
+    targetProblems:['ankleStiffness','kneeValgus'],
+    category:'selfcare', technique:'mobility', bodyPart:'foot', intensity:1,
+    equipment:'なし', position:'sitting', duration:'2分',
+    illustration: SVG2.calfStretch,
+    purpose:'足指の機能を取り戻し足底アーチを再構築。',
+    how:['足指を握る(グー)。','親指のみ上(チョキ)。','全指を大きく開く(パー)。各10回。'],
+    cues:{do:'ゆっくり丁寧に。',dont:'痛みなら無理しない。'},
+    why:'足指機能は土踏まずと姿勢の根幹。'
+  },
+  {
+    id:'st_supine_twist', name:'仰向け脊柱ツイスト', courses:['seitai','yoga'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    category:'selfcare', technique:'stretch', bodyPart:'spine', intensity:1,
+    equipment:'マット', position:'supine', duration:'各60秒',
+    illustration: SVG2.spineTwist,
+    purpose:'脊柱回旋とお尻のリリースを同時に。',
+    how:['仰向けで両腕を横に開く。','片膝を反対側に倒す。','顔は逆向き。60秒。'],
+    cues:{do:'吐きながら深める。',dont:'肩が浮かない。'},
+    why:'腰痛予防と内臓マッサージ効果。'
+  },
+  {
+    id:'st_happy_baby', name:'ハッピーベイビーポーズ', courses:['seitai','yoga'],
+    targetProblems:['anteriorPelvicTilt','swayBack'],
+    category:'selfcare', technique:'stretch', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'supine', duration:'1分',
+    illustration: SVG2.hipOpener,
+    purpose:'股関節と腰のリリース。骨盤底のリラックスも。',
+    how:['仰向けで両膝を胸へ。','両手で土踏まずを掴む。','膝を脇に近づけ揺れる。1分。'],
+    cues:{do:'呼吸を深く。',dont:'背中を反らせない。'},
+    why:'骨盤底筋のリラックスと股関節解放。'
+  },
+  {
+    id:'st_supine_figure4', name:'仰向けフィギュア4', courses:['seitai','yoga'],
+    targetProblems:['kneeValgus','anteriorPelvicTilt'],
+    category:'selfcare', technique:'stretch', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'supine', duration:'各60秒',
+    illustration: SVG2.pigeonRest,
+    purpose:'お尻と梨状筋を伸ばす定番ストレッチ。',
+    how:['仰向けで片足首を反対の膝に乗せる。','下の脚を胸に近づける。','60秒。'],
+    cues:{do:'お尻が伸びる感覚。',dont:'首に力を入れない。'},
+    why:'梨状筋ケアで腰痛・坐骨神経痛を予防。'
+  },
 ];
 
 export { DB_SEITAI };

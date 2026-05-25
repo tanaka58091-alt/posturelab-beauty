@@ -626,6 +626,531 @@ const DB_PERSONAL = [
     cues:{do:'柔らかく着地。',dont:'膝が内に入らない。'},
     why:'最も簡単な全身有酸素。'
   },
+
+  // ============== EXPANSION PACK 1 — 下半身強化 ==============
+  {
+    id:'pt_cossack_squat', name:'コサックスクワット', courses:['personal'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:3,
+    equipment:'なし', position:'standing', duration:'各8回 × 3セット',
+    illustration: SVG2.squat,
+    purpose:'内転筋と股関節可動域を同時に。',
+    how:['足を大きく開く。','片側にお尻を落とし反対は伸ばす。','左右交互に8回。'],
+    cues:{do:'かかとを浮かさない。',dont:'背中を丸めない。'},
+    why:'股関節モビリティと脚力を一度に育てる。'
+  },
+  {
+    id:'pt_pistol_progression', name:'ピストルスクワット練習', courses:['personal'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:3,
+    equipment:'椅子', position:'standing', duration:'各5回 × 3セット',
+    illustration: SVG2.squat,
+    purpose:'片脚スクワットへの段階練習。',
+    how:['椅子の前で片脚立ち。','もう一方は前へ。','椅子にタッチして立ち上がる。'],
+    cues:{do:'体幹を固めて。',dont:'反動で立たない。'},
+    why:'バランス・筋力・柔軟性の総合種目。'
+  },
+  {
+    id:'pt_shrimp_squat', name:'シュリンプスクワット', courses:['personal'],
+    targetProblems:['kneeValgus','lateralAsymmetry'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:3,
+    equipment:'なし', position:'standing', duration:'各5回 × 2セット',
+    illustration: SVG2.squat,
+    purpose:'片脚で大腿四頭筋を集中強化。',
+    how:['片脚立ち、もう一方は後ろに曲げて手で持つ。','膝を床に近づける。','5回。'],
+    cues:{do:'背すじを保つ。',dont:'倒れ込まない。'},
+    why:'スポーツ動作の安定性を上げる。'
+  },
+  {
+    id:'pt_skater_squat', name:'スケータースクワット', courses:['personal'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:3,
+    equipment:'なし', position:'standing', duration:'各8回 × 3セット',
+    illustration: SVG2.squat,
+    purpose:'片脚で深いスクワット動作。',
+    how:['片脚立ち。もう一方は後方斜め下に。','お尻を後ろに引いて下げる。','8回。'],
+    cues:{do:'膝とつま先は同方向。',dont:'前傾しすぎない。'},
+    why:'片脚機能を最大化。'
+  },
+  {
+    id:'pt_curtsy_lunge', name:'カーテシーランジ', courses:['personal'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:2,
+    equipment:'なし', position:'standing', duration:'各12回 × 3セット',
+    illustration: SVG2.lungeStretch,
+    purpose:'中臀筋・内転筋を同時に。',
+    how:['片脚を後ろ斜めに引く。','膝を曲げて下げる。','12回。反対も。'],
+    cues:{do:'骨盤は正面。',dont:'体を捻りすぎない。'},
+    why:'お尻のサイドを引き締める。'
+  },
+  {
+    id:'pt_walking_lunge', name:'ウォーキングランジ', courses:['personal'],
+    targetProblems:['lateralAsymmetry','posteriorPelvicTilt'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:2,
+    equipment:'なし', position:'standing', duration:'20歩 × 3セット',
+    illustration: SVG2.lungeStretch,
+    purpose:'歩きながら全身を鍛える。',
+    how:['前に大きく踏み出してランジ。','後ろ脚を前に引き寄せる。','続けて20歩。'],
+    cues:{do:'胸を張って。',dont:'歩幅が狭くならない。'},
+    why:'スポーツ・日常動作に直結。'
+  },
+  {
+    id:'pt_reverse_nordic', name:'リバースノルディック', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:3,
+    equipment:'マット', position:'kneeling', duration:'8回 × 3セット',
+    illustration: SVG2.lungeStretch,
+    purpose:'大腿四頭筋を伸ばしながら鍛える。',
+    how:['膝立ちで体を後ろに倒す。','つま先は伸ばす。','戻る。8回。'],
+    cues:{do:'お腹を引き締めて。',dont:'反りすぎない。'},
+    why:'前ももの強化と柔軟性。'
+  },
+  {
+    id:'pt_single_leg_glute_bridge', name:'片脚グルートブリッジ', courses:['personal'],
+    targetProblems:['posteriorPelvicTilt','lateralAsymmetry'],
+    category:'training', technique:'strength', bodyPart:'hip', intensity:2,
+    equipment:'マット', position:'supine', duration:'各12回 × 3セット',
+    illustration: SVG2.bridge,
+    purpose:'片脚で臀筋を集中強化。',
+    how:['仰向け、片脚を真上に伸ばす。','骨盤を持ち上げる。','12回。反対も。'],
+    cues:{do:'お尻を絞って。',dont:'腰を反らない。'},
+    why:'左右差解消とヒップアップ。'
+  },
+  {
+    id:'pt_hip_thrust_floor', name:'フロアヒップスラスト', courses:['personal'],
+    targetProblems:['posteriorPelvicTilt'],
+    category:'training', technique:'strength', bodyPart:'hip', intensity:2,
+    equipment:'なし', position:'supine', duration:'15回 × 3セット',
+    illustration: SVG2.bridge,
+    purpose:'臀筋を最大収縮させる王道。',
+    how:['仰向けで膝立て。','骨盤を爆発的に持ち上げる。','15回。'],
+    cues:{do:'頂点で2秒キープ。',dont:'腰だけで反らない。'},
+    why:'美尻の絶対種目。'
+  },
+  {
+    id:'pt_frog_pump', name:'フロッグポンプ', courses:['personal'],
+    targetProblems:['posteriorPelvicTilt'],
+    category:'training', technique:'strength', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'supine', duration:'20回 × 3セット',
+    illustration: SVG2.bridge,
+    purpose:'臀筋外側を狙うピンポイント種目。',
+    how:['仰向け、足裏同士を合わせて膝を外に。','お尻を上げる。','20回。'],
+    cues:{do:'外股のまま上下。',dont:'反動を使わない。'},
+    why:'丸いお尻を作る。'
+  },
+  {
+    id:'pt_glute_kickback', name:'グルートキックバック', courses:['personal'],
+    targetProblems:['posteriorPelvicTilt','lateralAsymmetry'],
+    category:'training', technique:'strength', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'kneeling', duration:'各15回 × 3セット',
+    illustration: SVG2.donkeyKick,
+    purpose:'臀筋を後方へ蹴り上げる。',
+    how:['四つん這い、片脚を後方に蹴り上げる。','つま先は床と平行。','15回。'],
+    cues:{do:'腰を反らない。',dont:'体を傾けない。'},
+    why:'ヒップアップとライン整え。'
+  },
+  {
+    id:'pt_fire_hydrant', name:'ファイアハイドラント', courses:['personal'],
+    targetProblems:['kneeValgus','posteriorPelvicTilt'],
+    category:'training', technique:'strength', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'kneeling', duration:'各15回 × 3セット',
+    illustration: SVG2.donkeyKick,
+    purpose:'中臀筋を直接刺激。',
+    how:['四つん這い、膝を曲げたまま横へ上げる。','15回。反対も。'],
+    cues:{do:'骨盤は床と平行。',dont:'体を傾けない。'},
+    why:'O脚改善・骨盤安定。'
+  },
+  {
+    id:'pt_lateral_step', name:'ラテラルステップ', courses:['personal'],
+    targetProblems:['kneeValgus','lateralAsymmetry'],
+    category:'training', technique:'strength', bodyPart:'hip', intensity:2,
+    equipment:'なし', position:'standing', duration:'各15回 × 3セット',
+    illustration: SVG2.squat,
+    purpose:'中臀筋を横方向に強化。',
+    how:['ハーフスクワット姿勢で横へステップ。','15回。反対も。'],
+    cues:{do:'低い姿勢を保つ。',dont:'体を起こさない。'},
+    why:'横方向の安定性アップ。'
+  },
+  {
+    id:'pt_single_leg_calf_raise', name:'片脚カーフレイズ', courses:['personal'],
+    targetProblems:['ankleStiffness','lateralAsymmetry'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:2,
+    equipment:'なし', position:'standing', duration:'各20回 × 3セット',
+    illustration: SVG2.calfRaise,
+    purpose:'ふくらはぎ片脚で集中強化。',
+    how:['片脚立ち、つま先立ちを繰り返す。','20回。反対も。'],
+    cues:{do:'高く上げる。',dont:'体を揺らさない。'},
+    why:'下腿の左右差解消。'
+  },
+  {
+    id:'pt_wall_sit_marching', name:'ウォールシット・マーチ', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt'],
+    category:'training', technique:'strength', bodyPart:'leg', intensity:3,
+    equipment:'壁', position:'standing', duration:'30秒 × 3セット',
+    illustration: SVG2.wallSquat,
+    purpose:'ウォールシットで片脚交互に上げる。',
+    how:['ウォールシットの姿勢。','片脚ずつ交互に膝を上げる。','30秒。'],
+    cues:{do:'腰を壁から離さない。',dont:'姿勢を崩さない。'},
+    why:'静的+動的な複合刺激。'
+  },
+
+  // ============== EXPANSION PACK 1 — 上半身 ==============
+  {
+    id:'pt_decline_pushup', name:'デクラインプッシュアップ', courses:['personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'椅子', position:'prone', duration:'10回 × 3セット',
+    illustration: SVG2.pushup,
+    purpose:'上部胸筋・三角筋前部を強化。',
+    how:['足を椅子に乗せる。','プッシュアップ姿勢。','10回。'],
+    cues:{do:'体一直線。',dont:'腰を反らない。'},
+    why:'上半身の強度UP段階。'
+  },
+  {
+    id:'pt_archer_pushup', name:'アーチャープッシュアップ', courses:['personal'],
+    targetProblems:['roundedShoulders','lateralAsymmetry'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'なし', position:'prone', duration:'各5回 × 2セット',
+    illustration: SVG2.pushup,
+    purpose:'片腕の強さを段階的に。',
+    how:['手幅を広く。','片肘を曲げて反対は伸ばしたまま下りる。','5回。'],
+    cues:{do:'体幹固めて。',dont:'反らない。'},
+    why:'片手プッシュアップへの橋渡し。'
+  },
+  {
+    id:'pt_pike_pushup', name:'パイクプッシュアップ', courses:['personal'],
+    targetProblems:['roundedShoulders'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'なし', position:'prone', duration:'8回 × 3セット',
+    illustration: SVG2.pushup,
+    purpose:'肩を集中強化。',
+    how:['お尻を高く上げてVの字。','頭を床に近づけて押し戻す。','8回。'],
+    cues:{do:'腕で押す。',dont:'背中で押さない。'},
+    why:'肩のラインを整える。'
+  },
+  {
+    id:'pt_diamond_pushup', name:'ダイヤモンドプッシュアップ', courses:['personal'],
+    targetProblems:['roundedShoulders'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'なし', position:'prone', duration:'8回 × 3セット',
+    illustration: SVG2.pushup,
+    purpose:'三頭筋・胸内側を強化。',
+    how:['両手でダイヤ型を作る。','胸を手に近づける。','8回。'],
+    cues:{do:'肘は体の側に。',dont:'肘が外に開かない。'},
+    why:'二の腕引き締め。'
+  },
+  {
+    id:'pt_wide_pushup', name:'ワイドプッシュアップ', courses:['personal'],
+    targetProblems:['roundedShoulders'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:2,
+    equipment:'なし', position:'prone', duration:'12回 × 3セット',
+    illustration: SVG2.pushup,
+    purpose:'胸筋外側を広く強化。',
+    how:['手幅を肩幅の1.5倍。','胸を床に近づける。','12回。'],
+    cues:{do:'肘は45度。',dont:'肩がすくまない。'},
+    why:'広い胸板を作る。'
+  },
+  {
+    id:'pt_pseudo_planche', name:'シュードプランシェ', courses:['personal'],
+    targetProblems:['roundedShoulders'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'なし', position:'prone', duration:'5回 × 2セット',
+    illustration: SVG2.pushup,
+    purpose:'手の位置を腰に近づける高難度。',
+    how:['手を腰の横に。','体を前に倒しながらプッシュアップ。','5回。'],
+    cues:{do:'肩を前方に。',dont:'肘を後ろに張らない。'},
+    why:'前鋸筋・三角筋前部の最大刺激。'
+  },
+  {
+    id:'pt_dive_bomber', name:'ダイブボンバー', courses:['personal'],
+    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'なし', position:'prone', duration:'8回 × 3セット',
+    illustration: SVG2.pushup,
+    purpose:'肩・胸・背中を流れるように。',
+    how:['Vの字から手を前に押し出す。','胸を反らせて起き上がる。','戻す。8回。'],
+    cues:{do:'流れるように。',dont:'力まない。'},
+    why:'肩関節の総合動作。'
+  },
+  {
+    id:'pt_inverted_row', name:'インバーテッドロウ', courses:['personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
+    category:'training', technique:'strength', bodyPart:'back', intensity:3,
+    equipment:'テーブル', position:'supine', duration:'10回 × 3セット',
+    illustration: SVG2.pullup,
+    purpose:'背中の引き動作を自重で。',
+    how:['テーブル下に仰向け、エッジを掴む。','胸を引き寄せる。','10回。'],
+    cues:{do:'肩甲骨を寄せる。',dont:'腰で引かない。'},
+    why:'プルアップへの最良の準備種目。'
+  },
+  {
+    id:'pt_scapular_pullup', name:'スキャプラプルアップ', courses:['personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'training', technique:'strength', bodyPart:'back', intensity:2,
+    equipment:'バー', position:'standing', duration:'10回 × 3セット',
+    illustration: SVG2.pullup,
+    purpose:'肩甲骨だけ動かす入門種目。',
+    how:['バーにぶら下がる。','肘を曲げず肩甲骨だけで上下。','10回。'],
+    cues:{do:'肩を下げ寄せる。',dont:'肘を曲げない。'},
+    why:'プルアップの基礎。'
+  },
+  {
+    id:'pt_dead_hang', name:'デッドハング', courses:['personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'training', technique:'isometric', bodyPart:'back', intensity:2,
+    equipment:'バー', position:'standing', duration:'30秒 × 3セット',
+    illustration: SVG2.pullup,
+    purpose:'グリップと肩の安定。',
+    how:['バーにぶら下がるだけ。','30秒。'],
+    cues:{do:'肩甲骨を軽く下げる。',dont:'すくみあげない。'},
+    why:'背骨の減圧効果。'
+  },
+  {
+    id:'pt_triceps_dip_chair', name:'トライセプスディップ', courses:['personal'],
+    targetProblems:['roundedShoulders'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:2,
+    equipment:'椅子', position:'sitting', duration:'12回 × 3セット',
+    illustration: SVG2.tricepsDip,
+    purpose:'二の腕の裏側を強化。',
+    how:['椅子に背を向け、手で縁を持つ。','肘を曲げてお尻を下ろす。','12回。'],
+    cues:{do:'肘は後ろに。',dont:'肩がすくまない。'},
+    why:'二の腕引き締め。'
+  },
+  {
+    id:'pt_pike_holds', name:'パイクホールド', courses:['personal'],
+    targetProblems:['roundedShoulders'],
+    category:'training', technique:'isometric', bodyPart:'arm', intensity:3,
+    equipment:'なし', position:'prone', duration:'30秒 × 3セット',
+    illustration: SVG2.plank,
+    purpose:'倒立への準備。肩の静的強化。',
+    how:['Vの字姿勢で静止。','30秒。'],
+    cues:{do:'肩で押す。',dont:'頭を下げすぎない。'},
+    why:'壁倒立への布石。'
+  },
+  {
+    id:'pt_wall_walk', name:'ウォールウォーク', courses:['personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'training', technique:'strength', bodyPart:'arm', intensity:3,
+    equipment:'壁', position:'prone', duration:'5往復',
+    illustration: SVG2.plank,
+    purpose:'倒立へ近づく動作。',
+    how:['プランクから足を壁に乗せて登る。','手を壁に近づける。','戻る。'],
+    cues:{do:'体幹を固める。',dont:'急がない。'},
+    why:'肩と体幹の同時強化。'
+  },
+
+  // ============== EXPANSION PACK 1 — 体幹 ==============
+  {
+    id:'pt_hollow_body_hold', name:'ホロウボディホールド', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt','swayBack'],
+    category:'core', technique:'isometric', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'supine', duration:'30秒 × 3セット',
+    illustration: SVG2.hundred,
+    purpose:'体幹の総合静的強化。',
+    how:['仰向け、手脚を伸ばして床から浮かせる。','腰は床に。','30秒。'],
+    cues:{do:'腰を床に押し付ける。',dont:'腰を反らない。'},
+    why:'体幹安定の基本。'
+  },
+  {
+    id:'pt_hollow_rock', name:'ホロウロック', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'supine', duration:'15回 × 3セット',
+    illustration: SVG2.hundred,
+    purpose:'ホロウ姿勢で前後に揺れる。',
+    how:['ホロウ姿勢から体を揺らす。','15回。'],
+    cues:{do:'姿勢キープ。',dont:'手脚を緩めない。'},
+    why:'体幹剛性の試金石。'
+  },
+  {
+    id:'pt_v_up', name:'Vアップ', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'supine', duration:'12回 × 3セット',
+    illustration: SVG2.vsit,
+    purpose:'上下体幹を同時収縮。',
+    how:['仰向けから手脚を同時に上げてVの字に。','戻す。12回。'],
+    cues:{do:'指先と足先を合わせる意識。',dont:'反動を使わない。'},
+    why:'腹直筋全体の最強種目。'
+  },
+  {
+    id:'pt_toe_touch', name:'トータッチ', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'15回 × 3セット',
+    illustration: SVG2.crunch,
+    purpose:'腹直筋上部を集中。',
+    how:['仰向けで脚を真上に。','手でつま先にタッチ。','15回。'],
+    cues:{do:'肩甲骨を浮かせて。',dont:'首を引っ張らない。'},
+    why:'お腹上部の引き締め。'
+  },
+  {
+    id:'pt_russian_twist', name:'ロシアンツイスト', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    category:'core', technique:'core', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'sitting', duration:'各15回 × 3セット',
+    illustration: SVG2.twist,
+    purpose:'腹斜筋を回旋で鍛える。',
+    how:['座って体を後ろに傾ける。','手を左右に振る。','15回ずつ。'],
+    cues:{do:'胸を回旋。',dont:'手だけ動かない。'},
+    why:'くびれを作る基本。'
+  },
+  {
+    id:'pt_bicycle_crunch', name:'バイシクルクランチ', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    category:'core', technique:'core', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'各15回 × 3セット',
+    illustration: SVG2.bicycle,
+    purpose:'回旋と屈曲を同時。',
+    how:['仰向け、肘と反対膝を近づける。','左右交互に15回。'],
+    cues:{do:'体を真正面に動かさない。',dont:'首を引っ張らない。'},
+    why:'腹斜筋の代表種目。'
+  },
+  {
+    id:'pt_hanging_knee_raise', name:'ハンギングニーレイズ', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:3,
+    equipment:'バー', position:'standing', duration:'12回 × 3セット',
+    illustration: SVG2.pullup,
+    purpose:'ぶら下がりで下腹部を強化。',
+    how:['バーにぶら下がる。','膝を胸に引き寄せる。','12回。'],
+    cues:{do:'反動を使わない。',dont:'体が揺れない。'},
+    why:'下腹部最強種目。'
+  },
+  {
+    id:'pt_dragon_flag_prep', name:'ドラゴンフラッグ準備', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'supine', duration:'5回 × 3セット',
+    illustration: SVG2.hundred,
+    purpose:'体幹剛性の頂点種目への準備。',
+    how:['仰向けで頭の上の何かを掴む。','体を真っ直ぐ持ち上げる。','5回。'],
+    cues:{do:'体一直線。',dont:'腰を曲げない。'},
+    why:'体幹強度の最高峰へ。'
+  },
+  {
+    id:'pt_side_plank_dip', name:'サイドプランクディップ', courses:['personal'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'side', duration:'各12回 × 3セット',
+    illustration: SVG2.sidePlank,
+    purpose:'サイドプランクから腰を上下。',
+    how:['サイドプランク姿勢。','腰を下げて上げる。','12回。反対も。'],
+    cues:{do:'体一直線。',dont:'腰だけ動かない。'},
+    why:'くびれと体幹同時。'
+  },
+  {
+    id:'pt_side_plank_reach', name:'サイドプランクリーチ', courses:['personal'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    category:'core', technique:'core', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'side', duration:'各10回 × 3セット',
+    illustration: SVG2.sidePlank,
+    purpose:'サイドプランクで腕を回す。',
+    how:['サイドプランクで上の腕を体の下に通す。','戻す。10回。'],
+    cues:{do:'胸郭を回旋。',dont:'腰を落とさない。'},
+    why:'胸椎モビリティと体幹。'
+  },
+  {
+    id:'pt_plank_to_pushup', name:'プランクtoプッシュアップ', courses:['personal'],
+    targetProblems:['roundedShoulders','anteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'prone', duration:'各10回 × 3セット',
+    illustration: SVG2.plank,
+    purpose:'肘プランクから手プランクへ。',
+    how:['肘プランクから片手ずつ手プランクに。','戻る。10回。'],
+    cues:{do:'お尻を振らない。',dont:'体を傾けない。'},
+    why:'体幹と肩の協調。'
+  },
+  {
+    id:'pt_bear_crawl', name:'ベアクロウル', courses:['personal'],
+    targetProblems:['roundedShoulders','anteriorPelvicTilt'],
+    category:'core', technique:'core', bodyPart:'core', intensity:2,
+    equipment:'なし', position:'prone', duration:'10歩 × 3セット',
+    illustration: SVG2.plank,
+    purpose:'四足歩行で全身連動。',
+    how:['四つん這いで膝を浮かす。','対角の手脚を動かす。','10歩前後。'],
+    cues:{do:'お尻を低く。',dont:'お尻が高くならない。'},
+    why:'体幹と肩の同時強化。'
+  },
+  {
+    id:'pt_crab_walk', name:'クラブウォーク', courses:['personal'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'training', technique:'strength', bodyPart:'fullbody', intensity:2,
+    equipment:'なし', position:'sitting', duration:'10歩 × 3セット',
+    illustration: SVG2.plank,
+    purpose:'背面全体を強化。',
+    how:['仰向けから手脚で体を支え腰を上げる。','カニ歩き10歩。'],
+    cues:{do:'胸を開く。',dont:'お尻が落ちない。'},
+    why:'肩・三頭・臀筋の総合。'
+  },
+  {
+    id:'pt_reverse_plank', name:'リバースプランク', courses:['personal'],
+    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    category:'core', technique:'isometric', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'30秒 × 3セット',
+    illustration: SVG2.reversePlank,
+    purpose:'背面のチェーン全体を強化。',
+    how:['長座で手を後ろに、お尻を持ち上げる。','体一直線で30秒。'],
+    cues:{do:'胸を開く。',dont:'お尻を落とさない。'},
+    why:'前面ばかりの世界とのバランス。'
+  },
+  {
+    id:'pt_l_sit_progression', name:'Lシット練習', courses:['personal'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'isometric', bodyPart:'core', intensity:3,
+    equipment:'なし', position:'sitting', duration:'15秒 × 3セット',
+    illustration: SVG2.vsit,
+    purpose:'手で体を支え脚を浮かす。',
+    how:['長座、手で体を持ち上げる。','可能なら脚も。','15秒。'],
+    cues:{do:'胸を張る。',dont:'肩がすくまない。'},
+    why:'腹筋と肩の融合種目。'
+  },
+
+  // ============== EXPANSION PACK 1 — 心肺 ==============
+  {
+    id:'pt_high_knees', name:'ハイニー', courses:['personal'],
+    targetProblems:['general'],
+    category:'training', technique:'cardio', bodyPart:'fullbody', intensity:2,
+    equipment:'なし', position:'standing', duration:'30秒 × 3セット',
+    illustration: SVG2.jumpingJack,
+    purpose:'その場で膝を高く上げる。',
+    how:['交互に膝を腰の高さまで。','30秒。'],
+    cues:{do:'リズミカルに。',dont:'前傾しない。'},
+    why:'心拍を即上げる。'
+  },
+  {
+    id:'pt_butt_kicks', name:'バットキック', courses:['personal'],
+    targetProblems:['general'],
+    category:'training', technique:'cardio', bodyPart:'fullbody', intensity:2,
+    equipment:'なし', position:'standing', duration:'30秒 × 3セット',
+    illustration: SVG2.jumpingJack,
+    purpose:'かかとでお尻にタッチ。',
+    how:['交互にかかとをお尻に。','30秒。'],
+    cues:{do:'素早く。',dont:'前傾しない。'},
+    why:'ハムストリングウォームアップ。'
+  },
+  {
+    id:'pt_skater_jump', name:'スケータージャンプ', courses:['personal'],
+    targetProblems:['lateralAsymmetry'],
+    category:'training', technique:'plyometric', bodyPart:'leg', intensity:3,
+    equipment:'なし', position:'standing', duration:'30秒 × 3セット',
+    illustration: SVG2.jumpingJack,
+    purpose:'横方向にジャンプ。',
+    how:['片脚立ちから横にジャンプ。','着地は片脚で。','30秒。'],
+    cues:{do:'柔らかく着地。',dont:'膝が内に入らない。'},
+    why:'横移動の瞬発力。'
+  },
+  {
+    id:'pt_squat_thrust', name:'スクワットスラスト', courses:['personal'],
+    targetProblems:['general'],
+    category:'training', technique:'plyometric', bodyPart:'fullbody', intensity:3,
+    equipment:'なし', position:'standing', duration:'30秒 × 3セット',
+    illustration: SVG2.burpee,
+    purpose:'バーピーの簡易版。',
+    how:['スクワットから手を床に。','脚を後ろに伸ばす。','戻る。30秒。'],
+    cues:{do:'リズム良く。',dont:'腰を落とさない。'},
+    why:'全身燃焼の入口。'
+  },
 ];
 
 export { DB_PERSONAL };

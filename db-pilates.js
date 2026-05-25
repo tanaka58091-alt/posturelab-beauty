@@ -568,6 +568,408 @@ const DB_PILATES = [
     cues:{do:'呼吸を続ける。',dont:'肩に力が入らない。'},
     why:'日常動作への落とし込み。'
   },
+
+  // ============== EXPANSION PACK 1 — マット古典追加 ==============
+  {
+    id:'pl_shoulder_bridge_kick', name:'ショルダーブリッジ・キック', courses:['pilates'],
+    targetProblems:['posteriorPelvicTilt','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'hip', intensity:3,
+    equipment:'マット', position:'supine', duration:'各5回',
+    illustration: SVG2.bridge,
+    purpose:'ブリッジで片脚を蹴り上げる。',
+    how:['ブリッジで安定。','片脚を蹴り上げ下ろす。','5回ずつ。'],
+    cues:{do:'骨盤を水平に。',dont:'落とさない。'},
+    why:'臀筋強化と骨盤安定。'
+  },
+  {
+    id:'pl_pelvic_clock', name:'ペルビッククロック', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt'],
+    category:'mobility', technique:'pilates', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'supine', duration:'2周',
+    illustration: SVG2.bridge,
+    purpose:'骨盤を時計に見立てて動かす。',
+    how:['仰向け膝立て。','骨盤で12→3→6→9を描く。','2周ずつ。'],
+    cues:{do:'小さく丁寧に。',dont:'体全体動かさない。'},
+    why:'骨盤の繊細な感覚を育てる。'
+  },
+  {
+    id:'pl_supine_marching', name:'スパイン・マーチング', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:1,
+    equipment:'マット', position:'supine', duration:'各10回',
+    illustration: SVG2.deadBug,
+    purpose:'仰向けで膝を交互に上げる。',
+    how:['仰向け膝立て。','片膝ずつ胸へ。','10回ずつ。'],
+    cues:{do:'骨盤を動かさない。',dont:'腰を反らない。'},
+    why:'体幹安定の入門。'
+  },
+  {
+    id:'pl_toe_taps', name:'トータップス', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'各12回',
+    illustration: SVG2.deadBug,
+    purpose:'両膝90度から交互に床タッチ。',
+    how:['膝を90度に持ち上げる。','片足ずつ床にタッチ。','12回ずつ。'],
+    cues:{do:'腰を床に。',dont:'腰を反らない。'},
+    why:'下腹部の活性化。'
+  },
+  {
+    id:'pl_table_top_hold', name:'テーブルトップホールド', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'30秒 × 3セット',
+    illustration: SVG2.deadBug,
+    purpose:'両膝90度をキープ。',
+    how:['仰向けで膝90度。','30秒キープ。'],
+    cues:{do:'腰を床に。',dont:'腰を反らない。'},
+    why:'コア持久力の基本。'
+  },
+  {
+    id:'pl_heel_taps', name:'ヒールタップス', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:1,
+    equipment:'マット', position:'supine', duration:'各12回',
+    illustration: SVG2.deadBug,
+    purpose:'テーブルトップから踵タッチ。',
+    how:['テーブルトップ姿勢。','片踵ずつ床にタッチ。','12回ずつ。'],
+    cues:{do:'コア固定。',dont:'腰を反らない。'},
+    why:'下腹部の安定と強化。'
+  },
+  {
+    id:'pl_dead_bug_pilates', name:'ピラティスデッドバグ', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'各10回',
+    illustration: SVG2.deadBug,
+    purpose:'対角の手脚を伸ばす。',
+    how:['テーブルトップから対角を伸ばす。','戻す。10回ずつ。'],
+    cues:{do:'呼吸と連動。',dont:'腰を反らない。'},
+    why:'体幹剛性と協調性。'
+  },
+  {
+    id:'pl_chest_lift_oblique', name:'チェストリフト・オブリーク', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'各10回',
+    illustration: SVG2.crunch,
+    purpose:'チェストリフトで斜めにねじる。',
+    how:['膝立て、頭と胸を上げて回旋。','10回ずつ。'],
+    cues:{do:'肘で引っ張らない。',dont:'首を動かさない。'},
+    why:'腹斜筋の活性化。'
+  },
+  {
+    id:'pl_hip_circles_supine', name:'ヒップサークル仰向け', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'supine', duration:'各5周',
+    illustration: SVG2.legRaise,
+    purpose:'天井向きの脚で大きく円を描く。',
+    how:['仰向け、両脚を天井に。','円を描く。','5周ずつ反転。'],
+    cues:{do:'コアで支える。',dont:'腰を反らない。'},
+    why:'股関節と体幹の協調。'
+  },
+  {
+    id:'pl_single_leg_circles', name:'シングルレッグサークル', courses:['pilates'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    category:'mobility', technique:'pilates', bodyPart:'hip', intensity:2,
+    equipment:'マット', position:'supine', duration:'各5周',
+    illustration: SVG2.legRaise,
+    purpose:'片脚で円を描く。',
+    how:['仰向け、片脚を天井に。','円を描く。','5周ずつ反転。反対も。'],
+    cues:{do:'骨盤を動かさない。',dont:'体が傾かない。'},
+    why:'股関節の独立した動き。'
+  },
+  {
+    id:'pl_corkscrew_advanced', name:'コークスクリュー上級', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'supine', duration:'各3周',
+    illustration: SVG2.legRaise,
+    purpose:'両脚を回しながら下ろす。',
+    how:['脚を天井に。','右に倒し下に円を描いて戻る。','3周ずつ。'],
+    cues:{do:'コアで支える。',dont:'腰を反らない。'},
+    why:'上級者の体幹試験。'
+  },
+  {
+    id:'pl_jackknife_basic', name:'ジャックナイフ基礎', courses:['pilates'],
+    targetProblems:['posteriorPelvicTilt','anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'supine', duration:'5回',
+    illustration: SVG2.legRaise,
+    purpose:'脚を天井に蹴り上げる。',
+    how:['仰向けから脚を頭上に。','天井に蹴り上げる。','5回。'],
+    cues:{do:'体重を肩に。',dont:'首に体重を乗せない。'},
+    why:'体幹剛性の頂点。'
+  },
+  {
+    id:'pl_rocking', name:'ロッキング', courses:['pilates'],
+    targetProblems:['thoracicKyphosis','anteriorPelvicTilt'],
+    category:'mobility', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'prone', duration:'10回',
+    illustration: SVG2.bow,
+    purpose:'うつ伏せから足首を掴んで揺れる。',
+    how:['弓のポーズ。','体を前後に揺らす。','10回。'],
+    cues:{do:'呼吸と連動。',dont:'痛みは出さない。'},
+    why:'前面と背筋の同時刺激。'
+  },
+  {
+    id:'pl_swan_advanced', name:'スワン上級', courses:['pilates'],
+    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    category:'mobility', technique:'pilates', bodyPart:'back', intensity:3,
+    equipment:'マット', position:'prone', duration:'8回',
+    illustration: SVG2.cobra,
+    purpose:'高い後屈と引き下ろし。',
+    how:['上体を上げ、手を離して飛ぶように。','戻る。8回。'],
+    cues:{do:'勢いをコントロール。',dont:'落ちない。'},
+    why:'背筋の最大刺激。'
+  },
+  {
+    id:'pl_breaststroke_full', name:'ブレストストローク（フル）', courses:['pilates'],
+    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    category:'mobility', technique:'pilates', bodyPart:'back', intensity:2,
+    equipment:'マット', position:'prone', duration:'10回',
+    illustration: SVG2.superman,
+    purpose:'うつ伏せで平泳ぎの腕の動き。',
+    how:['上体を上げ、両腕で平泳ぎの動き。','10回。'],
+    cues:{do:'胸を高く保つ。',dont:'腰だけで反らない。'},
+    why:'背中・肩の連動。'
+  },
+
+  // ============== EXPANSION PACK 1 — マット古典追加2 ==============
+  {
+    id:'pl_swimming_slow', name:'スイミング（スロー）', courses:['pilates'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'prone', duration:'各15回',
+    illustration: SVG2.superman,
+    purpose:'対角の手脚を交互に上げる。',
+    how:['うつ伏せから手脚を浮かす。','対角でゆっくり交互。','15回ずつ。'],
+    cues:{do:'長く伸ばす。',dont:'速くしない。'},
+    why:'背筋の繊細な制御。'
+  },
+  {
+    id:'pl_swimming_fast', name:'スイミング（ファスト）', courses:['pilates'],
+    targetProblems:['thoracicKyphosis'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'prone', duration:'30秒 × 3セット',
+    illustration: SVG2.superman,
+    purpose:'スイミングの素早いバージョン。',
+    how:['素早く対角の手脚を交互。','30秒。'],
+    cues:{do:'呼吸を続ける。',dont:'動きを止めない。'},
+    why:'心肺と背筋を同時に。'
+  },
+  {
+    id:'pl_double_leg_kick', name:'ダブルレッグキック', courses:['pilates'],
+    targetProblems:['thoracicKyphosis','anteriorPelvicTilt'],
+    category:'mobility', technique:'pilates', bodyPart:'back', intensity:2,
+    equipment:'マット', position:'prone', duration:'5回',
+    illustration: SVG2.bow,
+    purpose:'うつ伏せで両脚と背中を反らせる。',
+    how:['うつ伏せで手を背中で組む。','両膝を曲げ蹴り、胸を上げる。','5回。'],
+    cues:{do:'流れるように。',dont:'首を反らない。'},
+    why:'前後の同時動員。'
+  },
+  {
+    id:'pl_single_leg_kick', name:'シングルレッグキック', courses:['pilates'],
+    targetProblems:['thoracicKyphosis','anteriorPelvicTilt'],
+    category:'mobility', technique:'pilates', bodyPart:'back', intensity:2,
+    equipment:'マット', position:'prone', duration:'各8回',
+    illustration: SVG2.bow,
+    purpose:'スフィンクス姿勢で片脚キック。',
+    how:['前腕で支える。','片脚を曲げてお尻に。','8回ずつ。'],
+    cues:{do:'胸を持ち上げる。',dont:'腰を反らない。'},
+    why:'ハム強化と胸の開放。'
+  },
+  {
+    id:'pl_side_kick_circles', name:'サイドキック・サークル', courses:['pilates'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'mobility', technique:'pilates', bodyPart:'hip', intensity:2,
+    equipment:'マット', position:'side', duration:'各5周',
+    illustration: SVG2.sideLeg,
+    purpose:'横向きで脚を円運動。',
+    how:['横向き、上脚で円を描く。','5周ずつ反転。'],
+    cues:{do:'骨盤を安定。',dont:'体が揺れない。'},
+    why:'中臀筋の精密刺激。'
+  },
+  {
+    id:'pl_side_kick_lift', name:'サイドキック・リフト', courses:['pilates'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'core', technique:'pilates', bodyPart:'hip', intensity:2,
+    equipment:'マット', position:'side', duration:'各15回',
+    illustration: SVG2.sideLeg,
+    purpose:'上脚を上下に。',
+    how:['横向きで上脚を真上に上下。','15回ずつ。'],
+    cues:{do:'つま先まで伸ばす。',dont:'反動で上げない。'},
+    why:'中臀筋強化。'
+  },
+  {
+    id:'pl_inner_thigh_lift', name:'インナーサイ・リフト', courses:['pilates'],
+    targetProblems:['kneeValgus','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'leg', intensity:2,
+    equipment:'マット', position:'side', duration:'各15回',
+    illustration: SVG2.sideLeg,
+    purpose:'横向きで下の脚を上げる。',
+    how:['上脚を前に出し、下脚を上下。','15回ずつ。'],
+    cues:{do:'内転筋を意識。',dont:'体が傾かない。'},
+    why:'内転筋を直接刺激。'
+  },
+  {
+    id:'pl_clam', name:'クラム（貝）', courses:['pilates'],
+    targetProblems:['kneeValgus','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'side', duration:'各15回',
+    illustration: SVG2.sideLeg,
+    purpose:'横向きで膝を開閉。',
+    how:['横向き、膝を曲げる。','上膝だけ開閉。','15回ずつ。'],
+    cues:{do:'骨盤固定。',dont:'体を後ろに倒さない。'},
+    why:'中臀筋の的確な刺激。'
+  },
+  {
+    id:'pl_reverse_clam', name:'リバースクラム', courses:['pilates'],
+    targetProblems:['kneeValgus'],
+    category:'core', technique:'pilates', bodyPart:'hip', intensity:1,
+    equipment:'マット', position:'side', duration:'各15回',
+    illustration: SVG2.sideLeg,
+    purpose:'クラムの逆方向。',
+    how:['横向き、膝を曲げる。','足を合わせたまま膝を開閉。','15回。'],
+    cues:{do:'骨盤固定。',dont:'体を倒さない。'},
+    why:'外旋筋群の刺激。'
+  },
+  {
+    id:'pl_kneeling_side_kick', name:'ニーリングサイドキック', courses:['pilates'],
+    targetProblems:['lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'hip', intensity:3,
+    equipment:'マット', position:'kneeling', duration:'各10回',
+    illustration: SVG2.sideLeg,
+    purpose:'膝立ちから横にキック。',
+    how:['膝立ちで片手を床に。','上脚を横に上下。','10回。'],
+    cues:{do:'体一直線。',dont:'腰を落とさない。'},
+    why:'体側と中臀筋同時。'
+  },
+  {
+    id:'pl_teaser_variation_1', name:'ティーザー・バリエーション1', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'sitting', duration:'5回',
+    illustration: SVG2.vsit,
+    purpose:'ティーザーで片脚バージョン。',
+    how:['片脚を伸ばしてV字。','上体だけ動かす。','5回。'],
+    cues:{do:'流れるように。',dont:'反動使わない。'},
+    why:'ティーザーへの段階練習。'
+  },
+  {
+    id:'pl_teaser_variation_2', name:'ティーザー・バリエーション2', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'sitting', duration:'5回',
+    illustration: SVG2.vsit,
+    purpose:'両脚V字で上体だけ動かす。',
+    how:['両脚をV字。','上体だけ前後。','5回。'],
+    cues:{do:'コア固める。',dont:'脚を落とさない。'},
+    why:'コア持久力UP。'
+  },
+  {
+    id:'pl_teaser_variation_3', name:'ティーザー・バリエーション3', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:3,
+    equipment:'マット', position:'sitting', duration:'5回',
+    illustration: SVG2.vsit,
+    purpose:'完全なティーザー（同時に上がる）。',
+    how:['仰向けから手脚を同時にV字へ。','5回。'],
+    cues:{do:'流れるように。',dont:'力任せにしない。'},
+    why:'ピラティスの代表種目。'
+  },
+  {
+    id:'pl_open_leg_balance', name:'オープンレッグバランス', courses:['pilates'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    category:'core', technique:'pilates', bodyPart:'core', intensity:2,
+    equipment:'マット', position:'sitting', duration:'30秒',
+    illustration: SVG2.vsit,
+    purpose:'V字で開脚バランス。',
+    how:['座って脚を上げ開く。','手で足首を持つ。','30秒。'],
+    cues:{do:'背筋を伸ばす。',dont:'丸めない。'},
+    why:'柔軟性と体幹同時。'
+  },
+
+  // ============== EXPANSION PACK 1 — 立位ピラティス ==============
+  {
+    id:'pl_standing_roll_down', name:'スタンディングロールダウン', courses:['pilates','seitai'],
+    targetProblems:['thoracicKyphosis','forwardHead'],
+    category:'mobility', technique:'pilates', bodyPart:'back', intensity:1,
+    equipment:'なし', position:'standing', duration:'5回',
+    illustration: SVG2.forwardFold,
+    purpose:'立位で背骨を1つずつ前屈。',
+    how:['頭から1つずつ転がるように下りる。','戻る。5回。'],
+    cues:{do:'呼吸と連動。',dont:'勢いを使わない。'},
+    why:'背骨の流動性を高める。'
+  },
+  {
+    id:'pl_standing_side_bend', name:'スタンディングサイドベンド', courses:['pilates'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    category:'mobility', technique:'pilates', bodyPart:'core', intensity:1,
+    equipment:'なし', position:'standing', duration:'各5回',
+    illustration: SVG2.sideStretch,
+    purpose:'立位で体側を伸ばす。',
+    how:['立位、片腕を頭上に。','反対側に倒す。','5回ずつ。'],
+    cues:{do:'胸郭から動く。',dont:'前傾しない。'},
+    why:'体側の柔軟性。'
+  },
+  {
+    id:'pl_standing_arm_circles', name:'スタンディングアームサークル', courses:['pilates'],
+    targetProblems:['roundedShoulders','forwardHead'],
+    category:'mobility', technique:'pilates', bodyPart:'shoulder', intensity:1,
+    equipment:'なし', position:'standing', duration:'各5周',
+    illustration: SVG2.shoulderRoll,
+    purpose:'立位で肩関節の円運動。',
+    how:['両腕を真横に。','円を描く。','5周ずつ反転。'],
+    cues:{do:'肩を下げて。',dont:'肩をすくめない。'},
+    why:'肩可動域UP。'
+  },
+  {
+    id:'pl_standing_chest_expansion', name:'立位チェストエクスパンション', courses:['pilates'],
+    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    category:'mobility', technique:'pilates', bodyPart:'chest', intensity:1,
+    equipment:'なし', position:'standing', duration:'10回',
+    illustration: SVG2.shoulderOpen,
+    purpose:'立位で胸を開く呼吸。',
+    how:['立位、両腕を後ろに引く。','胸を開いて呼吸。','10回。'],
+    cues:{do:'肩甲骨を寄せる。',dont:'反り腰にならない。'},
+    why:'巻き肩の即時改善。'
+  },
+  {
+    id:'pl_standing_balance_lift', name:'立位バランスリフト', courses:['pilates'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'balance', technique:'pilates', bodyPart:'leg', intensity:2,
+    equipment:'なし', position:'standing', duration:'各30秒',
+    illustration: SVG2.warrior,
+    purpose:'片脚立ちでバランス。',
+    how:['片脚立ち、反対脚を前へ。','30秒。反対も。'],
+    cues:{do:'体幹固定。',dont:'体が揺れない。'},
+    why:'バランス能力向上。'
+  },
+  {
+    id:'pl_pilates_clock_lunge', name:'ピラティス時計ランジ', courses:['pilates'],
+    targetProblems:['lateralAsymmetry','kneeValgus'],
+    category:'integration', technique:'pilates', bodyPart:'leg', intensity:2,
+    equipment:'なし', position:'standing', duration:'各方向 3回',
+    illustration: SVG2.lungeStretch,
+    purpose:'時計の方向にランジ。',
+    how:['12時/3時/6時/9時とランジ。','3周。'],
+    cues:{do:'軸足固定。',dont:'バランス崩さない。'},
+    why:'多方向の安定性。'
+  },
+  {
+    id:'pl_relaxation_breath', name:'リラクゼーション呼吸', courses:['pilates','seitai','yoga'],
+    targetProblems:['general'],
+    category:'breath', technique:'pranayama', bodyPart:'core', intensity:1,
+    equipment:'マット', position:'supine', duration:'5分',
+    illustration: SVG2.breathing,
+    purpose:'仰向けで深い呼吸。',
+    how:['仰向け、片手は胸・片手はお腹。','5分間呼吸を観察。'],
+    cues:{do:'お腹の動きを感じる。',dont:'コントロールしない。'},
+    why:'神経系のリセット。'
+  },
 ];
 
 export { DB_PILATES };

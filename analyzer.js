@@ -239,6 +239,17 @@ function detectProblems(sideRes, frontRes){
       const v = Math.max(fm.lKneeIn, fm.rKneeIn);
       problems.push(makeProblem('kneeValgus', v, [0.03,0.08,0.15], '膝の内向き（Knee-in）', fm));
     }
+    // O脚（膝外向き = Knee Varus）: 両膝が外側に開く
+    if (fm.lKneeIn < -0.03 && fm.rKneeIn < -0.03) {
+      const v = Math.abs(Math.min(fm.lKneeIn, fm.rKneeIn));
+      problems.push(makeProblem('kneeVarus', v, [0.03,0.06,0.12], 'O脚（Knee-out）', fm));
+    }
+    // 側弯傾向: 肩と骨盤の傾きが逆方向(Cカーブ代償)
+    if (Math.abs(fm.shoulderTilt) > 1.5 && Math.abs(fm.pelvicTilt) > 1.5
+        && Math.sign(fm.shoulderTilt) !== Math.sign(fm.pelvicTilt)) {
+      const v = (Math.abs(fm.shoulderTilt) + Math.abs(fm.pelvicTilt)) / 2;
+      problems.push(makeProblem('scoliosis', v, [2,4,7], '側弯傾向（Cカーブ）', fm));
+    }
   }
 
   // 7. Ankle stiffness (推定: 立位で膝-足首が傾いている)
@@ -348,6 +359,22 @@ const PROBLEM_TEMPLATES = {
       weak:['前脛骨筋','長腓骨筋'],
     },
     unit:'',
+  },
+  kneeVarus: {
+    description:'O脚(膝が外側に開く)。中臀筋・内側広筋・内転筋下部の機能不全、外側組織の過緊張が原因。膝内側痛・変形性膝関節症のリスク増。',
+    tissues:{
+      tight:['大腿筋膜張筋','腸脛靱帯','外側ハムストリングス','腓骨筋','梨状筋'],
+      weak:['内転筋群下部','内側広筋','中臀筋後部繊維','内側ハムストリングス','後脛骨筋'],
+    },
+    unit:'',
+  },
+  scoliosis: {
+    description:'脊柱の左右への弯曲傾向(機能性側弯)。左右の筋バランス崩れが原因で、長期化すると肋骨変形・呼吸機能低下のリスク。',
+    tissues:{
+      tight:['凸側 腰方形筋','凸側 広背筋','凸側 腹斜筋','凸側 腸腰筋'],
+      weak:['凹側 腰方形筋','凹側 腹斜筋','凹側 中臀筋','凹側 多裂筋'],
+    },
+    unit:'°',
   },
 };
 

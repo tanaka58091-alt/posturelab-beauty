@@ -85,7 +85,10 @@ const SYMPTOM_MAP = {
   rsAware:        { label:'巻き肩の自覚',     keys:['roundedShoulders'] },
   kyphosisAware:  { label:'猫背の自覚',       keys:['thoracicKyphosis','roundedShoulders'] },
   kneePain:       { label:'膝の痛み',         keys:['kneeValgus','ankleStiffness'] },
-  oxLeg:          { label:'O脚・X脚',         keys:['kneeValgus','lateralAsymmetry'] },
+  oxLeg:          { label:'O脚・X脚',         keys:['kneeValgus','kneeVarus'] },
+  oLeg:           { label:'O脚',               keys:['kneeVarus'] },
+  xLeg:           { label:'X脚',               keys:['kneeValgus'] },
+  scoliosisAware: { label:'側弯の自覚',         keys:['scoliosis','lateralAsymmetry'] },
   shallowBreath:  { label:'呼吸が浅い',       keys:['roundedShoulders','thoracicKyphosis'] },
   swelling:       { label:'浮腫み・むくみ',   keys:['ankleStiffness','posteriorPelvicTilt'] },
   coldness:       { label:'冷え性',           keys:['posteriorPelvicTilt','swayBack'] },
@@ -120,6 +123,8 @@ const SYMPTOM_PROBLEM_META = {
   lateralAsymmetry:   { title:'左右非対称', desc:'お悩みから推定。骨盤や肩の高さに左右差を感じている状態。', tissues:{tight:['腰方形筋(片側)','中臀筋(片側)'], weak:['中臀筋(反対側)','腹斜筋']} },
   kneeValgus:         { title:'膝の内向き（Knee-in）', desc:'お悩みから推定。膝が内に入りやすく、痛みやO脚・X脚の一因に。', tissues:{tight:['内転筋','大腿筋膜張筋'], weak:['中臀筋','大臀筋','後脛骨筋']} },
   ankleStiffness:     { title:'足首背屈制限', desc:'お悩みから推定。足首が固いと、ふくらはぎの浮腫みや膝痛の原因に。', tissues:{tight:['腓腹筋','ヒラメ筋','足底筋膜'], weak:['前脛骨筋','長腓骨筋']} },
+  kneeVarus:          { title:'O脚（Knee-out）', desc:'お悩みから推定。膝が外側に開き、内ももの筋力低下と外側組織の硬さが原因。', tissues:{tight:['大腿筋膜張筋','腸脛靱帯','外側ハムストリングス','梨状筋'], weak:['内転筋群','内側広筋','中臀筋後部繊維']} },
+  scoliosis:          { title:'側弯傾向（Cカーブ）', desc:'お悩みから推定。背骨が左右にカーブする傾向。左右の筋バランス崩れが原因です。', tissues:{tight:['凸側 腰方形筋','凸側 広背筋','凸側 腹斜筋'], weak:['凹側 腰方形筋','凹側 腹斜筋','凹側 中臀筋']} },
 };
 
 function makeSymptomProblem(key){
