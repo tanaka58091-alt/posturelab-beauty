@@ -6,9 +6,10 @@ import {
   detectProblems, determinePostureType,
   calcScore, gradeFromScore, buildMetricsList, LM
 } from './analyzer.js';
-import { EXERCISES } from './exercises.js';
-import { pickTodayMenu, build30DayProgram } from './program.js';
+import { pickTodayMenu, build30DayProgram, ALL_EXERCISES } from './program.js';
 import { getKnowledgeFor } from './knowledge.js';
+import { COURSES, COURSE_ORDER, recommendCourse } from './courses.js';
+import { getPoolStats } from './prescription-matrix.js';
 
 // ===== DOM refs =====
 const $ = sel => document.querySelector(sel);
@@ -52,6 +53,10 @@ const els = {
   symptomChips: $('#symptom-chips'),
   symptomFree: $('#symptom-free'),
   symptomSummary: $('#symptom-summary'),
+
+  courseGrid: $('#course-grid'),
+  courseSection: $('#course-section'),
+  courseRecommend: $('#course-recommend'),
 };
 
 // ===== State =====
@@ -66,6 +71,8 @@ const state = {
   currentPhase: 1,
   symptoms: [],
   symptomFree: '',
+  selectedCourse: 'mixed',
+  recommendation: null,
 };
 
 // ===== Symptom → Problem mapping =====
@@ -272,7 +279,12 @@ els.btnAnalyze.addEventListener('click', async () => {
     if (state.problems.length > 1) {
       state.problems = state.problems.filter(p => p.key !== 'general');
     }
-    state.program = build30DayProgram(state.problems.map(p=>p.key));
+    // コース推奨を計算
+    const probKeys = state.problems.map(p=>p.key);
+    state.recommendation = recommendCourse(probKeys);
+    // 初回はトップ推奨コースを選択
+    state.selectedCourse = state.recommendation.top;
+    state.program = build30DayProgram(probKeys, state.selectedCourse);
 
     renderAll();
     hideLoader();
@@ -299,8 +311,81 @@ function renderAll(){
   renderSymptomSummary();
   renderProblems();
   renderKnowledge();
+  renderCourses();
   renderToday();
   renderProgram(state.currentPhase);
+}
+
+// --- COURSE SELECTION ---
+function renderCourses(){
+  if (!els.courseGrid) return;
+  const probKeys = state.problems.map(p=>p.key);
+  const rec = state.recommendation;
+  const rankMap = Object.fromEntries(rec.ranking.map(r => [r.course, r.score]));
+
+  els.courseGrid.innerHTML = COURSE_ORDER.map(cid => {
+    const c = COURSES[cid];
+    const isSelected = state.selectedCourse === cid;
+    const isTop = rec.top === cid;
+    const stats = getPoolStats(probKeys, cid);
+    const score = rankMap[cid] || 0;
+    const maxScore = rec.ranking[0].score || 1;
+    const starCount = cid === 'mixed' ? 3 : Math.max(1, Math.round((score / maxScore) * 3));
+    const stars = '⭐'.repeat(starCount) + '☆'.repeat(3 - starCount);
+
+    return `
+      <div class="course-card ${isSelected?'selected':''} ${isTop?'top-pick':''}"
+           data-course="${cid}"
+           style="--c-main:${c.color}; --c-soft:${c.colorSoft}">
+        ${isTop ? '<div class="course-badge">あなたへのおすすめ</div>' : ''}
+        <div class="course-head">
+          <div class="course-icon">${c.icon}</div>
+          <div>
+            <div class="course-name">${c.name}</div>
+            <div class="course-eng">${c.nameEn}</div>
+          </div>
+        </div>
+        <div class="course-supervisor">${c.supervisor}</div>
+        <div class="course-desc">${c.desc}</div>
+        <div class="course-match">
+          <span class="match-stars">${stars}</span>
+          <span class="match-label">あなたとの相性</span>
+        </div>
+        <div class="course-stats">
+          <span>📚 <strong>${stats.total}</strong>種</span>
+          <span>🧘 <strong>${stats.selfcare}</strong></span>
+          <span>💪 <strong>${stats.training}</strong></span>
+        </div>
+        <div class="course-tags">
+          ${c.bestFor.slice(0,3).map(t=>`<span>${t}</span>`).join('')}
+        </div>
+        <button class="course-select-btn">${isSelected ? '✓ 選択中' : 'このコースを選ぶ'}</button>
+      </div>
+    `;
+  }).join('');
+
+  // 推奨カードのキャプション
+  if (els.courseRecommend) {
+    const top = COURSES[rec.top];
+    els.courseRecommend.innerHTML = `
+      <strong>${top.icon} ${top.name}</strong>があなたの姿勢に最適と診断されました。
+      もちろん、いつでも他のコースに切り替え可能です。
+    `;
+  }
+
+  // クリックハンドラ
+  els.courseGrid.querySelectorAll('.course-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const cid = card.dataset.course;
+      if (cid === state.selectedCourse) return;
+      state.selectedCourse = cid;
+      state.program = build30DayProgram(state.problems.map(p=>p.key), cid);
+      state.currentPhase = 1;
+      renderCourses();
+      renderToday();
+      renderProgram(1);
+    });
+  });
 }
 
 function renderSymptomSummary(){
@@ -559,18 +644,31 @@ function renderKnowledge(){
 
 // --- TODAY MENU ---
 function renderToday(){
-  const menu = pickTodayMenu(state.problems.map(p=>p.key));
+  const menu = pickTodayMenu(state.problems.map(p=>p.key), state.selectedCourse);
   const all = [...menu.selfcare, ...menu.training];
   els.todayGrid.innerHTML = all.map(ex => exerciseCard(ex)).join('');
   bindExerciseCards(els.todayGrid);
 }
 
+// カテゴリ表記マッピング (新DB対応)
+function categoryLabel(ex){
+  const cat = ex.category;
+  if (cat === 'selfcare' || cat === 'mobility' || cat === 'breath' || cat === 'meditation') return 'セルフケア';
+  if (cat === 'strength' || cat === 'core' || cat === 'balance' || cat === 'integration') return 'トレーニング';
+  return cat;
+}
+function categoryClass(ex){
+  const cat = ex.category;
+  if (cat === 'selfcare' || cat === 'mobility' || cat === 'breath' || cat === 'meditation') return 'selfcare';
+  return 'training';
+}
+
 function exerciseCard(ex){
   return `
     <div class="exercise-card" data-ex="${ex.id}">
-      <div class="ex-illust">${ex.illustration}</div>
+      <div class="ex-illust">${ex.illustration || ''}</div>
       <div class="ex-info">
-        <span class="ex-cat ${ex.category}">${ex.category==='selfcare'?'セルフケア':'トレーニング'}</span>
+        <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
         <h4>${ex.name}</h4>
         <div class="ex-meta">
           <span><strong>⏱</strong> ${ex.duration}</span>
@@ -586,7 +684,7 @@ function bindExerciseCards(parent){
   parent.querySelectorAll('.exercise-card').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.dataset.ex;
-      openExerciseModal(EXERCISES[id]);
+      openExerciseModal(ALL_EXERCISES[id]);
     });
   });
 }
@@ -631,38 +729,58 @@ els.phaseTabs.addEventListener('click', e => {
 // ===================================================================
 // MODAL
 // ===================================================================
+const PROBLEM_LABELS = {
+  forwardHead:'頭部前方位(FHP)',
+  roundedShoulders:'巻き肩',
+  thoracicKyphosis:'猫背(胸椎後弯)',
+  anteriorPelvicTilt:'反り腰(骨盤前傾)',
+  posteriorPelvicTilt:'骨盤後傾',
+  swayBack:'スウェイバック',
+  lateralAsymmetry:'左右非対称',
+  kneeValgus:'Knee-in (内向き)',
+  ankleStiffness:'足首背屈制限',
+  general:'全身バランス',
+};
+
 function openExerciseModal(ex){
+  if (!ex) return;
+  const rawTargets = ex.targets || ex.targetProblems || [];
+  const targets = rawTargets.map(t => PROBLEM_LABELS[t] || t);
+  const courseTags = (ex.courses || []).map(c => {
+    const def = COURSES[c]; return def ? `<span class="ex-course-tag">${def.icon} ${def.name}</span>` : '';
+  }).join('');
   els.modalBody.innerHTML = `
     <div class="modal-ex-head">
-      <div class="modal-ex-illust">${ex.illustration}</div>
+      <div class="modal-ex-illust">${ex.illustration || ''}</div>
       <div class="modal-ex-info">
-        <span class="ex-cat ${ex.category}">${ex.category==='selfcare'?'セルフケア':'トレーニング'}</span>
+        <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
         <h2>${ex.name}</h2>
         <div class="ex-meta">
           <span><strong>所要</strong> ${ex.duration}</span>
           <span><strong>道具</strong> ${ex.equipment}</span>
         </div>
         <p style="font-size:13px; color:var(--ink-2); margin:10px 0 0">${ex.purpose}</p>
+        <div class="ex-course-tags">${courseTags}</div>
       </div>
     </div>
     <div class="modal-section">
-      <h4>🎯 ターゲット</h4>
-      <ul>${ex.targets.map(t=>`<li>${t}</li>`).join('')}</ul>
+      <h4>🎯 対応する姿勢の問題</h4>
+      <ul>${targets.map(t=>`<li>${t}</li>`).join('') || '<li>—</li>'}</ul>
     </div>
     <div class="modal-section">
       <h4>📋 やり方</h4>
-      <ol>${ex.how.map(s=>`<li>${s}</li>`).join('')}</ol>
+      <ol>${(ex.how||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
     </div>
     <div class="modal-section">
       <h4>✨ コツ</h4>
       <div class="modal-cues">
-        <div class="cue-box do"><strong>✅ DO</strong>${ex.cues.do}</div>
-        <div class="cue-box dont"><strong>❌ DON'T</strong>${ex.cues.dont}</div>
+        <div class="cue-box do"><strong>✅ DO</strong>${ex.cues?.do || ''}</div>
+        <div class="cue-box dont"><strong>❌ DON'T</strong>${ex.cues?.dont || ''}</div>
       </div>
     </div>
     <div class="modal-section">
       <h4>💡 なぜ効くのか</h4>
-      <p>${ex.why}</p>
+      <p>${ex.why || ''}</p>
     </div>
   `;
   showModal();
@@ -679,9 +797,9 @@ function openDayModal(d){
     <div style="display:grid; gap:14px">
       ${all.map(ex => `
         <div class="exercise-card" data-ex="${ex.id}">
-          <div class="ex-illust">${ex.illustration}</div>
+          <div class="ex-illust">${ex.illustration || ''}</div>
           <div class="ex-info">
-            <span class="ex-cat ${ex.category}">${ex.category==='selfcare'?'セルフケア':'トレーニング'}</span>
+            <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
             <h4>${ex.name}</h4>
             <div class="ex-meta"><span><strong>⏱</strong> ${ex.duration}</span><span><strong>🛠</strong> ${ex.equipment}</span></div>
             <div class="ex-purpose">${ex.purpose}</div>

@@ -925,3 +925,175 @@ body{
 /* ============ ANIM ============ */
 .fade-in{animation:fadeIn .6s ease both}
 @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+
+/* ============ COURSE SELECTION ============ */
+.course-card-section{}
+.course-recommend{
+  background:linear-gradient(135deg, #FFF5F8 0%, #FFE8F0 100%);
+  border:1px solid #FFD0DC;
+  border-radius:14px;
+  padding:14px 18px;
+  font-size:13px;
+  color:#5a2a3a;
+  margin-bottom:20px;
+}
+.course-recommend strong{color:#c9426a; font-weight:700;}
+
+.course-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:16px;
+}
+
+.course-card{
+  position:relative;
+  background:linear-gradient(180deg, #fff 0%, var(--c-soft, #FFE5EC) 100%);
+  border:2px solid #f0e5ea;
+  border-radius:18px;
+  padding:18px 16px 16px;
+  cursor:pointer;
+  transition:all .25s ease;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.course-card:hover{
+  transform:translateY(-2px);
+  border-color:var(--c-main, #FFB6C1);
+  box-shadow:0 8px 20px rgba(255,140,170,0.15);
+}
+.course-card.selected{
+  border-color:var(--c-main, #FFB6C1);
+  background:linear-gradient(180deg, var(--c-soft, #FFE5EC) 0%, #fff 100%);
+  box-shadow:0 6px 18px rgba(255,140,170,0.2);
+}
+.course-card.top-pick{
+  border-color:var(--c-main, #FFB6C1);
+}
+
+.course-badge{
+  position:absolute;
+  top:-10px;
+  left:14px;
+  background:linear-gradient(135deg, #FF6B8A, #FFB6C1);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:10px;
+  letter-spacing:.05em;
+  box-shadow:0 4px 8px rgba(255,107,138,0.25);
+}
+
+.course-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.course-icon{
+  font-size:32px;
+  width:48px; height:48px;
+  background:#fff;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+.course-name{
+  font-size:15px; font-weight:700; color:#3a2030;
+  line-height:1.2;
+}
+.course-eng{
+  font-family:'Inter', sans-serif;
+  font-size:10px; color:#9a7a8a;
+  letter-spacing:.08em;
+  margin-top:2px;
+}
+.course-supervisor{
+  font-size:10px; color:#7a5a6a;
+  background:rgba(255,255,255,0.6);
+  padding:4px 8px;
+  border-radius:6px;
+  display:inline-block;
+  align-self:flex-start;
+}
+.course-desc{
+  font-size:12px;
+  color:#5a3a4a;
+  line-height:1.5;
+}
+.course-match{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+}
+.match-stars{font-size:14px; letter-spacing:1px;}
+.match-label{color:#7a5a6a;}
+.course-stats{
+  display:flex;
+  gap:10px;
+  font-size:11px;
+  color:#5a3a4a;
+  padding:6px 0;
+  border-top:1px dashed #e8d5dc;
+  border-bottom:1px dashed #e8d5dc;
+}
+.course-stats strong{font-size:13px; color:#c9426a;}
+.course-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+}
+.course-tags span{
+  font-size:10px;
+  background:rgba(255,255,255,0.8);
+  color:#7a4a5a;
+  padding:3px 8px;
+  border-radius:8px;
+  border:1px solid #f0d5dc;
+}
+.course-select-btn{
+  margin-top:6px;
+  width:100%;
+  padding:9px 12px;
+  border-radius:10px;
+  border:none;
+  background:var(--c-main, #FFB6C1);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s ease;
+  letter-spacing:.05em;
+}
+.course-select-btn:hover{filter:brightness(0.95);}
+.course-card.selected .course-select-btn{
+  background:#3a2030;
+}
+
+.ex-course-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:8px;
+}
+.ex-course-tag{
+  font-size:10px;
+  background:rgba(255,182,193,0.18);
+  border:1px solid rgba(255,182,193,0.4);
+  color:#7a4a5a;
+  padding:3px 8px;
+  border-radius:8px;
+}
+
+@media (max-width: 600px){
+  .course-grid{grid-template-columns:1fr 1fr; gap:12px;}
+  .course-card{padding:14px 12px 12px;}
+  .course-icon{font-size:24px; width:38px; height:38px;}
+  .course-name{font-size:13px;}
+  .course-desc{font-size:11px;}
+  .course-supervisor{font-size:9px;}
+}
+@media (max-width: 380px){
+  .course-grid{grid-template-columns:1fr;}
+}
