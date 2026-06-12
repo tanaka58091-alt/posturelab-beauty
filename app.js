@@ -10,6 +10,7 @@ import { pickTodayMenu, build30DayProgram, ALL_EXERCISES } from './program.js';
 import { getKnowledgeFor } from './knowledge.js';
 import { COURSES, COURSE_ORDER, recommendCourse } from './courses.js';
 import { getPoolStats } from './prescription-matrix.js';
+import * as Store from './storage.js';
 
 // ===== DOM refs =====
 const $ = sel => document.querySelector(sel);
@@ -57,6 +58,10 @@ const els = {
   courseGrid: $('#course-grid'),
   courseSection: $('#course-section'),
   courseRecommend: $('#course-recommend'),
+
+  btnMyData: $('#btn-mydata'),
+  mydata: $('#mydata'),
+  mydataBody: $('#mydata-body'),
 };
 
 // ===== State =====
@@ -97,18 +102,42 @@ const SYMPTOM_MAP = {
   bellyOut:       { label:'下腹ぽっこり',     keys:['anteriorPelvicTilt','swayBack'] },
 };
 
-// 症状から追加問題を作る(姿勢解析で検出されなかった場合に補完)
+// 自由記入欄のキーワード → 姿勢問題キー（②お悩みをプログラムに反映）
+const FREE_TEXT_RULES = [
+  { re:/(肩こり|肩が|肩の|肩凝)/, keys:['roundedShoulders','forwardHead'] },
+  { re:/(首|頭痛|ストレートネック|うなじ)/, keys:['forwardHead'] },
+  { re:/(反り腰|反って|腰が反)/, keys:['anteriorPelvicTilt'] },
+  { re:/(腰痛|腰が|ぎっくり|腰の痛)/, keys:['anteriorPelvicTilt','swayBack'] },
+  { re:/(猫背|背中が丸|まるまっ|円背)/, keys:['thoracicKyphosis','roundedShoulders'] },
+  { re:/(巻き肩|まきがた|巻肩)/, keys:['roundedShoulders'] },
+  { re:/(o脚|オーきゃく|がに股|ガニ股)/i, keys:['kneeVarus'] },
+  { re:/(x脚|エックス脚|内股|うちまた)/i, keys:['kneeValgus'] },
+  { re:/(側弯|そくわん|背骨.{0,3}曲|背骨.{0,3}カーブ)/, keys:['scoliosis','lateralAsymmetry'] },
+  { re:/(むくみ|浮腫|ふくらはぎ|足首)/, keys:['ankleStiffness','posteriorPelvicTilt'] },
+  { re:/(冷え|ひえ性|冷え性)/, keys:['posteriorPelvicTilt','swayBack'] },
+  { re:/(下腹|ぽっこり|ポッコリ|お腹.{0,3}出)/, keys:['anteriorPelvicTilt','swayBack'] },
+  { re:/(歪み|ゆがみ|左右差|傾き|肩の高さ|骨盤.{0,3}傾)/, keys:['lateralAsymmetry'] },
+  { re:/(膝|ひざ|ヒザ)/, keys:['kneeValgus','ankleStiffness'] },
+  { re:/(呼吸|息が|息苦)/, keys:['roundedShoulders','thoracicKyphosis'] },
+  { re:/(疲れ|だるい|肩甲骨|疲労)/, keys:['thoracicKyphosis','swayBack'] },
+  { re:/(お尻|ヒップ|垂れ尻|尻が下)/, keys:['posteriorPelvicTilt'] },
+];
+function parseFreeTextKeys(text){
+  if (!text) return [];
+  const out = new Set();
+  FREE_TEXT_RULES.forEach(rule => { if (rule.re.test(text)) rule.keys.forEach(k => out.add(k)); });
+  return [...out];
+}
+
+// 症状(チェック)＋自由記入 から追加問題キーを作る
 function buildSymptomProblems(){
-  const added = new Set();
   const out = [];
+  const added = new Set();
+  const push = k => { if (!added.has(k)){ added.add(k); out.push(k); } };
   state.symptoms.forEach(sym => {
-    const def = SYMPTOM_MAP[sym]; if (!def) return;
-    def.keys.forEach(k => {
-      if (added.has(k)) return;
-      added.add(k);
-      out.push(k);
-    });
+    const def = SYMPTOM_MAP[sym]; if (def) def.keys.forEach(push);
   });
+  parseFreeTextKeys(state.symptomFree).forEach(push);
   return out; // problem key array
 }
 
@@ -292,6 +321,7 @@ els.btnAnalyze.addEventListener('click', async () => {
     state.program = build30DayProgram(probKeys, state.selectedCourse);
 
     renderAll();
+    saveCurrentSession();   // ① 履歴に保存（端末内）
     hideLoader();
     els.results.hidden = false;
     els.results.classList.add('fade-in');
@@ -428,6 +458,11 @@ function renderScoreAndType(){
   els.postureType.textContent = type.name;
   els.postureTypeDesc.textContent = type.desc;
   els.postureTypeTags.innerHTML = type.tags.map(t => `<span>${t}</span>`).join('');
+
+  // セッション保存用に控える
+  state.lastScore = score;
+  state.lastGrade = grade;
+  state.lastType = type.name;
 }
 
 // --- METRICS ---
@@ -668,6 +703,15 @@ function categoryClass(ex){
   return 'training';
 }
 
+// ⑤ このメニューが「あなたのどの問題」に効くかのバッジ
+function exerciseProblemBadges(ex){
+  const mine = new Set(state.problems.map(p => p.key));
+  const tp = ex.targets || ex.targetProblems || [];
+  const hit = tp.filter(k => mine.has(k));
+  if (!hit.length) return '';
+  return `<div class="ex-links">${hit.slice(0,3).map(k => `<span class="ex-link">${PROBLEM_LABELS[k] || k}</span>`).join('')}</div>`;
+}
+
 function exerciseCard(ex){
   return `
     <div class="exercise-card" data-ex="${ex.id}">
@@ -680,6 +724,7 @@ function exerciseCard(ex){
           <span><strong>🛠</strong> ${ex.equipment}</span>
         </div>
         <div class="ex-purpose">${ex.purpose}</div>
+        ${exerciseProblemBadges(ex)}
       </div>
     </div>
   `;
@@ -743,6 +788,8 @@ const PROBLEM_LABELS = {
   swayBack:'スウェイバック',
   lateralAsymmetry:'左右非対称',
   kneeValgus:'Knee-in (内向き)',
+  kneeVarus:'O脚 (Knee-out)',
+  scoliosis:'側弯傾向',
   ankleStiffness:'足首背屈制限',
   general:'全身バランス',
 };
@@ -833,6 +880,203 @@ document.addEventListener('keydown', e => {
 });
 
 // ===================================================================
+// MY DATA — 講座生ごとのデータ蓄積・変化追跡（①③④）
+// ===================================================================
+function fmtDate(iso){
+  const d = new Date(iso);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+function fmtDateFull(iso){
+  const d = new Date(iso);
+  return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+// 解析完了時に呼ぶ：現在の結果を端末に保存
+function saveCurrentSession(){
+  try {
+    const profile = Store.ensureProfile(Store.getProfile()?.nickname);
+    const metrics = buildMetricsList(state.resultSide, state.resultFront)
+      .map(m => ({ name:m.name, value:m.value, sev:m.sev, pct:m.pct }));
+    const session = {
+      nickname: profile.nickname,
+      score: state.lastScore,
+      grade: state.lastGrade,
+      typeName: state.lastType,
+      course: state.selectedCourse,
+      problems: state.problems.map(p => ({ key:p.key, title:p.title || PROBLEM_LABELS[p.key] || p.key })),
+      metrics,
+      symptoms: state.symptoms.slice(),
+      symptomFree: state.symptomFree,
+      thumbSide: Store.makeThumb(state.imgSide),
+      thumbFront: Store.makeThumb(state.imgFront),
+    };
+    const saved = Store.addSession(session);
+    state.currentSessionId = saved.id;
+    showSaveToast(Store.getSessions().length);
+  } catch (e){ console.warn('session save failed', e); }
+}
+
+function showSaveToast(count){
+  let t = document.getElementById('save-toast');
+  if (!t){
+    t = document.createElement('div');
+    t.id = 'save-toast'; t.className = 'save-toast';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = `✓ マイデータに保存しました（通算 ${count} 回目）　<button id="toast-open">マイデータを見る</button>`;
+  t.classList.add('show');
+  document.getElementById('toast-open').onclick = () => { t.classList.remove('show'); openMyData(); };
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 6000);
+}
+
+// ---------- スコア推移グラフ（外部ライブラリ不使用のSVG折れ線）①----------
+function scoreChartSVG(sessions){
+  if (!sessions.length) return '<p class="muted">まだ診断データがありません。</p>';
+  const W = 320, H = 150, pad = { l:30, r:14, t:14, b:24 };
+  const xs = sessions.map((s,i) => sessions.length===1 ? (pad.l+(W-pad.l-pad.r)/2) : pad.l + (W-pad.l-pad.r) * i/(sessions.length-1));
+  const y = v => pad.t + (H-pad.t-pad.b) * (1 - v/100);
+  const pts = sessions.map((s,i) => [xs[i], y(s.score||0)]);
+  const line = pts.map((p,i) => (i? 'L':'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const area = `M${pts[0][0].toFixed(1)} ${(H-pad.b).toFixed(1)} ` + pts.map(p=>`L${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') + ` L${pts[pts.length-1][0].toFixed(1)} ${(H-pad.b).toFixed(1)} Z`;
+  const grid = [0,25,50,75,100].map(v => `<line x1="${pad.l}" y1="${y(v)}" x2="${W-pad.r}" y2="${y(v)}" stroke="#f1d9e2" stroke-width="1"/><text x="${pad.l-6}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="#b48">${v}</text>`).join('');
+  const dots = pts.map((p,i) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="#fff" stroke="#ec5a86" stroke-width="2.5"/>${i===pts.length-1?`<text x="${p[0].toFixed(1)}" y="${(p[1]-10).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#ec5a86">${sessions[i].score}</text>`:''}`).join('');
+  const labels = sessions.map((s,i) => `<text x="${xs[i].toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9" fill="#b48">${fmtDate(s.date)}</text>`).join('');
+  const first = sessions[0].score, last = sessions[sessions.length-1].score, diff = last-first;
+  const diffTxt = sessions.length>1 ? `<div class="chart-delta ${diff>=0?'up':'down'}">初回比 ${diff>=0?'+':''}${diff} 点</div>` : '';
+  return `${diffTxt}<svg viewBox="0 0 ${W} ${H}" class="score-chart" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fbbacb" stop-opacity="0.5"/><stop offset="100%" stop-color="#fbbacb" stop-opacity="0"/></linearGradient></defs>
+    ${grid}<path d="${area}" fill="url(#cg)"/><path d="${line}" fill="none" stroke="#ec5a86" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}${labels}
+  </svg>`;
+}
+
+// ---------- マイデータ パネル ----------
+function openMyData(){
+  renderMyData();
+  els.mydata.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeMyData(){
+  els.mydata.hidden = true;
+  document.body.style.overflow = '';
+}
+
+function renderMyData(){
+  const profile = Store.getProfile() || { nickname:'ゲスト' };
+  const sessions = Store.getSessions();
+  const latest = sessions[sessions.length-1];
+  const best = sessions.reduce((b,s)=> (s.score>(b?.score??-1)?s:b), null);
+
+  els.mydataBody.innerHTML = `
+    <div class="md-head">
+      <div>
+        <div class="md-eyebrow">MY DATA</div>
+        <h2>${escapeHtml(profile.nickname)} さんの記録</h2>
+        <p class="muted">診断 ${sessions.length} 回　${sessions.length?`/ 最高 ${best.score}点`:''}</p>
+      </div>
+      <div class="md-name-edit">
+        <input id="md-nick" type="text" placeholder="ニックネーム" value="${escapeHtml(profile.nickname==='ゲスト'?'':profile.nickname)}" maxlength="16">
+        <button class="btn-ghost sm" id="md-nick-save">保存</button>
+      </div>
+    </div>
+
+    <section class="md-card">
+      <h3>📈 姿勢スコアの推移</h3>
+      <div id="md-chart">${scoreChartSVG(sessions)}</div>
+    </section>
+
+    <section class="md-card">
+      <h3>🔄 ビフォー → アフター比較</h3>
+      ${sessions.length>=2 ? `
+        <div class="cmp-pick">
+          <label>Before <select id="cmp-a">${sessions.map((s,i)=>`<option value="${s.id}" ${i===0?'selected':''}>${fmtDateFull(s.date)}（${s.score}点）</option>`).join('')}</select></label>
+          <label>After <select id="cmp-b">${sessions.map((s,i)=>`<option value="${s.id}" ${i===sessions.length-1?'selected':''}>${fmtDateFull(s.date)}（${s.score}点）</option>`).join('')}</select></label>
+        </div>
+        <div id="cmp-result"></div>
+      ` : `<p class="muted">2回以上診断すると、写真とスコアの変化を比較できます（残り ${Math.max(0,2-sessions.length)} 回）。</p>`}
+    </section>
+
+    <section class="md-card">
+      <h3>🗂 診断の履歴</h3>
+      <div class="md-history">
+        ${sessions.slice().reverse().map(s => `
+          <div class="md-hist-row" data-id="${s.id}">
+            ${s.thumbSide ? `<img class="md-thumb" src="${s.thumbSide}" alt="">` : `<div class="md-thumb ph">📷</div>`}
+            <div class="md-hist-info">
+              <div class="md-hist-top"><strong>${s.score}点</strong> <span class="md-grade">${s.grade||''}</span> <span class="md-type">${escapeHtml(s.typeName||'')}</span></div>
+              <div class="md-hist-date">${fmtDateFull(s.date)}</div>
+              <div class="md-hist-tags">${(s.problems||[]).slice(0,3).map(p=>`<span>${escapeHtml(p.title)}</span>`).join('')}</div>
+            </div>
+            <button class="md-del" data-del="${s.id}" title="削除">×</button>
+          </div>`).join('') || '<p class="muted">まだ履歴がありません。</p>'}
+      </div>
+    </section>
+
+    <section class="md-card md-backup">
+      <h3>💾 バックアップ / 引き継ぎ</h3>
+      <p class="muted">端末を変える時やデータを学長に共有する時に使えます。</p>
+      <div class="md-backup-btns">
+        <button class="btn-ghost" id="md-export">データを書き出す</button>
+        <label class="btn-ghost" for="md-import-file">データを読み込む</label>
+        <input id="md-import-file" type="file" accept="application/json" hidden>
+      </div>
+    </section>
+  `;
+
+  // バインド
+  const nickSave = document.getElementById('md-nick-save');
+  if (nickSave) nickSave.onclick = () => {
+    const v = (document.getElementById('md-nick').value||'').trim();
+    Store.ensureProfile(v || 'ゲスト');
+    renderMyData();
+  };
+  const a = document.getElementById('cmp-a'), b = document.getElementById('cmp-b');
+  if (a && b){
+    const upd = () => renderComparison(a.value, b.value);
+    a.onchange = upd; b.onchange = upd; upd();
+  }
+  els.mydataBody.querySelectorAll('[data-del]').forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); if (confirm('この診断データを削除しますか？')){ Store.deleteSession(btn.dataset.del); renderMyData(); } };
+  });
+  const exp = document.getElementById('md-export');
+  if (exp) exp.onclick = () => Store.downloadExport();
+  const imp = document.getElementById('md-import-file');
+  if (imp) imp.onchange = async () => {
+    const f = imp.files[0]; if (!f) return;
+    try { Store.importData(await f.text(), true); alert('データを読み込みました。'); renderMyData(); }
+    catch(err){ alert('読み込みに失敗しました：' + err.message); }
+  };
+}
+
+// ③ ビフォーアフター比較
+function renderComparison(idA, idB){
+  const box = document.getElementById('cmp-result'); if (!box) return;
+  const A = Store.getSession(idA), B = Store.getSession(idB);
+  if (!A || !B){ box.innerHTML = ''; return; }
+  const diff = (B.score||0) - (A.score||0);
+  // 指標の変化（名前一致で比較）
+  const mapA = Object.fromEntries((A.metrics||[]).map(m=>[m.name,m]));
+  const rows = (B.metrics||[]).filter(m=>mapA[m.name]).map(m => {
+    const before = mapA[m.name];
+    // pctが小さいほど良い（逸脱が少ない）想定。sevで良化/悪化を判定
+    const order = { ok:0, mild:1, warn:2, bad:3 };
+    const ba = order[before.sev] ?? 1, bb = order[m.sev] ?? 1;
+    const trend = bb<ba ? 'up' : bb>ba ? 'down' : 'flat';
+    return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(before.value)}</td><td>→</td><td>${escapeHtml(m.value)}</td><td class="cmp-${trend}">${trend==='up'?'改善':trend==='down'?'要注意':'維持'}</td></tr>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="cmp-photos">
+      <figure>${A.thumbSide?`<img src="${A.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>Before ${fmtDate(A.date)}<br><strong>${A.score}点</strong></figcaption></figure>
+      <div class="cmp-arrow">
+        <div class="cmp-delta ${diff>=0?'up':'down'}">${diff>=0?'+':''}${diff}<small>点</small></div>
+      </div>
+      <figure>${B.thumbSide?`<img src="${B.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>After ${fmtDate(B.date)}<br><strong>${B.score}点</strong></figcaption></figure>
+    </div>
+    ${rows?`<table class="cmp-table"><thead><tr><th>指標</th><th>Before</th><th></th><th>After</th><th>変化</th></tr></thead><tbody>${rows}</tbody></table>`:''}
+  `;
+}
+
+// ===================================================================
 // FOOTER ACTIONS
 // ===================================================================
 els.btnRestart.addEventListener('click', () => {
@@ -840,3 +1084,18 @@ els.btnRestart.addEventListener('click', () => {
   document.getElementById('upload-section').scrollIntoView({behavior:'smooth'});
 });
 els.btnPrint.addEventListener('click', () => window.print());
+
+// ===== MY DATA open/close =====
+if (els.btnMyData) els.btnMyData.addEventListener('click', openMyData);
+if (els.mydata) els.mydata.addEventListener('click', e => {
+  if (e.target.matches('[data-close-md]')) closeMyData();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && els.mydata && !els.mydata.hidden) closeMyData();
+});
+// ヘッダーのバッジに通算回数を反映
+(function initMyDataBadge(){
+  if (!els.btnMyData) return;
+  const n = Store.getSessions().length;
+  if (n > 0) els.btnMyData.dataset.count = n;
+})();
