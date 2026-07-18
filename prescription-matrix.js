@@ -154,23 +154,35 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
     p.training.forEach(ex => { if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex); });
   });
 
-  // 空 or 少なすぎる場合、generalで補完
-  if (selfSet.size < 4 || trainSet.size < 4) {
+  // 30日プログラムが単調にならないよう、必ず十分な種類数まで補充する。
+  // 問題に紐づく種目(=アンカー)は既に入っており優先処方される。ここでは
+  // general＋コース全体の安全な種目を足して「変化の幅」を確保する。
+  // 目標: セルフケア24種 / トレーニング20種（各日2種×30日でも同一種目の再登場を抑える）
+  const MIN_SELF = 24, MIN_TRAIN = 20;
+
+  // ① general の種目で補充
+  if (selfSet.size < MIN_SELF || trainSet.size < MIN_TRAIN) {
     const general = buildPoolForProblem('general', course);
     general.selfcare.forEach(ex => { if (!selfSet.has(ex.id)) selfSet.set(ex.id, ex); });
     general.training.forEach(ex => { if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex); });
   }
 
-  // それでも足りなければ、コース全体から軽強度のものを補完
-  if (selfSet.size < 4) {
+  // ② それでも足りなければ、コース全体の安全な種目で目標数まで補充
+  if (selfSet.size < MIN_SELF) {
     const fallback = filterByCourse(ALL_EXERCISES_LIST, course)
       .filter(ex => isSelfcare(ex) && ex.intensity <= 2 && isSeniorSafe(ex));
-    fallback.forEach(ex => { if (!selfSet.has(ex.id)) selfSet.set(ex.id, ex); });
+    for (const ex of fallback) {
+      if (selfSet.size >= MIN_SELF) break;
+      if (!selfSet.has(ex.id)) selfSet.set(ex.id, ex);
+    }
   }
-  if (trainSet.size < 4) {
+  if (trainSet.size < MIN_TRAIN) {
     const fallback = filterByCourse(ALL_EXERCISES_LIST, course)
       .filter(ex => isTraining(ex) && isSeniorSafe(ex));
-    fallback.forEach(ex => { if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex); });
+    for (const ex of fallback) {
+      if (trainSet.size >= MIN_TRAIN) break;
+      if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex);
+    }
   }
 
   return {
