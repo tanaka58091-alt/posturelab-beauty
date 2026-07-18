@@ -148,11 +148,14 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
   const trainSet = new Map();
 
   // 優先順位: 最初の問題キーから順に追加(順序保持のため Map)
+  // ここで入る種目 = ユーザーの姿勢問題に直結する「targeted(オーダーメイド)」種目。
   problemKeys.forEach(k => {
     const p = buildPoolForProblem(k, course);
     p.selfcare.forEach(ex => { if (!selfSet.has(ex.id)) selfSet.set(ex.id, ex); });
     p.training.forEach(ex => { if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex); });
   });
+  // この時点のidが「問題直結(targeted)」。以降の補充は「変化用(variety)」として区別する。
+  const targeted = new Set([...selfSet.keys(), ...trainSet.keys()]);
 
   // 30日プログラムが単調にならないよう、必ず十分な種類数まで補充する。
   // 問題に紐づく種目(=アンカー)は既に入っており優先処方される。ここでは
@@ -188,6 +191,7 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
   return {
     selfcare: Array.from(selfSet.values()),
     training: Array.from(trainSet.values()),
+    targeted, // 問題直結種目のidセット(オーダーメイドの核)
   };
 }
 

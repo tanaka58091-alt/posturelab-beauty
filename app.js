@@ -320,6 +320,8 @@ els.btnAnalyze.addEventListener('click', async () => {
     state.selectedCourse = state.recommendation.top;
     state.program = build30DayProgram(probKeys, state.selectedCourse);
 
+    state.savedMetrics = null; state.savedThumbs = null; // 新規診断なので保存モード解除
+    hideSavedBanner();
     renderAll();
     saveCurrentSession();   // ① 履歴に保存（端末内）
     hideLoader();
@@ -443,8 +445,22 @@ function escapeHtml(s){
 
 // --- SCORE & TYPE ---
 function renderScoreAndType(){
-  const score = calcScore(state.resultSide, state.resultFront, state.problems);
-  const { grade, desc } = gradeFromScore(score);
+  const type = determinePostureType(state.problems);
+  let score, grade, desc;
+  if (state.resultSide){
+    score = calcScore(state.resultSide, state.resultFront, state.problems);
+    ({ grade, desc } = gradeFromScore(score));
+    // セッション保存用に控える
+    state.lastScore = score;
+    state.lastGrade = grade;
+    state.lastType = type.name;
+  } else {
+    // 保存プラン閲覧モード（写真なし）: 保存済みスコアを使う
+    score = state.lastScore ?? 0;
+    const g = gradeFromScore(score);
+    grade = state.lastGrade || g.grade;
+    desc  = g.desc;
+  }
 
   els.scoreValue.textContent = score;
   els.scoreGrade.textContent = grade;
@@ -454,32 +470,37 @@ function renderScoreAndType(){
   const offset = circ - (score/100) * circ;
   els.scoreArc.setAttribute('stroke-dashoffset', offset);
 
-  const type = determinePostureType(state.problems);
-  els.postureType.textContent = type.name;
+  els.postureType.textContent = state.lastType && !state.resultSide ? state.lastType : type.name;
   els.postureTypeDesc.textContent = type.desc;
   els.postureTypeTags.innerHTML = type.tags.map(t => `<span>${t}</span>`).join('');
-
-  // セッション保存用に控える
-  state.lastScore = score;
-  state.lastGrade = grade;
-  state.lastType = type.name;
 }
 
 // --- METRICS ---
 function renderMetrics(){
-  const items = buildMetricsList(state.resultSide, state.resultFront);
+  const items = state.resultSide
+    ? buildMetricsList(state.resultSide, state.resultFront)
+    : (state.savedMetrics || []).map(m => ({ ...m, detail: m.detail || '' }));
+  if (!items.length){ els.metricsList.style.display = 'none'; els.metricsList.innerHTML = ''; return; }
+  els.metricsList.style.display = '';
   els.metricsList.innerHTML = items.map(it => `
     <div class="metric ${it.sev}">
       <div class="metric-name">${it.name}</div>
       <div class="metric-value">${it.value}</div>
       <div class="metric-bar"><i style="width:${it.pct}%"></i></div>
-      <div class="metric-detail">${it.detail}</div>
+      ${it.detail ? `<div class="metric-detail">${it.detail}</div>` : ''}
     </div>
   `).join('');
 }
 
 // --- OVERLAYS ---
 function renderOverlays(){
+  const grid = document.querySelector('.overlay-grid');
+  if (!state.resultSide){
+    // 保存プラン閲覧モード: 元画像が無いため解析オーバーレイは非表示にする
+    if (grid) grid.style.display = 'none';
+    return;
+  }
+  if (grid) grid.style.display = '';
   drawSideOverlay();
   if (state.resultFront){
     els.frontPane.style.display = '';
@@ -955,6 +976,67 @@ function closeMyData(){
   document.body.style.overflow = '';
 }
 
+// ===== 保存済みプランを写真なしで復元表示 =====
+function openSavedSession(id){
+  const s = Store.getSession(id);
+  if (!s){ alert('この記録が見つかりませんでした。'); return; }
+
+  // 問題オブジェクトをキーから復元（severityは保存があれば使う）
+  state.problems = (s.problems || []).map(p => {
+    const obj = makeSymptomProblem(p.key);
+    if (p.title) obj.title = p.title;
+    if (p.severity) obj.severity = p.severity;
+    obj.fromSaved = true;
+    return obj;
+  });
+  if (!state.problems.length) state.problems = [makeSymptomProblem('general')];
+
+  state.symptoms    = s.symptoms || [];
+  state.symptomFree = s.symptomFree || '';
+  const keys = state.problems.map(p => p.key);
+  state.recommendation = recommendCourse(keys);
+  state.selectedCourse = s.course || state.recommendation.top;
+  state.currentPhase   = 1;
+  state.program = build30DayProgram(keys, state.selectedCourse);
+
+  // 写真なしモード
+  state.resultSide = null; state.resultFront = null;
+  state.imgSide = null; state.imgFront = null;
+  state.lastScore = s.score; state.lastGrade = s.grade; state.lastType = s.typeName;
+  state.savedMetrics = s.metrics || null;
+  state.savedThumbs  = { side: s.thumbSide, front: s.thumbFront };
+  state.currentSessionId = s.id;
+
+  closeMyData();
+  renderAll();
+  showSavedBanner(s);
+  els.results.hidden = false;
+  els.results.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// 保存プラン閲覧中である旨のバナー
+function showSavedBanner(s){
+  let b = document.getElementById('saved-banner');
+  if (!b){
+    b = document.createElement('div');
+    b.id = 'saved-banner'; b.className = 'saved-banner';
+    els.results.prepend(b);
+  }
+  b.innerHTML = `
+    <span>📋 <strong>${fmtDateFull(s.date)}</strong> の保存プランを表示中（写真なしで見られます）</span>
+    <button id="saved-new" class="btn-ghost sm">新しく診断する</button>`;
+  b.hidden = false;
+  document.getElementById('saved-new').onclick = () => {
+    b.hidden = true;
+    els.results.hidden = true;
+    document.getElementById('upload-section')?.scrollIntoView({ behavior:'smooth' });
+  };
+}
+function hideSavedBanner(){
+  const b = document.getElementById('saved-banner');
+  if (b) b.hidden = true;
+}
+
 function renderMyData(){
   const profile = Store.getProfile() || { nickname:'ゲスト' };
   const sessions = Store.getSessions();
@@ -994,13 +1076,14 @@ function renderMyData(){
       <h3>🗂 診断の履歴</h3>
       <div class="md-history">
         ${sessions.slice().reverse().map(s => `
-          <div class="md-hist-row" data-id="${s.id}">
+          <div class="md-hist-row" data-open="${s.id}" role="button" tabindex="0" title="このプランを見る">
             ${s.thumbSide ? `<img class="md-thumb" src="${s.thumbSide}" alt="">` : `<div class="md-thumb ph">📷</div>`}
             <div class="md-hist-info">
               <div class="md-hist-top"><strong>${s.score}点</strong> <span class="md-grade">${s.grade||''}</span> <span class="md-type">${escapeHtml(s.typeName||'')}</span></div>
               <div class="md-hist-date">${fmtDateFull(s.date)}</div>
               <div class="md-hist-tags">${(s.problems||[]).slice(0,3).map(p=>`<span>${escapeHtml(p.title)}</span>`).join('')}</div>
             </div>
+            <span class="md-hist-view">📋 プランを見る</span>
             <button class="md-del" data-del="${s.id}" title="削除">×</button>
           </div>`).join('') || '<p class="muted">まだ履歴がありません。</p>'}
       </div>
@@ -1031,6 +1114,12 @@ function renderMyData(){
   }
   els.mydataBody.querySelectorAll('[data-del]').forEach(btn => {
     btn.onclick = (e) => { e.stopPropagation(); if (confirm('この診断データを削除しますか？')){ Store.deleteSession(btn.dataset.del); renderMyData(); } };
+  });
+  // 履歴行クリックで、写真なしでプランを開く
+  els.mydataBody.querySelectorAll('[data-open]').forEach(row => {
+    const open = () => openSavedSession(row.dataset.open);
+    row.onclick = open;
+    row.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } };
   });
   const exp = document.getElementById('md-export');
   if (exp) exp.onclick = () => Store.downloadExport();
@@ -1092,4 +1181,17 @@ document.addEventListener('keydown', e => {
   if (!els.btnMyData) return;
   const n = Store.getSessions().length;
   if (n > 0) els.btnMyData.dataset.count = n;
+})();
+
+// 前回のプランがあれば、写真なしで見られる導線をアップロード画面に表示
+(function initResumePlan(){
+  const box = document.getElementById('resume-plan');
+  const btn = document.getElementById('resume-plan-btn');
+  if (!box || !btn) return;
+  const sessions = Store.getSessions();
+  if (!sessions.length) return;
+  const latest = sessions[sessions.length - 1];
+  box.hidden = false;
+  btn.textContent = `前回のプランを見る（${fmtDateFull(latest.date)}）`;
+  btn.onclick = () => openSavedSession(latest.id);
 })();
