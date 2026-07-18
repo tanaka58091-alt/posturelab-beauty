@@ -9,7 +9,7 @@
 //   ・下部に動作ラベル
 // 共通: viewBox 200x200
 // ===================================================================
-import { ART_KEYS } from './art-manifest.js';
+import { DIAGRAMS } from './art-diagrams.js';
 
 const _DEF = `<defs>
   <marker id="mv" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -1780,13 +1780,14 @@ const ALIASES = {
 const BASE_KEYS = Object.keys(RAW).filter(k => RAW[k]);
 
 // 公開レジストリ SVG2:
-//   art-manifest.js に登録済みのキー → 実画像(art/<key>.png)を表示
-//   未登録キー → 従来のSVG図解を表示（フォールバック・404なし）
-const _artImg = (key) => `<img src="art/${key}.png" alt="" class="ex-art-img" loading="lazy" decoding="async">`;
+// 優先順位: ①新2コマ指導図(DIAGRAMS) → ②従来SVG図解(RAW・フォールバック)
+const _pick = (k) => DIAGRAMS[k] || RAW[k];
 const SVG2 = {};
-BASE_KEYS.forEach(k => { SVG2[k] = ART_KEYS.has(k) ? _artImg(k) : RAW[k]; });
-// エイリアスは基底キーの表現(画像 or SVG)を共有
-Object.entries(ALIASES).forEach(([alias, base]) => { SVG2[alias] = SVG2[base]; });
+BASE_KEYS.forEach(k => { SVG2[k] = _pick(k); });
+// DIAGRAMSにしか無いキー(基底キー未定義でも登録可能に)
+Object.keys(DIAGRAMS).forEach(k => { if (!SVG2[k]) SVG2[k] = DIAGRAMS[k]; });
+// エイリアスは基底キーの表現(図 or 画像 or SVG)を共有
+Object.entries(ALIASES).forEach(([alias, base]) => { SVG2[alias] = DIAGRAMS[alias] || SVG2[base]; });
 
 // 生のSVG文字列も必要に応じて取り出せるよう公開
 const SVG_RAW = {};
