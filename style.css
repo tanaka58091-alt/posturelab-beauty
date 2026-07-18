@@ -641,8 +641,8 @@ body{
 /* ============ TODAY MENU ============ */
 .today-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px}
 .exercise-card{
-  display:grid; grid-template-columns:88px 1fr; gap:16px;
-  padding:20px;
+  display:flex; flex-direction:column; gap:14px;
+  padding:16px;
   background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
   border:1px solid var(--line); border-radius:20px;
   cursor:pointer; transition:.2s;
@@ -652,10 +652,10 @@ body{
   box-shadow:var(--shadow-lg); border-color:var(--pink-2);
 }
 .ex-illust{
-  background:var(--pink-soft);
+  background:#fff;
   border:1px solid var(--pink-3); border-radius:16px;
   display:flex; align-items:center; justify-content:center;
-  aspect-ratio:1; padding:14px;
+  width:100%; aspect-ratio:410/205; padding:10px;
 }
 .ex-illust svg{width:100%; height:100%}
 .ex-illust .ex-art-img{width:100%; height:100%; object-fit:contain; border-radius:10px}
@@ -736,11 +736,12 @@ body{
 }
 .modal-close:hover{background:var(--pink); color:#fff; border-color:var(--pink);}
 
-.modal-ex-head{display:grid; grid-template-columns:120px 1fr; gap:22px; margin-bottom:24px}
+.modal-ex-head{display:flex; flex-direction:column; gap:16px; margin-bottom:24px}
 .modal-ex-illust{
   position:relative;
-  background:var(--pink-soft); border:1px solid var(--pink-3); border-radius:18px;
-  padding:14px; display:flex; align-items:center; justify-content:center; aspect-ratio:1;
+  background:#fff; border:1px solid var(--pink-3); border-radius:18px;
+  padding:12px; display:flex; align-items:center; justify-content:center;
+  width:100%; max-width:560px; aspect-ratio:410/205; margin:0 auto;
 }
 .modal-ex-illust svg{width:100%; height:100%}
 .modal-ex-illust .ex-art-img{width:100%; height:100%; object-fit:contain; border-radius:12px}
@@ -832,13 +833,10 @@ body{
   .summary-grid{grid-template-columns:1fr}
   .overlay-grid{grid-template-columns:1fr}
   .today-grid{grid-template-columns:1fr}
-  .exercise-card{grid-template-columns:90px 1fr}
   .problem{grid-template-columns:auto 1fr;}
   .problem-side{display:none}
   .tissue-list{grid-template-columns:1fr}
   .hero-stats{grid-template-columns:repeat(2,1fr); max-width:420px;}
-  .modal-ex-head{grid-template-columns:1fr}
-  .modal-ex-illust{max-width:120px; aspect-ratio:1; justify-self:start}
   .modal-panel{padding:28px 22px;}
   .phase-tab{padding:12px 8px; font-size:13px;}
 }
