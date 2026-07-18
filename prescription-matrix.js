@@ -26,37 +26,58 @@ const ALL_EXERCISES = Object.fromEntries(
 // ===== カテゴリ分類 =====
 // selfcare = stretch/release/mobility/breath/yoga(柔らかい系)
 // training = strength/core/balance/integration
-const SELFCARE_TECHNIQUES = new Set([
-  'stretch','release','mobility','breath','pranayama','meditation',
+// ===== 分類（網羅版・死蔵ゼロ化）=====
+// training = 筋力/持久力/バランス/有酸素を高める系
+// selfcare = ストレッチ/モビリティ/呼吸/弛緩系
+// どちらにも該当しないものは selfcare にフォールバック（＝プール未収載＝死蔵を防ぐ）
+const TRAINING_CATEGORIES = new Set([
+  'training','strength','core','balance','integration','cardio',
 ]);
 const TRAINING_TECHNIQUES = new Set([
-  'strength','core','balance','plyometric','isometric','integration',
+  'strength','core','balance','plyometric','isometric','integration','cardio','endurance',
+]);
+// アクティブに保持する系のasana（強度2以上はトレーニング寄り）
+const ACTIVE_ASANA_TECH = new Set([
+  'standing','backbend','inversion','balance','arm_balance','isometric',
+]);
+const SELFCARE_CATEGORIES = new Set([
+  'selfcare','breath','meditation','pranayama','mobility','asana',
+]);
+const SELFCARE_TECHNIQUES = new Set([
+  'stretch','release','mobility','breath','breathing','pranayama','meditation',
+  'restorative','seated','twist','massage','forward_bend','supine',
 ]);
 
-function isSelfcare(ex){
-  if (ex.category === 'selfcare') return true;
-  if (ex.category === 'breath' || ex.category === 'meditation') return true;
-  if (ex.category === 'mobility' && ex.intensity <= 1) return true;
-  if (SELFCARE_TECHNIQUES.has(ex.technique)) return true;
+function isTraining(ex){
+  const c = ex.category, t = ex.technique, i = ex.intensity || 1;
+  if (TRAINING_CATEGORIES.has(c)) return true;
+  if (TRAINING_TECHNIQUES.has(t)) return true;
+  // アクティブなasana(立位・後屈・逆転・バランス)で強度2以上はトレーニング扱い
+  if (c === 'asana' && ACTIVE_ASANA_TECH.has(t) && i >= 2) return true;
   return false;
 }
 
-function isTraining(ex){
-  if (ex.category === 'strength') return true;
-  if (ex.category === 'core' && ex.intensity >= 2) return true;
-  if (ex.category === 'balance') return true;
-  if (ex.category === 'integration') return true;
-  if (TRAINING_TECHNIQUES.has(ex.technique) && ex.intensity >= 2) return true;
-  return false;
+function isSelfcare(ex){
+  if (isTraining(ex)) return false;         // trainingを優先
+  const c = ex.category, t = ex.technique;
+  if (SELFCARE_CATEGORIES.has(c)) return true;
+  if (SELFCARE_TECHNIQUES.has(t)) return true;
+  // フォールバック: trainingでない残り(軽いasana・mobility等)は全てselfcareへ
+  return true;
 }
 
 // ===== 40〜70代女性・道具なし安全フィルタ =====
 // 道具を使わない、かつ年齢層に無理のないものだけ通す
-const SAFE_EQUIPMENT = new Set(['なし','マット','マットなし','']);
+// 家庭内で確実に用意できるものは許可（壁・椅子・タオル・クッション等）。
+// 専用器具（フォームローラー・ボール・バー・ベルト等）は除外。
+const SAFE_EQUIPMENT = new Set([
+  'なし','マット','マットなし','',
+  '壁','椅子','イス','ドア枠','タオル','クッション','座布団','机','階段','台','ソファ',
+]);
 function equipmentOk(eq){
   if (!eq) return true;
-  // 「マット/椅子」「タオル/ベルト」など複合も道具扱いで除外
-  if (eq.includes('/')) return false;
+  // 複合（「マット/椅子」等）は全要素が家庭内アイテムならOK
+  if (eq.includes('/')) return eq.split('/').every(x => SAFE_EQUIPMENT.has(x.trim()));
   return SAFE_EQUIPMENT.has(eq);
 }
 
@@ -82,10 +103,16 @@ const UNSAFE_IDS = new Set([
 ]);
 
 function isSeniorSafe(ex){
+  // ★DB由来の初心者安全フラグを最優先ゲートに。
+  // 敵対的監査(52歳・運動未経験・図なし主婦)で「体力的に無理／危険」と判定された種目は
+  // beginnerSafe:false が付与済み。コース・強度・sn_*キュレーションに関係なく必ず除外する。
+  // （UNSAFE_IDS/intensity ヒューリスティックを DB駆動で上書きする権威的フィルタ）
+  if (ex.beginnerSafe === false) return false;
   if (UNSAFE_IDS.has(ex.id)) return false;
   if (UNSAFE_TECHNIQUES.has(ex.technique)) return false;
   if (!equipmentOk(ex.equipment)) return false;
   // sn_* は40〜70代女性向けに手動キュレーション済 → intensity 不問で通す
+  // （ただし上の beginnerSafe:false で監査除外済みの sn_* は既に弾かれている）
   if (ex.id && ex.id.startsWith('sn_')) return true;
   // 40〜70代女性: intensity 3 はすべて除外（呼吸・瞑想のみ例外）
   if (ex.intensity >= 3) {

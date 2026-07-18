@@ -9,6 +9,7 @@
 //   ・下部に動作ラベル
 // 共通: viewBox 200x200
 // ===================================================================
+import { ART_KEYS } from './art-manifest.js';
 
 const _DEF = `<defs>
   <marker id="mv" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -1778,11 +1779,14 @@ const ALIASES = {
 // RAW から null プレースホルダを除いた基底キー集合
 const BASE_KEYS = Object.keys(RAW).filter(k => RAW[k]);
 
-// 公開レジストリ SVG2: 各キー→SVG文字列を直接描画(軽量・通信なし)
+// 公開レジストリ SVG2:
+//   art-manifest.js に登録済みのキー → 実画像(art/<key>.png)を表示
+//   未登録キー → 従来のSVG図解を表示（フォールバック・404なし）
+const _artImg = (key) => `<img src="art/${key}.png" alt="" class="ex-art-img" loading="lazy" decoding="async">`;
 const SVG2 = {};
-BASE_KEYS.forEach(k => { SVG2[k] = RAW[k]; });
-// エイリアスは基底キーのSVGを共有
-Object.entries(ALIASES).forEach(([alias, base]) => { SVG2[alias] = RAW[base]; });
+BASE_KEYS.forEach(k => { SVG2[k] = ART_KEYS.has(k) ? _artImg(k) : RAW[k]; });
+// エイリアスは基底キーの表現(画像 or SVG)を共有
+Object.entries(ALIASES).forEach(([alias, base]) => { SVG2[alias] = SVG2[base]; });
 
 // 生のSVG文字列も必要に応じて取り出せるよう公開
 const SVG_RAW = {};

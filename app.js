@@ -713,16 +713,18 @@ function exerciseProblemBadges(ex){
 }
 
 function exerciseCard(ex){
+  const firstStep = (ex.how && ex.how[0]) ? ex.how[0] : '';
   return `
     <div class="exercise-card" data-ex="${ex.id}">
       <div class="ex-illust">${ex.illustration || ''}</div>
       <div class="ex-info">
         <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
-        <h4>${ex.name}</h4>
+        <h4>${ex.displayName || ex.name}</h4>
         <div class="ex-meta">
           <span><strong>⏱</strong> ${ex.duration}</span>
           <span><strong>🛠</strong> ${ex.equipment}</span>
         </div>
+        ${firstStep ? `<div class="ex-howhint"><span class="ex-howhint-badge">STEP 1</span>${firstStep}</div>` : ''}
         <div class="ex-purpose">${ex.purpose}</div>
         ${exerciseProblemBadges(ex)}
       </div>
@@ -803,10 +805,11 @@ function openExerciseModal(ex){
   }).join('');
   els.modalBody.innerHTML = `
     <div class="modal-ex-head">
-      <div class="modal-ex-illust">${ex.illustration || ''}</div>
+      <div class="modal-ex-illust">${ex.illustration || ''}<span class="illust-note">図はイメージ</span></div>
       <div class="modal-ex-info">
         <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
-        <h2>${ex.name}</h2>
+        <h2>${ex.displayName || ex.name}</h2>
+        ${ex.displayName && ex.displayName !== ex.name ? `<div class="ex-formal">正式名称：${ex.name}</div>` : ''}
         <div class="ex-meta">
           <span><strong>所要</strong> ${ex.duration}</span>
           <span><strong>道具</strong> ${ex.equipment}</span>
@@ -815,20 +818,21 @@ function openExerciseModal(ex){
         <div class="ex-course-tags">${courseTags}</div>
       </div>
     </div>
+    <div class="modal-section how-section">
+      <h4>📋 やり方 — この手順どおりに動かしてください</h4>
+      <ol class="how-steps">${(ex.how||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+      ${ex.easyOption ? `<div class="easy-opt"><span class="easy-badge">きつい場合</span>${ex.easyOption}</div>` : ''}
+    </div>
+    <div class="modal-section">
+      <h4>✨ 効かせるコツ</h4>
+      <div class="modal-cues">
+        <div class="cue-box do"><strong>✅ こうする</strong>${ex.cues?.do || ''}</div>
+        <div class="cue-box dont"><strong>❌ やりがちなミス</strong>${ex.cues?.dont || ''}</div>
+      </div>
+    </div>
     <div class="modal-section">
       <h4>🎯 対応する姿勢の問題</h4>
       <ul>${targets.map(t=>`<li>${t}</li>`).join('') || '<li>—</li>'}</ul>
-    </div>
-    <div class="modal-section">
-      <h4>📋 やり方</h4>
-      <ol>${(ex.how||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
-    </div>
-    <div class="modal-section">
-      <h4>✨ コツ</h4>
-      <div class="modal-cues">
-        <div class="cue-box do"><strong>✅ DO</strong>${ex.cues?.do || ''}</div>
-        <div class="cue-box dont"><strong>❌ DON'T</strong>${ex.cues?.dont || ''}</div>
-      </div>
     </div>
     <div class="modal-section">
       <h4>💡 なぜ効くのか</h4>
@@ -847,17 +851,7 @@ function openDayModal(d){
       <p style="color:var(--muted); font-size:13px; margin:0">${d.isRest ? '今日は身体を労わる日。呼吸とゆっくりしたストレッチに集中しましょう。' : '今日のメニュー4種。各エクササイズをクリックで詳細表示。'}</p>
     </div>
     <div style="display:grid; gap:14px">
-      ${all.map(ex => `
-        <div class="exercise-card" data-ex="${ex.id}">
-          <div class="ex-illust">${ex.illustration || ''}</div>
-          <div class="ex-info">
-            <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
-            <h4>${ex.name}</h4>
-            <div class="ex-meta"><span><strong>⏱</strong> ${ex.duration}</span><span><strong>🛠</strong> ${ex.equipment}</span></div>
-            <div class="ex-purpose">${ex.purpose}</div>
-          </div>
-        </div>
-      `).join('')}
+      ${all.map(ex => exerciseCard(ex)).join('')}
     </div>
   `;
   bindExerciseCards(els.modalBody);
