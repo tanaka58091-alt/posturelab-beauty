@@ -220,9 +220,21 @@
         <span class="btn-label">姿勢を解析する</span>
         <svg viewBox="0 0 24 24" width="16" height="16" class="btn-arrow"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+      <div class="simple-diag">
+        <span class="simple-diag-text">写真がいま手元になくても大丈夫。</span>
+        <button class="btn-ghost" id="btn-simple" type="button">📋 お悩みから簡易プランを見る（写真なし）</button>
+      </div>
       <div class="loader" id="loader" hidden>
         <div class="loader-spin"></div>
         <span id="loader-text">モデルを初期化しています…</span>
+      </div>
+      <div class="analyze-error" id="analyze-error" hidden>
+        <div class="ae-title" id="ae-title"></div>
+        <div class="ae-desc" id="ae-desc"></div>
+        <div class="ae-actions">
+          <button class="btn-primary" id="ae-retry" type="button">もう一度試す</button>
+          <button class="btn-ghost" id="ae-simple" type="button">📋 写真なしで簡易プランを見る</button>
+        </div>
       </div>
     </div>
   </div>

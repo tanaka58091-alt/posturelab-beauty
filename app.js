@@ -24,6 +24,7 @@ const els = {
   previewSide: $('#preview-side'),
   previewFront: $('#preview-front'),
   btnAnalyze: $('#btn-analyze'),
+  btnSimple: $('#btn-simple'),
   loader: $('#loader'),
   loaderText: $('#loader-text'),
   results: $('#results'),
@@ -228,27 +229,50 @@ function collectSymptoms(){
 // ===================================================================
 // MEDIAPIPE POSE LANDMARKER
 // ===================================================================
-async function loadLandmarker(){
-  if (state.landmarker) return state.landmarker;
-  setLoader('MediaPipe Visionモデルを読み込んでいます…');
-  const vision = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs');
-  const fileset = await vision.FilesetResolver.forVisionTasks(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm'
-  );
-  setLoader('姿勢推定モデル(Pose Landmarker)を初期化中…');
-  state.landmarker = await vision.PoseLandmarker.createFromOptions(fileset, {
-    baseOptions: {
-      modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task',
-      delegate:'GPU',
-    },
-    runningMode:'IMAGE',
-    numPoses:1,
-    minPoseDetectionConfidence: 0.5,
-    minPosePresenceConfidence: 0.5,
-    minTrackingConfidence: 0.5,
+function loadLandmarker(silent = false){
+  if (state.landmarker) return Promise.resolve(state.landmarker);
+  if (state._lmPromise) return state._lmPromise;   // 先読み中ならその読み込みを共有
+
+  state._lmPromise = (async () => {
+    if (!silent) setLoader('AIの準備をしています…（初回は20〜30秒ほどかかることがあります）');
+    const vision = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs');
+    const fileset = await vision.FilesetResolver.forVisionTasks(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm'
+    );
+    if (!silent) setLoader('姿勢を読み取るAIを起動中… もうすぐです');
+    const create = (delegate) => vision.PoseLandmarker.createFromOptions(fileset, {
+      baseOptions: {
+        modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task',
+        delegate,
+      },
+      runningMode:'IMAGE',
+      numPoses:1,
+      minPoseDetectionConfidence: 0.5,
+      minPosePresenceConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+    let lm;
+    try {
+      lm = await create('GPU');
+    } catch (e) {
+      // 古い端末等でGPU初期化に失敗したらCPUで自動再試行
+      console.warn('GPU delegate failed, falling back to CPU', e);
+      lm = await create('CPU');
+    }
+    state.landmarker = lm;
+    return lm;
+  })().catch(e => {
+    state._lmPromise = null;  // 失敗したら次のクリックで再試行できるように
+    throw e;
   });
-  return state.landmarker;
+  return state._lmPromise;
 }
+
+// ページ表示後にバックグラウンドで先読み（解析クリック時の待ちをなくす）
+function preloadLandmarker(){
+  loadLandmarker(true).catch(e => console.warn('model preload failed (クリック時に再試行します)', e));
+}
+window.addEventListener('load', () => setTimeout(preloadLandmarker, 1500));
 
 async function detectPose(image){
   const lm = await loadLandmarker();
@@ -273,13 +297,35 @@ function hideLoader(){
 // ===================================================================
 // ANALYZE FLOW
 // ===================================================================
+// ===== 解析失敗時のやさしいエラーカード（alertの代わり） =====
+function showAnalyzeError(kind){
+  hideLoader();
+  const box = document.getElementById('analyze-error');
+  if (!box) return;
+  const t = document.getElementById('ae-title');
+  const d = document.getElementById('ae-desc');
+  if (kind === 'nopose'){
+    t.textContent = '写真から人物を見つけられませんでした';
+    d.textContent = '頭から足まで全身が写っているか、明るい場所で撮った写真かをご確認ください。体が大きめに写る縦向きの写真だと見つけやすくなります。';
+  } else {
+    t.textContent = '解析の準備がうまくいきませんでした';
+    d.textContent = '通信環境の良い場所で「もう一度試す」を押してみてください。お急ぎの場合は、写真なしの簡易プランもご利用いただけます。';
+  }
+  box.hidden = false;
+  box.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function hideAnalyzeError(){
+  const b = document.getElementById('analyze-error');
+  if (b) b.hidden = true;
+}
+
 els.btnAnalyze.addEventListener('click', async () => {
   try {
+    hideAnalyzeError();
     setLoader('姿勢を解析中… 側面写真の特徴点を検出しています');
     const lmsSide = await detectPose(state.imgSide);
     if (!lmsSide){
-      alert('側面写真から人物を検出できませんでした。全身が写った写真を試してください。');
-      hideLoader();
+      showAnalyzeError('nopose');
       return;
     }
     state.resultSide = analyzeSide(lmsSide);
@@ -333,10 +379,21 @@ els.btnAnalyze.addEventListener('click', async () => {
 
   } catch (e){
     console.error(e);
-    alert('解析中にエラーが発生しました。コンソールで詳細を確認してください。\n\n' + e.message);
-    hideLoader();
+    showAnalyzeError('load');
   }
 });
+
+// エラーカードのボタン: もう一度試す / 写真なしで簡易プラン
+(function bindAnalyzeError(){
+  const retry = document.getElementById('ae-retry');
+  const simple = document.getElementById('ae-simple');
+  if (retry) retry.onclick = () => { hideAnalyzeError(); els.btnAnalyze.click(); };
+  if (simple) simple.onclick = () => {
+    hideAnalyzeError();
+    document.getElementById('btn-simple')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    runSimpleDiagnosis();
+  };
+})();
 
 // ===================================================================
 // RENDER
@@ -454,12 +511,17 @@ function renderScoreAndType(){
     state.lastScore = score;
     state.lastGrade = grade;
     state.lastType = type.name;
-  } else {
-    // 保存プラン閲覧モード（写真なし）: 保存済みスコアを使う
-    score = state.lastScore ?? 0;
+  } else if (state.lastScore != null){
+    // 保存プラン閲覧モード（写真診断あり）: 保存済みスコアを使う
+    score = state.lastScore;
     const g = gradeFromScore(score);
     grade = state.lastGrade || g.grade;
     desc  = g.desc;
+  } else {
+    // 簡易診断モード（写真なし・お悩みベース）: スコアは偽らず「簡易」表示
+    score = '—';
+    grade = '簡易診断';
+    desc  = '写真で診断すると数値スコアが表示されます';
   }
 
   els.scoreValue.textContent = score;
@@ -467,7 +529,8 @@ function renderScoreAndType(){
   els.scoreDesc.textContent = desc;
 
   const circ = 2 * Math.PI * 52;
-  const offset = circ - (score/100) * circ;
+  const num = typeof score === 'number' ? score : 0;
+  const offset = circ - (num/100) * circ;
   els.scoreArc.setAttribute('stroke-dashoffset', offset);
 
   els.postureType.textContent = state.lastType && !state.resultSide ? state.lastType : type.name;
@@ -910,11 +973,13 @@ function fmtDateFull(iso){
 function saveCurrentSession(){
   try {
     const profile = Store.ensureProfile(Store.getProfile()?.nickname);
-    const metrics = buildMetricsList(state.resultSide, state.resultFront)
-      .map(m => ({ name:m.name, value:m.value, sev:m.sev, pct:m.pct }));
+    const metrics = state.resultSide
+      ? buildMetricsList(state.resultSide, state.resultFront)
+          .map(m => ({ name:m.name, value:m.value, sev:m.sev, pct:m.pct }))
+      : [];
     const session = {
       nickname: profile.nickname,
-      score: state.lastScore,
+      score: state.lastScore ?? null,
       grade: state.lastGrade,
       typeName: state.lastType,
       course: state.selectedCourse,
@@ -947,6 +1012,7 @@ function showSaveToast(count){
 
 // ---------- スコア推移グラフ（外部ライブラリ不使用のSVG折れ線）①----------
 function scoreChartSVG(sessions){
+  sessions = sessions.filter(s => s.score != null); // 簡易診断(スコアなし)は除外
   if (!sessions.length) return '<p class="muted">まだ診断データがありません。</p>';
   const W = 320, H = 150, pad = { l:30, r:14, t:14, b:24 };
   const xs = sessions.map((s,i) => sessions.length===1 ? (pad.l+(W-pad.l-pad.r)/2) : pad.l + (W-pad.l-pad.r) * i/(sessions.length-1));
@@ -1037,6 +1103,56 @@ function hideSavedBanner(){
   if (b) b.hidden = true;
 }
 
+// ===== 簡易診断（写真なし・お悩みベース） =====
+function runSimpleDiagnosis(){
+  hideAnalyzeError();
+  collectSymptoms();
+  const keys = buildSymptomProblems();
+  if (!keys.length){
+    alert('お悩みを1つ以上選ぶか、自由記入欄にご記入ください。\n（簡易プランはお悩みをもとに作成します）');
+    return;
+  }
+  state.problems = keys.map(makeSymptomProblem);
+  state.resultSide = null; state.resultFront = null;
+  state.imgSide = null; state.imgFront = null;
+  state.savedMetrics = null; state.savedThumbs = null;
+  state.lastScore = null; state.lastGrade = null;
+  state.lastType = determinePostureType(state.problems).name;
+
+  const probKeys = state.problems.map(p => p.key);
+  state.recommendation = recommendCourse(probKeys);
+  state.selectedCourse = state.recommendation.top;
+  state.currentPhase = 1;
+  state.program = build30DayProgram(probKeys, state.selectedCourse);
+
+  hideSavedBanner();
+  renderAll();
+  saveCurrentSession();
+  showSimpleBanner();
+  els.results.hidden = false;
+  els.results.classList.add('fade-in');
+  els.results.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// 簡易プラン閲覧中である旨のバナー（写真診断への誘導つき）
+function showSimpleBanner(){
+  let b = document.getElementById('saved-banner');
+  if (!b){
+    b = document.createElement('div');
+    b.id = 'saved-banner'; b.className = 'saved-banner';
+    els.results.prepend(b);
+  }
+  b.innerHTML = `
+    <span>📋 <strong>お悩みから作成した簡易プラン</strong>です。写真で診断すると、姿勢スコアつきのより正確なプランになります</span>
+    <button id="saved-new" class="btn-ghost sm">写真で診断する</button>`;
+  b.hidden = false;
+  document.getElementById('saved-new').onclick = () => {
+    b.hidden = true;
+    els.results.hidden = true;
+    document.getElementById('upload-section')?.scrollIntoView({ behavior:'smooth' });
+  };
+}
+
 function renderMyData(){
   const profile = Store.getProfile() || { nickname:'ゲスト' };
   const sessions = Store.getSessions();
@@ -1048,7 +1164,7 @@ function renderMyData(){
       <div>
         <div class="md-eyebrow">MY DATA</div>
         <h2>${escapeHtml(profile.nickname)} さんの記録</h2>
-        <p class="muted">診断 ${sessions.length} 回　${sessions.length?`/ 最高 ${best.score}点`:''}</p>
+        <p class="muted">診断 ${sessions.length} 回　${best && best.score!=null ? `/ 最高 ${best.score}点` : ''}</p>
       </div>
       <div class="md-name-edit">
         <input id="md-nick" type="text" placeholder="ニックネーム" value="${escapeHtml(profile.nickname==='ゲスト'?'':profile.nickname)}" maxlength="16">
@@ -1065,8 +1181,8 @@ function renderMyData(){
       <h3>🔄 ビフォー → アフター比較</h3>
       ${sessions.length>=2 ? `
         <div class="cmp-pick">
-          <label>Before <select id="cmp-a">${sessions.map((s,i)=>`<option value="${s.id}" ${i===0?'selected':''}>${fmtDateFull(s.date)}（${s.score}点）</option>`).join('')}</select></label>
-          <label>After <select id="cmp-b">${sessions.map((s,i)=>`<option value="${s.id}" ${i===sessions.length-1?'selected':''}>${fmtDateFull(s.date)}（${s.score}点）</option>`).join('')}</select></label>
+          <label>Before <select id="cmp-a">${sessions.map((s,i)=>`<option value="${s.id}" ${i===0?'selected':''}>${fmtDateFull(s.date)}（${s.score!=null?s.score+'点':'簡易'}）</option>`).join('')}</select></label>
+          <label>After <select id="cmp-b">${sessions.map((s,i)=>`<option value="${s.id}" ${i===sessions.length-1?'selected':''}>${fmtDateFull(s.date)}（${s.score!=null?s.score+'点':'簡易'}）</option>`).join('')}</select></label>
         </div>
         <div id="cmp-result"></div>
       ` : `<p class="muted">2回以上診断すると、写真とスコアの変化を比較できます（残り ${Math.max(0,2-sessions.length)} 回）。</p>`}
@@ -1079,7 +1195,7 @@ function renderMyData(){
           <div class="md-hist-row" data-open="${s.id}" role="button" tabindex="0" title="このプランを見る">
             ${s.thumbSide ? `<img class="md-thumb" src="${s.thumbSide}" alt="">` : `<div class="md-thumb ph">📷</div>`}
             <div class="md-hist-info">
-              <div class="md-hist-top"><strong>${s.score}点</strong> <span class="md-grade">${s.grade||''}</span> <span class="md-type">${escapeHtml(s.typeName||'')}</span></div>
+              <div class="md-hist-top"><strong>${s.score!=null ? s.score+'点' : '簡易'}</strong> <span class="md-grade">${s.grade||''}</span> <span class="md-type">${escapeHtml(s.typeName||'')}</span></div>
               <div class="md-hist-date">${fmtDateFull(s.date)}</div>
               <div class="md-hist-tags">${(s.problems||[]).slice(0,3).map(p=>`<span>${escapeHtml(p.title)}</span>`).join('')}</div>
             </div>
@@ -1149,11 +1265,11 @@ function renderComparison(idA, idB){
   }).join('');
   box.innerHTML = `
     <div class="cmp-photos">
-      <figure>${A.thumbSide?`<img src="${A.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>Before ${fmtDate(A.date)}<br><strong>${A.score}点</strong></figcaption></figure>
+      <figure>${A.thumbSide?`<img src="${A.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>Before ${fmtDate(A.date)}<br><strong>${A.score!=null?A.score+'点':'簡易'}</strong></figcaption></figure>
       <div class="cmp-arrow">
         <div class="cmp-delta ${diff>=0?'up':'down'}">${diff>=0?'+':''}${diff}<small>点</small></div>
       </div>
-      <figure>${B.thumbSide?`<img src="${B.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>After ${fmtDate(B.date)}<br><strong>${B.score}点</strong></figcaption></figure>
+      <figure>${B.thumbSide?`<img src="${B.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>After ${fmtDate(B.date)}<br><strong>${B.score!=null?B.score+'点':'簡易'}</strong></figcaption></figure>
     </div>
     ${rows?`<table class="cmp-table"><thead><tr><th>指標</th><th>Before</th><th></th><th>After</th><th>変化</th></tr></thead><tbody>${rows}</tbody></table>`:''}
   `;
@@ -1170,6 +1286,7 @@ els.btnPrint.addEventListener('click', () => window.print());
 
 // ===== MY DATA open/close =====
 if (els.btnMyData) els.btnMyData.addEventListener('click', openMyData);
+if (els.btnSimple) els.btnSimple.addEventListener('click', runSimpleDiagnosis);
 if (els.mydata) els.mydata.addEventListener('click', e => {
   if (e.target.matches('[data-close-md]')) closeMyData();
 });

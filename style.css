@@ -1283,3 +1283,21 @@ body{
   white-space:nowrap; margin-left:auto; align-self:center;
 }
 @media(max-width:600px){ .md-hist-view{display:none} }
+
+/* ===== 簡易診断（写真なし）導線 ===== */
+.simple-diag{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin-top:14px; padding-top:14px;
+  border-top:1px dashed var(--line);
+}
+.simple-diag-text{font-size:13px; color:var(--muted)}
+
+/* ===== 解析エラーカード（alertの代わり・行き止まり防止） ===== */
+.analyze-error{
+  margin-top:16px; padding:18px 20px;
+  background:#FFF4F6; border:1.5px solid var(--pink-2);
+  border-radius:16px;
+}
+.ae-title{font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.ae-desc{font-size:13.5px; color:var(--ink-2); line-height:1.9; margin-bottom:14px}
+.ae-actions{display:flex; gap:12px; flex-wrap:wrap}
