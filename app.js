@@ -767,11 +767,70 @@ function renderKnowledge(){
 }
 
 // --- TODAY MENU ---
+// ===== 進捗（30日プログラムの現在地） =====
+const progressKey = () => state.currentSessionId || 'draft';
+
+function currentDayNumber(){
+  const done = new Set(Store.getProgress(progressKey()).done);
+  for (let d = 1; d <= 30; d++) if (!done.has(d)) return d;
+  return null; // 全30日完了
+}
+
 function renderToday(){
-  const menu = pickTodayMenu(state.problems.map(p=>p.key), state.selectedCourse);
-  const all = [...menu.selfcare, ...menu.training];
+  if (!state.program || !state.program.length) return;
+  const head = document.querySelector('.today-card .card-head h2');
+  const sub  = document.querySelector('.today-card .card-head .muted');
+  const act  = document.getElementById('today-actions');
+  const doneArr = Store.getProgress(progressKey()).done;
+  const cur = currentDayNumber();
+
+  // 全30日完走
+  if (cur == null){
+    if (head) head.innerHTML = '30日プログラム完走！ <span class="head-deco">🎉</span>';
+    if (sub)  sub.textContent = '素晴らしい継続でした。写真でもう一度診断すると、姿勢の変化を確かめられます。';
+    els.todayGrid.innerHTML = `<div class="today-complete">👑 全30日、やり切りました！おつかれさまでした。<br>写真で再診断して、ビフォーアフターの変化を見てみましょう。</div>`;
+    if (act) act.innerHTML = '';
+    return;
+  }
+
+  const d = state.program.find(x => x.day === cur);
+  if (head) head.innerHTML = `今日のあなた専用メニュー — DAY ${String(cur).padStart(2,'0')} <span class="head-deco">🎀</span>`;
+  if (sub)  sub.textContent = d.isRest
+    ? `${d.theme}｜今日は休息日。やさしいセルフケアだけでOKです`
+    : `${d.theme}｜セルフケア2種＋トレーニング2種（約10〜15分）`;
+
+  const all = [...(d.selfcare||[]), ...(d.training||[])];
   els.todayGrid.innerHTML = all.map(ex => exerciseCard(ex)).join('');
   bindExerciseCards(els.todayGrid);
+
+  if (act){
+    act.innerHTML = `
+      <button class="btn-primary" id="btn-day-done" type="button">✓ DAY ${cur} のメニューを完了にする</button>
+      <span class="today-progress">これまで ${doneArr.length}/30日 完了</span>`;
+    document.getElementById('btn-day-done').onclick = () => {
+      Store.toggleDayDone(progressKey(), cur);
+      renderToday();
+      renderProgram(state.currentPhase);
+      showDoneToast(cur);
+    };
+  }
+}
+
+// 完了時の祝福トースト
+function showDoneToast(day){
+  let t = document.getElementById('save-toast');
+  if (!t){
+    t = document.createElement('div');
+    t.id = 'save-toast'; t.className = 'save-toast';
+    document.body.appendChild(t);
+  }
+  const next = currentDayNumber();
+  t.innerHTML = next
+    ? `🎉 DAY ${day} おつかれさまでした！ 次は DAY ${next} です`
+    : `👑 全30日コンプリート！ 本当におつかれさまでした`;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 // カテゴリ表記マッピング (新DB対応)
@@ -830,8 +889,21 @@ function renderProgram(phase){
   state.currentPhase = phase;
   $$('.phase-tab').forEach(t => t.classList.toggle('active', +t.dataset.phase === phase));
 
+  const doneArr = Store.getProgress(progressKey()).done;
+  const doneSet = new Set(doneArr);
+  const curDay = currentDayNumber();
+
+  // 進捗バー
+  const pp = document.getElementById('program-progress');
+  if (pp){
+    const pct = Math.round(doneArr.length / 30 * 100);
+    pp.innerHTML = `
+      <div class="pp-bar"><i style="width:${pct}%"></i></div>
+      <span class="pp-label">${doneArr.length}/30日 完了${doneArr.length >= 30 ? '・完走🎉' : doneArr.length > 0 ? '・その調子です！' : ''}</span>`;
+  }
+
   const days = state.program.filter(d => d.phase === phase);
-  els.programGrid.innerHTML = days.map(d => dayCard(d)).join('');
+  els.programGrid.innerHTML = days.map(d => dayCard(d, doneSet, curDay)).join('');
 
   // クリック→詳細モーダル
   els.programGrid.querySelectorAll('.day-card').forEach(card => {
@@ -842,11 +914,14 @@ function renderProgram(phase){
   });
 }
 
-function dayCard(d){
+function dayCard(d, doneSet, curDay){
   const all = [...(d.selfcare||[]), ...(d.training||[])];
+  const done = doneSet && doneSet.has(d.day);
+  const isToday = curDay === d.day;
   return `
-    <div class="day-card ${d.isRest?'rest':''}" data-day="${d.day}">
-      <span class="day-badge">${d.isRest?'REST':'WORK'}</span>
+    <div class="day-card ${d.isRest?'rest':''} ${done?'done':''} ${isToday?'today':''}" data-day="${d.day}">
+      <span class="day-badge">${done ? '✓ DONE' : (d.isRest?'REST':'WORK')}</span>
+      ${isToday ? '<span class="day-today-tag">今日</span>' : ''}
       <div class="day-num">DAY ${String(d.day).padStart(2,'0')}</div>
       <div class="day-theme">${d.theme}</div>
       <ul class="day-list">

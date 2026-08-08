@@ -67,6 +67,28 @@ function clearAll(){
   localStorage.removeItem(SESSIONS_KEY);
 }
 
+// ---------- 30日プログラムの進捗（診断セッションごと・端末内） ----------
+const PROGRESS_KEY = 'pl_progress_v1';
+function _readProgressAll(){
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
+  catch { return {}; }
+}
+function getProgress(sessionId){
+  const p = _readProgressAll()[sessionId];
+  return (p && Array.isArray(p.done)) ? p : { done: [] };
+}
+function toggleDayDone(sessionId, day){
+  const all = _readProgressAll();
+  const p = (all[sessionId] && Array.isArray(all[sessionId].done)) ? all[sessionId] : { done: [] };
+  const i = p.done.indexOf(day);
+  if (i >= 0) p.done.splice(i, 1); else p.done.push(day);
+  p.done.sort((a, b) => a - b);
+  p.updatedAt = new Date().toISOString();
+  all[sessionId] = p;
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch {}
+  return p;
+}
+
 // ---------- 写真サムネ生成（縮小して容量節約） ----------
 // img: HTMLImageElement / ImageBitmap / Canvas。max長辺(px)。JPEG dataURL を返す
 function makeThumb(img, max = 360, quality = 0.62){
@@ -130,5 +152,6 @@ function importData(jsonText, merge = true){
 export {
   getProfile, setProfile, ensureProfile,
   getSessions, getSession, addSession, deleteSession, clearAll,
+  getProgress, toggleDayDone,
   makeThumb, exportData, downloadExport, importData,
 };

@@ -1301,3 +1301,26 @@ body{
 .ae-title{font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
 .ae-desc{font-size:13.5px; color:var(--ink-2); line-height:1.9; margin-bottom:14px}
 .ae-actions{display:flex; gap:12px; flex-wrap:wrap}
+
+/* ===== 30日プログラムの進捗（続きから・完了チェック） ===== */
+.today-actions{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:20px}
+.today-progress{font-size:13px; color:var(--ink-2); font-weight:700}
+.today-complete{
+  padding:34px 24px; text-align:center;
+  background:var(--pink-soft); border-radius:16px;
+  font-size:15px; line-height:2.1; color:var(--ink);
+  grid-column:1/-1;
+}
+.day-card{position:relative}
+.day-card.done{opacity:.55}
+.day-card.done .day-badge{background:var(--good); color:#2c5c3f}
+.day-card.today{border-color:var(--rose); box-shadow:0 0 0 2.5px var(--pink-2)}
+.day-today-tag{
+  position:absolute; top:10px; right:12px;
+  background:var(--rose); color:#fff;
+  font-size:10px; font-weight:700; padding:2px 9px; border-radius:999px;
+}
+.program-progress{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+.pp-bar{flex:1; height:9px; background:var(--pink-soft); border-radius:999px; overflow:hidden}
+.pp-bar i{display:block; height:100%; background:linear-gradient(90deg, var(--pink), var(--rose)); border-radius:999px; transition:width .4s}
+.pp-label{font-size:12.5px; color:var(--ink-2); font-weight:700; white-space:nowrap}
