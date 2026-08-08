@@ -1152,7 +1152,26 @@ function openSavedSession(id){
   renderAll();
   showSavedBanner(s);
   els.results.hidden = false;
-  els.results.scrollIntoView({ behavior:'smooth', block:'start' });
+  // 再訪者の目的は「今日のメニュー」。診断サマリーではなく今日の分へ直接着地する
+  // ※長距離移動のためsmoothではなく即時ジャンプ（確実に届き、画面が流れて酔うのも防ぐ）
+  const jumpToToday = () => {
+    const t = document.querySelector('.today-card') || els.results;
+    t.scrollIntoView({ behavior:'auto', block:'start' });
+  };
+  jumpToToday();
+  // フォント/画像読込でレイアウトが動いても確実に届くよう、着地を確認しながら最大5回補正
+  let _jumpTries = 0;
+  const settleJump = () => {
+    const t = document.querySelector('.today-card');
+    if (!t) return;
+    const top = t.getBoundingClientRect().top;
+    if (Math.abs(top) > 200 && _jumpTries < 5){
+      _jumpTries++;
+      t.scrollIntoView({ behavior:'auto', block:'start' });
+      setTimeout(settleJump, 350);
+    }
+  };
+  setTimeout(settleJump, 350);
 }
 
 // 保存プラン閲覧中である旨のバナー
@@ -1385,5 +1404,34 @@ document.addEventListener('keydown', e => {
   const latest = sessions[sessions.length - 1];
   box.hidden = false;
   btn.textContent = `前回のプランを見る（${fmtDateFull(latest.date)}）`;
+  btn.onclick = () => openSavedSession(latest.id);
+})();
+
+// 再訪者向け: ページ最上部の「おかえりなさい」カード（1タップで今日のメニューへ）
+(function initWelcomeBack(){
+  const box = document.getElementById('welcome-back');
+  const btn = document.getElementById('wb-open');
+  if (!box || !btn) return;
+  const sessions = Store.getSessions();
+  if (!sessions.length) return;   // 初見ユーザーには出さない
+  const latest = sessions[sessions.length - 1];
+  const done = Store.getProgress(latest.id).done || [];
+  let nextDay = null;
+  for (let d = 1; d <= 30; d++) if (!done.includes(d)) { nextDay = d; break; }
+
+  const nick = Store.getProfile()?.nickname;
+  const name = (nick && nick !== 'ゲスト') ? `${escapeHtml(nick)}さん、` : '';
+  const title = document.getElementById('wb-title');
+  const sub = document.getElementById('wb-sub');
+  if (nextDay == null){
+    title.textContent = `${name ? name.replace(/、$/, '') + '、' : ''}30日プログラム完走済みです 👑`;
+    sub.textContent = '写真でもう一度診断して、姿勢の変化を確かめてみましょう。';
+    btn.textContent = 'プランを見る';
+  } else {
+    title.innerHTML = `おかえりなさい、${name || ''}今日も続けましょう 🌸`;
+    sub.textContent = `次は DAY ${nextDay}（これまで ${done.length}/30日 完了）`;
+    btn.textContent = `今日のメニューを開く（DAY ${nextDay}）`;
+  }
+  box.hidden = false;
   btn.onclick = () => openSavedSession(latest.id);
 })();

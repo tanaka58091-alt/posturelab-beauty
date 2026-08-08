@@ -1324,3 +1324,18 @@ body{
 .pp-bar{flex:1; height:9px; background:var(--pink-soft); border-radius:999px; overflow:hidden}
 .pp-bar i{display:block; height:100%; background:linear-gradient(90deg, var(--pink), var(--rose)); border-radius:999px; transition:width .4s}
 .pp-label{font-size:12.5px; color:var(--ink-2); font-weight:700; white-space:nowrap}
+
+/* ===== 再訪者向け「おかえりなさい」カード（ページ最上部・1タップで続きへ） ===== */
+.welcome-back{
+  display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+  margin:0 0 34px; padding:20px 26px;
+  background:linear-gradient(135deg, #fff 0%, var(--pink-soft) 100%);
+  border:1.5px solid var(--pink-2); border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.wb-title{font-size:16px; font-weight:700; color:var(--ink)}
+.wb-sub{font-size:13px; color:var(--ink-2); font-weight:700; margin-top:2px}
+@media(max-width:640px){
+  .welcome-back{padding:16px 18px}
+  .welcome-back .btn-primary{width:100%; justify-content:center}
+}
