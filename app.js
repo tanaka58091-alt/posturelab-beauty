@@ -9,7 +9,7 @@ import {
 import { pickTodayMenu, build30DayProgram, ALL_EXERCISES } from './program.js';
 import { getKnowledgeFor } from './knowledge.js';
 import { COURSES, COURSE_ORDER, recommendCourse } from './courses.js';
-import { getPoolStats, setPainAvoidance } from './prescription-matrix.js';
+import { getPoolStats, setPainAvoidance, setFocusParts } from './prescription-matrix.js';
 import * as Store from './storage.js';
 
 // ===== DOM refs =====
@@ -83,24 +83,43 @@ const state = {
 
 // ===== Symptom → Problem mapping =====
 // 各症状を、対応する姿勢問題キーへマッピング。複数キーを持つ症状もある。
+// keys: 姿勢問題キー / focus: その悩み特有の重点(同じキーでも狙いを変える)
+//   bodyPart = 優先して当てたい部位(exercise.bodyPartと照合) / note = 診断文に足す一文
 const SYMPTOM_MAP = {
-  shoulderStiff:  { label:'肩こり',           keys:['forwardHead','roundedShoulders'] },
-  neckStiff:      { label:'首こり・頭痛',     keys:['forwardHead','thoracicKyphosis'] },
-  lowBackPain:    { label:'腰痛',             keys:['anteriorPelvicTilt','swayBack'] },
-  aptAware:       { label:'反り腰の自覚',     keys:['anteriorPelvicTilt'] },
-  rsAware:        { label:'巻き肩の自覚',     keys:['roundedShoulders'] },
-  kyphosisAware:  { label:'猫背の自覚',       keys:['thoracicKyphosis','roundedShoulders'] },
-  kneePain:       { label:'膝の痛み',         keys:['kneeValgus','ankleStiffness'] },
-  oxLeg:          { label:'O脚・X脚',         keys:['kneeValgus','kneeVarus'] },
-  oLeg:           { label:'O脚',               keys:['kneeVarus'] },
-  xLeg:           { label:'X脚',               keys:['kneeValgus'] },
-  scoliosisAware: { label:'側弯の自覚',         keys:['scoliosis','lateralAsymmetry'] },
-  shallowBreath:  { label:'呼吸が浅い',       keys:['roundedShoulders','thoracicKyphosis'] },
-  swelling:       { label:'浮腫み・むくみ',   keys:['ankleStiffness','posteriorPelvicTilt'] },
-  coldness:       { label:'冷え性',           keys:['posteriorPelvicTilt','swayBack'] },
-  fatigue:        { label:'疲れやすい',       keys:['thoracicKyphosis','swayBack'] },
-  hipImbalance:   { label:'左右の歪み',       keys:['lateralAsymmetry'] },
-  bellyOut:       { label:'下腹ぽっこり',     keys:['anteriorPelvicTilt','swayBack'] },
+  shoulderStiff:  { label:'肩こり',           keys:['forwardHead','roundedShoulders'],
+    focus:{ bodyPart:['neck','shoulder'], note:'肩まわりのこりをほぐす動きを多めに組みました。' } },
+  neckStiff:      { label:'首こり・頭痛',     keys:['forwardHead','thoracicKyphosis'],
+    focus:{ bodyPart:['neck'], note:'首まわりをゆるめる動きを最優先にしています。' } },
+  lowBackPain:    { label:'腰痛',             keys:['anteriorPelvicTilt','swayBack'],
+    focus:{ bodyPart:['hip','back','spine'], note:'腰の負担を減らすため、腰まわり・股関節をゆるめる動きを中心にしています。' } },
+  aptAware:       { label:'反り腰の自覚',     keys:['anteriorPelvicTilt'],
+    focus:{ bodyPart:['hip','core'], note:'骨盤の傾きを整える動きを中心にしています。' } },
+  rsAware:        { label:'巻き肩の自覚',     keys:['roundedShoulders'],
+    focus:{ bodyPart:['shoulder','chest'], note:'胸の前を開く動きを中心にしています。' } },
+  kyphosisAware:  { label:'猫背の自覚',       keys:['thoracicKyphosis','roundedShoulders'],
+    focus:{ bodyPart:['back','chest'], note:'背中を伸ばす動きと胸を開く動きを組み合わせています。' } },
+  kneePain:       { label:'膝の痛み',         keys:['kneeValgus','ankleStiffness'],
+    focus:{ bodyPart:['hip','foot','legs'], note:'ひざへの負担を避け、まわりの股関節・足首から整えます。' } },
+  oxLeg:          { label:'O脚・X脚',         keys:['kneeValgus','kneeVarus'],
+    focus:{ bodyPart:['hip','leg','glutes'], note:'脚のラインに関わる股関節まわりを中心にしています。' } },
+  oLeg:           { label:'O脚',               keys:['kneeVarus'],
+    focus:{ bodyPart:['hip','leg','glutes'], note:'内ももとお尻の横を使う動きを中心にしています。' } },
+  xLeg:           { label:'X脚',               keys:['kneeValgus'],
+    focus:{ bodyPart:['hip','leg','glutes'], note:'お尻の横を使う動きを中心にしています。' } },
+  scoliosisAware: { label:'側弯の自覚',         keys:['scoliosis','lateralAsymmetry'],
+    focus:{ bodyPart:['back','core'], note:'左右差に配慮し、体側と背中を整える動きを入れています。' } },
+  shallowBreath:  { label:'呼吸が浅い',       keys:['roundedShoulders','thoracicKyphosis'],
+    focus:{ bodyPart:['chest','breath','spine'], note:'呼吸がしやすいよう、胸郭を広げる動きと呼吸法を多めにしています。' } },
+  swelling:       { label:'浮腫み・むくみ',   keys:['ankleStiffness','posteriorPelvicTilt'],
+    focus:{ bodyPart:['foot','leg','legs'], note:'脚の巡りを促す足首・ふくらはぎの動きを中心にしています。' } },
+  coldness:       { label:'冷え性',           keys:['posteriorPelvicTilt','swayBack'],
+    focus:{ bodyPart:['leg','legs','glutes'], note:'体を温めるよう、大きな筋肉を動かす種目と呼吸を組み合わせています。' } },
+  fatigue:        { label:'疲れやすい',       keys:['thoracicKyphosis','swayBack'],
+    focus:{ bodyPart:['back','core','breath'], note:'疲れにくい姿勢づくりのため、背中の支えと呼吸を整えます。' } },
+  hipImbalance:   { label:'左右の歪み',       keys:['lateralAsymmetry'],
+    focus:{ bodyPart:['hip','core'], note:'左右差に配慮し、片側ずつ整える動きを入れています。' } },
+  bellyOut:       { label:'下腹ぽっこり',     keys:['anteriorPelvicTilt','swayBack'],
+    focus:{ bodyPart:['core','glutes'], note:'下腹の支えをつくるため、お腹まわりを使う動きを中心にしています。' } },
 };
 
 // 自由記入欄のキーワード → 姿勢問題キー（②お悩みをプログラムに反映）
@@ -252,6 +271,24 @@ function computePainFlags(){
   setPainAvoidance(flags);
   return flags;
 }
+// 選んだ悩みから「重点部位」と「診断に添える一文」を集約する
+// 同じ姿勢問題キーでも、腰痛の人と下腹ぽっこりの人で狙いを変えるための情報
+function computeFocus(){
+  const parts = [], notes = [], labels = [];
+  state.symptoms.forEach(sym => {
+    const def = SYMPTOM_MAP[sym];
+    if (!def || !def.focus) return;
+    labels.push(def.label);
+    (def.focus.bodyPart || []).forEach(b => { if (!parts.includes(b)) parts.push(b); });
+    if (def.focus.note && !notes.includes(def.focus.note)) notes.push(def.focus.note);
+  });
+  state.focusParts = parts;
+  state.focusNotes = notes;
+  state.focusLabels = labels;
+  setFocusParts(parts);
+  return { parts, notes, labels };
+}
+
 const PAIN_LABELS = { knee:'ひざ', lowBack:'腰' };
 function painLabelList(){
   const f = state.painFlags || {};
@@ -379,6 +416,8 @@ els.btnAnalyze.addEventListener('click', async () => {
     setLoader('問題点を抽出 → セルフケア・プログラムを構築中…');
     collectSymptoms();
     computePainFlags();   // 痛み配慮(禁忌)を処方に反映
+  computeFocus();       // 主訴の重点部位を処方に反映
+    computeFocus();       // 主訴の重点部位を処方に反映
     state.problems = detectProblems(state.resultSide, state.resultFront);
     // 症状から導かれた追加キーを問題リストにマージ(姿勢解析で未検出のものを補完)
     const symptomEntries = buildSymptomProblems();
@@ -753,7 +792,7 @@ function renderProblems(){
             <span>計測値: <strong>${p.metric}</strong></span>
             <span>重症度: <strong>${sevText}</strong></span>
           </div>
-          <div class="problem-desc">${p.description}</div>
+          <div class="problem-desc">${p.description}${p.fromSymptom && (state.focusNotes||[]).length ? ' <span class="focus-note">' + escapeHtml(state.focusNotes[0]) + '</span>' : ''}</div>
           <div class="tissue-list">
             <div class="tissue tight">
               <strong>🔴 短縮 / 過緊張</strong>
@@ -1146,6 +1185,8 @@ function saveCurrentSession(){
       symptoms: state.symptoms.slice(),
       symptomFree: state.symptomFree,
       painFlags: state.painFlags || { knee:false, lowBack:false },
+      focusParts: state.focusParts || [],
+      focusNotes: state.focusNotes || [],
       thumbSide: Store.makeThumb(state.imgSide),
       thumbFront: Store.makeThumb(state.imgFront),
     };
@@ -1220,6 +1261,9 @@ function openSavedSession(id){
   state.symptomFree = s.symptomFree || '';
   state.painFlags   = s.painFlags || { knee:false, lowBack:false };
   setPainAvoidance(state.painFlags);   // 保存プランでも痛み配慮を維持
+  state.focusParts = s.focusParts || [];
+  state.focusNotes = s.focusNotes || [];
+  setFocusParts(state.focusParts);     // 主訴の重点も維持
   const keys = state.problems.map(p => p.key);
   state.recommendation = recommendCourse(keys);
   state.selectedCourse = s.course || state.recommendation.top;
@@ -1288,6 +1332,7 @@ function runSimpleDiagnosis(){
   hideAnalyzeError();
   collectSymptoms();
   computePainFlags();   // 痛み配慮(禁忌)を処方に反映
+  computeFocus();       // 主訴の重点部位を処方に反映
   const entries = buildSymptomProblems();
   if (!entries.length){
     alert('お悩みを1つ以上選ぶか、自由記入欄にご記入ください。\n（簡易プランはお悩みをもとに作成します）');

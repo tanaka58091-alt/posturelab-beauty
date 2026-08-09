@@ -1365,3 +1365,9 @@ body{
   border-radius:12px;
   font-size:13.5px; color:var(--ink); line-height:1.9;
 }
+
+/* ===== 主訴に応じた重点の一文（診断文の一般論化を防ぐ） ===== */
+.focus-note{
+  display:inline-block; margin-top:6px;
+  color:var(--rose); font-weight:700;
+}

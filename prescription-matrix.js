@@ -134,6 +134,20 @@ const PAIN_EXCLUDE = {
   knee:    /スクワット|ランジ|踏み込|踏み出|空気イス|立ち座り|ステップ|踏み台|しゃがん|ひざ立ち|もも上げ/,
   lowBack: /上体起こし|起き上が|ロールアップ|レッグレイズ|両脚下ろし|下ろし上げ|Ｖ字|V字|ジャックナイフ|スーパーマン/,
 };
+// ===== 主訴フォーカス（同じ問題キーでも「何に困って来たか」で重点部位を変える）=====
+// 例: 腰痛の人は腰まわり/体幹、下腹ぽっこりの人はお腹まわり を優先して当てる。
+let FOCUS_PARTS = [];
+function setFocusParts(parts){
+  FOCUS_PARTS = Array.isArray(parts) ? parts.filter(Boolean) : [];
+}
+// 種目が主訴の重点部位に合致するか（0=最優先, 1=次点, 99=該当なし）
+function focusRank(ex){
+  if (!FOCUS_PARTS.length) return 99;
+  const bp = String(ex.bodyPart || '').toLowerCase();
+  const i = FOCUS_PARTS.findIndex(p => bp === String(p).toLowerCase());
+  return i < 0 ? 99 : i;
+}
+
 function passesPainRules(ex){
   const name = `${ex.displayName || ''} ${ex.name || ''}`;
   if (PAIN_AVOID.knee && PAIN_EXCLUDE.knee.test(name)) return false;
@@ -214,6 +228,7 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
     training: Array.from(trainSet.values()),
     targeted, // 問題直結種目のidセット(オーダーメイドの核)
     rank,     // id → 引き込んだ問題の順位(0=主訴)。補充分は未登録
+    focusRank,// 関数: 種目→主訴フォーカス順位(0が最優先/99=該当なし)
   };
 }
 
@@ -242,6 +257,8 @@ function getPoolStats(problemKeys, course='mixed'){
 export {
   ALL_EXERCISES,
   setPainAvoidance,
+  setFocusParts,
+  focusRank,
   ALL_EXERCISES_LIST,
   buildPrescriptionPool,
   buildAnchors,
