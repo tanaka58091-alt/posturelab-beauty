@@ -800,20 +800,32 @@ function renderToday(){
     : `${d.theme}｜セルフケア2種＋トレーニング2種（約10〜15分）`;
 
   const all = [...(d.selfcare||[]), ...(d.training||[])];
+  state.todayList = all;   // ガイド付き実行モードで使う
   els.todayGrid.innerHTML = all.map(ex => exerciseCard(ex)).join('');
   bindExerciseCards(els.todayGrid);
 
   if (act){
     act.innerHTML = `
-      <button class="btn-primary" id="btn-day-done" type="button">✓ DAY ${cur} のメニューを完了にする</button>
+      <button class="btn-primary" id="btn-day-start" type="button">▶ 順番に始める（${all.length}種・${d.isRest?'ゆったり':'約10〜15分'}）</button>
+      <button class="btn-ghost" id="btn-day-done" type="button">✓ 完了にする</button>
       <span class="today-progress">これまで ${doneArr.length}/30日 完了</span>`;
-    document.getElementById('btn-day-done').onclick = () => {
-      Store.toggleDayDone(progressKey(), cur);
-      renderToday();
-      renderProgram(state.currentPhase);
-      showDoneToast(cur);
+    document.getElementById('btn-day-start').onclick = () => {
+      if (state.todayList && state.todayList.length){
+        openExerciseModal(state.todayList[0], { index: 0, list: state.todayList });
+      }
     };
+    document.getElementById('btn-day-done').onclick = completeCurrentDay;
   }
+}
+
+// 今日の分を完了として記録（完了ボタン／ガイド最終画面の両方から呼ばれる）
+function completeCurrentDay(){
+  const cur = currentDayNumber();
+  if (cur == null) return;
+  Store.toggleDayDone(progressKey(), cur);
+  renderToday();
+  renderProgram(state.currentPhase);
+  showDoneToast(cur);
 }
 
 // 完了時の祝福トースト
@@ -955,7 +967,7 @@ const PROBLEM_LABELS = {
   general:'全身バランス',
 };
 
-function openExerciseModal(ex){
+function openExerciseModal(ex, nav){
   if (!ex) return;
   const rawTargets = ex.targets || ex.targetProblems || [];
   const targets = rawTargets.map(t => PROBLEM_LABELS[t] || t);
@@ -997,7 +1009,23 @@ function openExerciseModal(ex){
       <h4>💡 なぜ効くのか</h4>
       <p>${ex.why || ''}</p>
     </div>
+    ${nav ? `
+    <div class="guided-nav">
+      <button class="btn-ghost" id="gn-prev" type="button" ${nav.index === 0 ? 'disabled' : ''}>← 前へ</button>
+      <span class="gn-pos">${nav.index + 1} / ${nav.list.length}</span>
+      ${nav.index < nav.list.length - 1
+        ? `<button class="btn-primary" id="gn-next" type="button">次のエクササイズ →</button>`
+        : `<button class="btn-primary" id="gn-finish" type="button">✓ 今日の分を完了する</button>`}
+    </div>` : ''}
   `;
+  if (nav){
+    const prev = document.getElementById('gn-prev');
+    const next = document.getElementById('gn-next');
+    const fin  = document.getElementById('gn-finish');
+    if (prev && nav.index > 0) prev.onclick = () => openExerciseModal(nav.list[nav.index - 1], { index: nav.index - 1, list: nav.list });
+    if (next) next.onclick = () => openExerciseModal(nav.list[nav.index + 1], { index: nav.index + 1, list: nav.list });
+    if (fin)  fin.onclick  = () => { closeModal(); completeCurrentDay(); };
+  }
   showModal();
 }
 
@@ -1020,6 +1048,10 @@ function openDayModal(d){
 function showModal(){
   els.modal.hidden = false;
   document.body.style.overflow = 'hidden';
+  // 「次へ」でエクササイズを切り替えた時も必ず先頭から読めるように
+  els.modal.scrollTop = 0;
+  const panel = els.modal.querySelector('.modal-panel');
+  if (panel) panel.scrollTop = 0;
 }
 function closeModal(){
   els.modal.hidden = true;

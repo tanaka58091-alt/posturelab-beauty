@@ -1339,3 +1339,21 @@ body{
   .welcome-back{padding:16px 18px}
   .welcome-back .btn-primary{width:100%; justify-content:center}
 }
+
+/* ===== ガイド付き実行モード（順番に始める→次へ→完了） ===== */
+.guided-nav{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  margin-top:26px; padding-top:20px;
+  border-top:1.5px dashed var(--pink-2);
+  position:sticky; bottom:-1px; background:var(--surface);
+  padding-bottom:6px;
+}
+.gn-pos{
+  font-family:var(--font-en); font-size:14px; font-weight:700; color:var(--rose);
+  letter-spacing:.06em; white-space:nowrap;
+}
+.guided-nav .btn-ghost[disabled]{opacity:.35; pointer-events:none}
+@media(max-width:640px){
+  .guided-nav{flex-wrap:wrap}
+  .guided-nav .btn-primary{flex:1; justify-content:center}
+}
