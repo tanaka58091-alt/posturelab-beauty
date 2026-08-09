@@ -131,15 +131,20 @@ function parseFreeTextKeys(text){
 }
 
 // 症状(チェック)＋自由記入 から追加問題キーを作る
+// 複数の悩みが同じ問題を指すほど「票」が集まり、優先順位が上がる
 function buildSymptomProblems(){
-  const out = [];
-  const added = new Set();
-  const push = k => { if (!added.has(k)){ added.add(k); out.push(k); } };
+  const votes = new Map();   // key → 票数
+  const order = [];          // 初出順
+  const push = k => {
+    if (!votes.has(k)){ votes.set(k, 0); order.push(k); }
+    votes.set(k, votes.get(k) + 1);
+  };
   state.symptoms.forEach(sym => {
     const def = SYMPTOM_MAP[sym]; if (def) def.keys.forEach(push);
   });
   parseFreeTextKeys(state.symptomFree).forEach(push);
-  return out; // problem key array
+  order.sort((a, b) => votes.get(b) - votes.get(a));  // 票数降順(同数は初出順)
+  return order.map(k => ({ key: k, votes: votes.get(k) }));
 }
 
 // 症状起源の問題エントリ(姿勢解析が反応しなかったが本人の自覚あり)
@@ -157,17 +162,27 @@ const SYMPTOM_PROBLEM_META = {
   scoliosis:          { title:'側弯傾向（Cカーブ）', desc:'お悩みから推定。背骨が左右にカーブする傾向。左右の筋バランス崩れが原因です。', tissues:{tight:['凸側 腰方形筋','凸側 広背筋','凸側 腹斜筋'], weak:['凹側 腰方形筋','凹側 腹斜筋','凹側 中臀筋']} },
 };
 
-function makeSymptomProblem(key){
+function makeSymptomProblem(key, votes = 1){
   const meta = SYMPTOM_PROBLEM_META[key] || SYMPTOM_PROBLEM_META.forwardHead;
   return {
     key,
-    severity:'mid',
+    // 複数の悩みが同じ問題を指すほど優先度を上げる（3票以上=重）
+    severity: votes >= 3 ? 'high' : 'mid',
     title: meta.title,
     description: meta.desc,
     tissues: meta.tissues,
     metric: 'お悩みベース',
     fromSymptom: true,
   };
+}
+
+// 問題を重症度順（重→中→軽）に並べ替える。処方の優先順位の源泉。
+const SEVERITY_RANK = { high: 0, mid: 1, low: 2 };
+function sortProblemsBySeverity(problems){
+  return problems
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => (SEVERITY_RANK[a.p.severity] ?? 1) - (SEVERITY_RANK[b.p.severity] ?? 1) || a.i - b.i)
+    .map(x => x.p);
 }
 
 // ===================================================================
@@ -348,17 +363,19 @@ els.btnAnalyze.addEventListener('click', async () => {
     collectSymptoms();
     state.problems = detectProblems(state.resultSide, state.resultFront);
     // 症状から導かれた追加キーを問題リストにマージ(姿勢解析で未検出のものを補完)
-    const symptomKeys = buildSymptomProblems();
+    const symptomEntries = buildSymptomProblems();
     const existingKeys = new Set(state.problems.map(p => p.key));
-    symptomKeys.forEach(k => {
-      if (existingKeys.has(k)) return;
-      // 症状起源の問題は severity=mid として追加
-      state.problems.push(makeSymptomProblem(k));
+    symptomEntries.forEach(e => {
+      if (existingKeys.has(e.key)) return;
+      // 症状起源の問題を票数つきで追加(3票以上=重)
+      state.problems.push(makeSymptomProblem(e.key, e.votes));
     });
     // 「general」のみだったケースでは general を取り除く(症状ベースの処方を優先)
     if (state.problems.length > 1) {
       state.problems = state.problems.filter(p => p.key !== 'general');
     }
+    // 重症度順(重→中→軽)に並べ替え = 処方・表示とも重い問題を最優先に
+    state.problems = sortProblemsBySeverity(state.problems);
     // コース推奨を計算
     const probKeys = state.problems.map(p=>p.key);
     state.recommendation = recommendCourse(probKeys);
@@ -1090,7 +1107,7 @@ function saveCurrentSession(){
       grade: state.lastGrade,
       typeName: state.lastType,
       course: state.selectedCourse,
-      problems: state.problems.map(p => ({ key:p.key, title:p.title || PROBLEM_LABELS[p.key] || p.key })),
+      problems: state.problems.map(p => ({ key:p.key, title:p.title || PROBLEM_LABELS[p.key] || p.key, severity:p.severity })),
       metrics,
       symptoms: state.symptoms.slice(),
       symptomFree: state.symptomFree,
@@ -1233,12 +1250,12 @@ function hideSavedBanner(){
 function runSimpleDiagnosis(){
   hideAnalyzeError();
   collectSymptoms();
-  const keys = buildSymptomProblems();
-  if (!keys.length){
+  const entries = buildSymptomProblems();
+  if (!entries.length){
     alert('お悩みを1つ以上選ぶか、自由記入欄にご記入ください。\n（簡易プランはお悩みをもとに作成します）');
     return;
   }
-  state.problems = keys.map(makeSymptomProblem);
+  state.problems = sortProblemsBySeverity(entries.map(e => makeSymptomProblem(e.key, e.votes)));
   state.resultSide = null; state.resultFront = null;
   state.imgSide = null; state.imgFront = null;
   state.savedMetrics = null; state.savedThumbs = null;

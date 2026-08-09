@@ -149,10 +149,12 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
 
   // 優先順位: 最初の問題キーから順に追加(順序保持のため Map)
   // ここで入る種目 = ユーザーの姿勢問題に直結する「targeted(オーダーメイド)」種目。
-  problemKeys.forEach(k => {
+  // rank = その種目を最初に引き込んだ問題の順位(0=主訴)。処方の優先度に使う。
+  const rank = new Map();
+  problemKeys.forEach((k, idx) => {
     const p = buildPoolForProblem(k, course);
-    p.selfcare.forEach(ex => { if (!selfSet.has(ex.id)) selfSet.set(ex.id, ex); });
-    p.training.forEach(ex => { if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex); });
+    p.selfcare.forEach(ex => { if (!selfSet.has(ex.id)){ selfSet.set(ex.id, ex); rank.set(ex.id, idx); } });
+    p.training.forEach(ex => { if (!trainSet.has(ex.id)){ trainSet.set(ex.id, ex); rank.set(ex.id, idx); } });
   });
   // この時点のidが「問題直結(targeted)」。以降の補充は「変化用(variety)」として区別する。
   const targeted = new Set([...selfSet.keys(), ...trainSet.keys()]);
@@ -192,6 +194,7 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
     selfcare: Array.from(selfSet.values()),
     training: Array.from(trainSet.values()),
     targeted, // 問題直結種目のidセット(オーダーメイドの核)
+    rank,     // id → 引き込んだ問題の順位(0=主訴)。補充分は未登録
   };
 }
 

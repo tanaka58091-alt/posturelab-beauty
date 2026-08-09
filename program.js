@@ -12,17 +12,21 @@ import {
   buildAnchors,
 } from './prescription-matrix.js';
 
-// ----- 内部: 最少使用の1件を返す（除外・アンカー優先） -----
-function pickOne(exList, usage, anchors, excludeIds){
+// ----- 内部: 最少使用の1件を返す（除外・アンカー優先・主訴rank優先） -----
+function pickOne(exList, usage, anchors, excludeIds, rank){
   const score = (ex) => {
     const raw = usage[ex.id] || 0;
     return anchors && anchors.has(ex.id) ? raw * 0.5 : raw;
   };
+  const rk = (ex) => (rank && rank.has(ex.id)) ? rank.get(ex.id) : 99;
   const cand = exList
     .filter(ex => !excludeIds.includes(ex.id))
     .sort((a, b) => {
       const sa = score(a), sb = score(b);
       if (sa !== sb) return sa - sb;
+      // 使用回数が同じなら、主訴(順位の高い問題)の種目を優先
+      const ra = rk(a), rb = rk(b);
+      if (ra !== rb) return ra - rb;
       const aa = anchors && anchors.has(a.id) ? 0 : 1;
       const ab = anchors && anchors.has(b.id) ? 0 : 1;
       return aa - ab;
@@ -33,7 +37,7 @@ function pickOne(exList, usage, anchors, excludeIds){
 // ----- オーダーメイド＋変化の両立ピック -----
 // count件のうち、可能な限り「問題直結(targeted)」を最低 wantTargeted 件含め、
 // 残りは「変化用(variety)」から最少使用で選ぶ。どちらも足りなければ他方で埋める。
-function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantTargeted){
+function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantTargeted, rank){
   const picked = [];
   const exclude = [...excludeIds];
   const tList = exList.filter(ex => targeted.has(ex.id));
@@ -41,19 +45,19 @@ function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantT
 
   // ① 問題直結を wantTargeted 件
   for (let i = 0; i < wantTargeted && picked.length < count; i++){
-    const ex = pickOne(tList, usage, anchors, exclude);
+    const ex = pickOne(tList, usage, anchors, exclude, rank);
     if (!ex) break;
     picked.push(ex); exclude.push(ex.id);
   }
   // ② 残りは変化用から
   while (picked.length < count){
-    const ex = pickOne(vList, usage, anchors, exclude);
+    const ex = pickOne(vList, usage, anchors, exclude, rank);
     if (!ex) break;
     picked.push(ex); exclude.push(ex.id);
   }
   // ③ まだ足りなければ全体(targeted含む)から
   while (picked.length < count){
-    const ex = pickOne(exList, usage, anchors, exclude);
+    const ex = pickOne(exList, usage, anchors, exclude, rank);
     if (!ex) break;
     picked.push(ex); exclude.push(ex.id);
   }
@@ -72,6 +76,7 @@ function build30DayProgram(problemKeys, course='mixed'){
   const pool = buildPrescriptionPool(problemKeys, course);
   const anchors = buildAnchors(problemKeys, course);
   const targeted = pool.targeted || new Set();
+  const rank = pool.rank || new Map();
   const sList = pool.selfcare;
   const tList = pool.training;
 
@@ -96,12 +101,12 @@ function build30DayProgram(problemKeys, course='mixed'){
 
     let selfcare, training;
     if (isRest) {
-      selfcare = pickBalanced(sList, targeted, sUsage, 2, anchors, prevIds, sHasTargeted ? 1 : 0);
+      selfcare = pickBalanced(sList, targeted, sUsage, 2, anchors, prevIds, sHasTargeted ? 1 : 0, rank);
       training = [];
     } else {
-      selfcare = pickBalanced(sList, targeted, sUsage, 2, anchors, prevIds, sHasTargeted ? 1 : 0);
+      selfcare = pickBalanced(sList, targeted, sUsage, 2, anchors, prevIds, sHasTargeted ? 1 : 0, rank);
       const sameDayIds = selfcare.map(e => e.id);
-      training = pickBalanced(tList, targeted, tUsage, 2, anchors, [...prevIds, ...sameDayIds], tHasTargeted ? 1 : 0);
+      training = pickBalanced(tList, targeted, tUsage, 2, anchors, [...prevIds, ...sameDayIds], tHasTargeted ? 1 : 0, rank);
     }
 
     selfcare.forEach(ex => { sUsage[ex.id] = (sUsage[ex.id]||0) + 1; });
