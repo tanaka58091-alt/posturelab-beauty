@@ -9,7 +9,7 @@ import {
 import { pickTodayMenu, build30DayProgram, ALL_EXERCISES } from './program.js';
 import { getKnowledgeFor } from './knowledge.js';
 import { COURSES, COURSE_ORDER, recommendCourse } from './courses.js';
-import { getPoolStats } from './prescription-matrix.js';
+import { getPoolStats, setPainAvoidance } from './prescription-matrix.js';
 import * as Store from './storage.js';
 
 // ===== DOM refs =====
@@ -241,6 +241,23 @@ function collectSymptoms(){
   state.symptomFree = (els.symptomFree.value || '').trim();
 }
 
+// 申告された痛み部位を検出（チェック＋自由記述）。処方の禁忌フィルタに使う。
+function computePainFlags(){
+  const t = state.symptomFree || '';
+  const flags = {
+    knee:    state.symptoms.includes('kneePain')    || /(ひざ|膝|ヒザ).{0,8}(痛|いた)/.test(t),
+    lowBack: state.symptoms.includes('lowBackPain') || /(腰|こし).{0,8}(痛|いた)/.test(t) || /ぎっくり/.test(t),
+  };
+  state.painFlags = flags;
+  setPainAvoidance(flags);
+  return flags;
+}
+const PAIN_LABELS = { knee:'ひざ', lowBack:'腰' };
+function painLabelList(){
+  const f = state.painFlags || {};
+  return Object.keys(PAIN_LABELS).filter(k => f[k]).map(k => PAIN_LABELS[k]);
+}
+
 // ===================================================================
 // MEDIAPIPE POSE LANDMARKER
 // ===================================================================
@@ -361,6 +378,7 @@ els.btnAnalyze.addEventListener('click', async () => {
 
     setLoader('問題点を抽出 → セルフケア・プログラムを構築中…');
     collectSymptoms();
+    computePainFlags();   // 痛み配慮(禁忌)を処方に反映
     state.problems = detectProblems(state.resultSide, state.resultFront);
     // 症状から導かれた追加キーを問題リストにマージ(姿勢解析で未検出のものを補完)
     const symptomEntries = buildSymptomProblems();
@@ -812,9 +830,13 @@ function renderToday(){
 
   const d = state.program.find(x => x.day === cur);
   if (head) head.innerHTML = `今日のあなた専用メニュー — DAY ${String(cur).padStart(2,'0')} <span class="head-deco">🎀</span>`;
-  if (sub)  sub.textContent = d.isRest
-    ? `${d.theme}｜今日は休息日。やさしいセルフケアだけでOKです`
-    : `${d.theme}｜セルフケア2種＋トレーニング2種（約10〜15分）`;
+  if (sub){
+    sub.textContent = d.isRest
+      ? `${d.theme}｜今日は休息日。やさしいセルフケアだけでOKです`
+      : `${d.theme}｜セルフケア2種＋トレーニング2種（約10〜15分）`;
+    const care = painLabelList();
+    if (care.length) sub.textContent += `｜🛡 ${care.join('・')}に配慮した内容です`;
+  }
 
   const all = [...(d.selfcare||[]), ...(d.training||[])];
   state.todayList = all;   // ガイド付き実行モードで使う
@@ -984,6 +1006,17 @@ const PROBLEM_LABELS = {
   general:'全身バランス',
 };
 
+// 痛み申告部位に触れる種目には、実行前に注意を出す
+function painCautionHTML(ex){
+  const f = state.painFlags || {};
+  const txt = [ex.displayName, ex.name, ...(ex.how || [])].join(' ');
+  const parts = [];
+  if (f.knee && /ひざ|膝/.test(txt)) parts.push('ひざ');
+  if (f.lowBack && /腰/.test(txt)) parts.push('腰');
+  if (!parts.length) return '';
+  return `<div class="pain-caution">⚠ <strong>${parts.join('・')}に痛みがある方へ</strong>：痛みを感じたら、その場で中止してください。無理は禁物です。${ex.easyOption ? 'つらい時は下の「きつい場合」の簡単版から始めましょう。' : ''}</div>`;
+}
+
 function openExerciseModal(ex, nav){
   if (!ex) return;
   const rawTargets = ex.targets || ex.targetProblems || [];
@@ -1006,6 +1039,7 @@ function openExerciseModal(ex, nav){
         <div class="ex-course-tags">${courseTags}</div>
       </div>
     </div>
+    ${painCautionHTML(ex)}
     <div class="modal-section how-section">
       <h4>📋 やり方 — この手順どおりに動かしてください</h4>
       <ol class="how-steps">${(ex.how||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
@@ -1111,6 +1145,7 @@ function saveCurrentSession(){
       metrics,
       symptoms: state.symptoms.slice(),
       symptomFree: state.symptomFree,
+      painFlags: state.painFlags || { knee:false, lowBack:false },
       thumbSide: Store.makeThumb(state.imgSide),
       thumbFront: Store.makeThumb(state.imgFront),
     };
@@ -1183,6 +1218,8 @@ function openSavedSession(id){
 
   state.symptoms    = s.symptoms || [];
   state.symptomFree = s.symptomFree || '';
+  state.painFlags   = s.painFlags || { knee:false, lowBack:false };
+  setPainAvoidance(state.painFlags);   // 保存プランでも痛み配慮を維持
   const keys = state.problems.map(p => p.key);
   state.recommendation = recommendCourse(keys);
   state.selectedCourse = s.course || state.recommendation.top;
@@ -1250,6 +1287,7 @@ function hideSavedBanner(){
 function runSimpleDiagnosis(){
   hideAnalyzeError();
   collectSymptoms();
+  computePainFlags();   // 痛み配慮(禁忌)を処方に反映
   const entries = buildSymptomProblems();
   if (!entries.length){
     alert('お悩みを1つ以上選ぶか、自由記入欄にご記入ください。\n（簡易プランはお悩みをもとに作成します）');

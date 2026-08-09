@@ -122,6 +122,25 @@ function isSeniorSafe(ex){
   return true;
 }
 
+// ===== 痛み配慮（禁忌）フィルタ =====
+// ユーザーが申告した痛み部位に強い負荷がかかる種目を処方から外す。
+// フラグは診断のたびに app.js が setPainAvoidance() で設定する（既定は全てfalse=挙動不変）。
+let PAIN_AVOID = { knee: false, lowBack: false };
+function setPainAvoidance(flags){
+  PAIN_AVOID = { knee: !!(flags && flags.knee), lowBack: !!(flags && flags.lowBack) };
+}
+// 部位ごとの高負荷種目（表示名/正式名で判定）
+const PAIN_EXCLUDE = {
+  knee:    /スクワット|ランジ|踏み込|踏み出|空気イス|立ち座り|ステップ|踏み台|しゃがん|ひざ立ち|もも上げ/,
+  lowBack: /上体起こし|起き上が|ロールアップ|レッグレイズ|両脚下ろし|下ろし上げ|Ｖ字|V字|ジャックナイフ|スーパーマン/,
+};
+function passesPainRules(ex){
+  const name = `${ex.displayName || ''} ${ex.name || ''}`;
+  if (PAIN_AVOID.knee && PAIN_EXCLUDE.knee.test(name)) return false;
+  if (PAIN_AVOID.lowBack && PAIN_EXCLUDE.lowBack.test(name)) return false;
+  return true;
+}
+
 // ===== 問題 × コース のフィルタリング =====
 // course: 'seitai' | 'personal' | 'yoga' | 'pilates' | 'mixed'
 // 'mixed' は全コース許可
@@ -135,7 +154,7 @@ function buildPoolForProblem(problemKey, course){
   const matches = ALL_EXERCISES_LIST.filter(ex =>
     ex.targetProblems && ex.targetProblems.includes(problemKey)
   );
-  const filtered = filterByCourse(matches, course).filter(isSeniorSafe);
+  const filtered = filterByCourse(matches, course).filter(isSeniorSafe).filter(passesPainRules);
   return {
     selfcare: filtered.filter(isSelfcare),
     training: filtered.filter(isTraining),
@@ -175,7 +194,7 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
   // ② それでも足りなければ、コース全体の安全な種目で目標数まで補充
   if (selfSet.size < MIN_SELF) {
     const fallback = filterByCourse(ALL_EXERCISES_LIST, course)
-      .filter(ex => isSelfcare(ex) && ex.intensity <= 2 && isSeniorSafe(ex));
+      .filter(ex => isSelfcare(ex) && ex.intensity <= 2 && isSeniorSafe(ex) && passesPainRules(ex));
     for (const ex of fallback) {
       if (selfSet.size >= MIN_SELF) break;
       if (!selfSet.has(ex.id)) selfSet.set(ex.id, ex);
@@ -183,7 +202,7 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
   }
   if (trainSet.size < MIN_TRAIN) {
     const fallback = filterByCourse(ALL_EXERCISES_LIST, course)
-      .filter(ex => isTraining(ex) && isSeniorSafe(ex));
+      .filter(ex => isTraining(ex) && isSeniorSafe(ex) && passesPainRules(ex));
     for (const ex of fallback) {
       if (trainSet.size >= MIN_TRAIN) break;
       if (!trainSet.has(ex.id)) trainSet.set(ex.id, ex);
@@ -222,6 +241,7 @@ function getPoolStats(problemKeys, course='mixed'){
 
 export {
   ALL_EXERCISES,
+  setPainAvoidance,
   ALL_EXERCISES_LIST,
   buildPrescriptionPool,
   buildAnchors,
