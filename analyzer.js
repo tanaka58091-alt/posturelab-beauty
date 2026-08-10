@@ -95,7 +95,9 @@ function analyzeSide(lms){
   // 横向き写真で「骨盤が前傾」=大腿骨が後方に流れる傾向→thighTiltが90から外れる方向で判定
   const pelvicTilt = Math.abs(90 - Math.abs(thighTilt)); // 0=完全垂直
   // 骨盤前傾 vs 後傾の判定: 骨盤が膝より前にあるか後ろにあるか
-  const pelvicHorizDiff = facing==='left' ? (hip.x - knee.x) : (knee.x - hip.x);
+  // facing==='left' は被写体が画面の左を向いている＝「前」は x が小さい方向。
+  // （旧実装は両方の分岐で符号が逆で、前傾と後傾が入れ替わって表示されていた）
+  const pelvicHorizDiff = facing==='left' ? (knee.x - hip.x) : (hip.x - knee.x);
   const pelvicForward = pelvicHorizDiff > 0; // hip が前
 
   // === 4. Knee Position
@@ -105,7 +107,10 @@ function analyzeSide(lms){
   // === 5. Sway Back 判定
   // 骨盤が肩より前にシフト + 膝が伸展ロック
   const pelvisShiftFwd = facing==='left' ? (sh.x - hip.x) : (hip.x - sh.x);
-  const swayBackScore = (-pelvisShiftFwd / trunkLen) + (kneeFlex < 5 ? 0.1 : 0);
+  // pelvisShiftFwd は「骨盤が肩より前」でプラス。スウェイバックはまさにその状態なので、そのまま加点する。
+  // （旧実装は符号が逆で、まっすぐ立っている人が判定され、本当のスウェイバックが見逃されていた）
+  // 膝の反張はスウェイバックに伴いやすいが、それ単独で判定が出ないよう検出閾値(0.05)未満の加点に留める。
+  const swayBackScore = (pelvisShiftFwd / trunkLen) + (kneeFlex < -2 ? 0.04 : 0);
 
   // === 6. Plumb Line (理想垂直線) からの逸脱
   // 理想: 耳-肩-大転子-膝-外果が一直線
@@ -165,10 +170,19 @@ function analyzeFront(lms){
   // 各側ごとに hip→knee と knee→ankle のなす角度
   const lKneeAxis = angle3(lHip, lKnee, lAnk);
   const rKneeAxis = angle3(rHip, rKnee, rAnk);
-  // Knee-in 検出: 膝が両股関節中央に近づいているか
+  // Knee-in 検出: 「股関節と足首を結んだ線」から膝がどれだけ内側にずれているか。
+  // 旧実装は体の中心からの距離を測っていたため、まっすぐ立っているだけで 0.35（閾値0.05の7倍）になり、
+  // しかも膝が内に入るほど値が小さくなる＝X脚とO脚が逆に判定されていた。
   const midHip = mid(lHip, rHip);
-  const lKneeIn = (midHip.x - lKnee.x) / shoulderWidth; // 大きいほど内側に入っている
-  const rKneeIn = (rKnee.x - midHip.x) / shoulderWidth;
+  const kneeInward = (hip, knee, ankle) => {
+    const span = (ankle.y - hip.y) || 1e-6;
+    const t = (knee.y - hip.y) / span;
+    const lineX = hip.x + (ankle.x - hip.x) * t;        // 膝が本来あるべき位置
+    const inward = Math.sign(midHip.x - hip.x) || 1;     // 体の中心へ向かう向き（左右反転画像でも成立）
+    return inward * (knee.x - lineX) / (shoulderWidth || 1e-6);
+  };
+  const lKneeIn = kneeInward(lHip, lKnee, lAnk);         // プラス=内側に入っている
+  const rKneeIn = kneeInward(rHip, rKnee, rAnk);
 
   // === 全体の左右非対称スコア
   const lateralScore =
@@ -217,11 +231,16 @@ function detectProblems(sideRes, frontRes){
   }
 
   // 4. Pelvic Tilt
-  if (m.pelvicForward && m.pelvicTiltAngle > 5){
-    // 前傾の可能性
-    problems.push(makeProblem('anteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤前傾（反り腰）', m));
-  } else if (!m.pelvicForward && m.pelvicTiltAngle > 5){
-    problems.push(makeProblem('posteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤後傾', m));
+  // スウェイバック（骨盤ごと前へ押し出して立つ）のときは、骨盤が膝より前にあるのは
+  // 「前傾しているから」ではなく「骨盤ごと平行移動しているから」。この立ち方では
+  // 写真から前傾／後傾を言い分けられないので、反り腰と断定しない（逆の処方を避ける）。
+  const isSway = m.swayBackScore != null && m.swayBackScore > 0.05;
+  if (!isSway && m.pelvicTiltAngle > 5){
+    if (m.pelvicForward){
+      problems.push(makeProblem('anteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤前傾（反り腰）', m));
+    } else {
+      problems.push(makeProblem('posteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤後傾', m));
+    }
   }
 
   // 5. Sway Back
