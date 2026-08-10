@@ -1551,3 +1551,31 @@ body{
 @media (max-width:640px){
   .cp-actions .btn-primary{ width:100% }
 }
+
+/* ===== 達成バッジ・最低実行ライン・完走カード ===== */
+.badge-strip{ width:100%; margin-top:10px }
+.badges{ display:flex; gap:6px; flex-wrap:wrap }
+.badge{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  min-width:52px; padding:7px 4px; border-radius:11px;
+  background:#F7F4F5; border:1px solid var(--line);
+  font-size:17px; line-height:1; opacity:.5;
+}
+.badge.got{ background:#FFF3F7; border-color:#FFD2E0; opacity:1 }
+.badge i{ font-style:normal; font-size:10.5px; font-weight:700; color:var(--muted) }
+.badge.got i{ color:var(--rose) }
+.badge-hint{ display:block; margin-top:7px; font-size:12px; color:var(--muted) }
+#btn-day-min{ font-size:13px }
+.complete-card{
+  grid-column:1 / -1;
+  background:linear-gradient(150deg,#FFF6F9,#FFFBF5);
+  border:1.5px solid #FFD9E4; border-radius:20px;
+  padding:26px 20px; text-align:center;
+}
+.cc-crown{ font-size:44px; line-height:1 }
+.cc-title{ font-size:20px; font-weight:800; color:var(--ink); margin:8px 0 16px }
+.cc-stats{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin-bottom:14px }
+.cc-stats > div{ display:flex; flex-direction:column; align-items:center }
+.cc-stats strong{ font-family:var(--font-en); font-size:28px; font-weight:800; color:var(--rose); line-height:1.1 }
+.cc-stats span{ font-size:11.5px; color:var(--muted); margin-top:3px }
+.cc-lead{ font-size:13.5px; color:#5B5257; line-height:1.75; margin:0 0 14px }

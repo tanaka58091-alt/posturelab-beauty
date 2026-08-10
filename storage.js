@@ -86,9 +86,12 @@ function _readProgressAll(){
 }
 function getProgress(sessionId){
   const p = _readProgressAll()[sessionId];
-  if (!p || !Array.isArray(p.done)) return { done: [], logs: {}, adapt: null };
+  if (!p || !Array.isArray(p.done)) return { done: [], logs: {}, adapt: null, round: 1, history: [] };
   // 旧データ(doneだけ)も壊さずに読めるようにする
-  return { done: p.done, logs: p.logs || {}, adapt: p.adapt || null, updatedAt: p.updatedAt };
+  return {
+    done: p.done, logs: p.logs || {}, adapt: p.adapt || null,
+    round: p.round || 1, history: p.history || [], updatedAt: p.updatedAt,
+  };
 }
 function _writeProgress(sessionId, p){
   const all = _readProgressAll();
@@ -120,6 +123,24 @@ function logDay(sessionId, day, status, feel){
   if (advanced && i < 0) p.done.push(day);
   if (!advanced && i >= 0) p.done.splice(i, 1);
   p.done.sort((a, b) => a - b);
+  return _writeProgress(sessionId, p);
+}
+// 次の30日へ。前回の記録は history に要約して残し、done/logs だけリセットする
+function startRound(sessionId, opts){
+  const p = getProgress(sessionId);
+  const logs = Object.values(p.logs || {});
+  p.history = (p.history || []).concat([{
+    round: p.round || 1,
+    done: p.done.length,
+    full: logs.filter(l => l.status === 'full').length,
+    easy: logs.filter(l => l.feel === 'easy').length,
+    hard: logs.filter(l => l.feel === 'hard').length,
+    endedAt: new Date().toISOString(),
+  }]);
+  p.round = (p.round || 1) + 1;
+  p.done = [];
+  p.logs = {};
+  p.adapt = { at: 0, level: opts?.level || 0, sizeDelta: 0, reason: opts?.reason || '' };
   return _writeProgress(sessionId, p);
 }
 function setAdapt(sessionId, adapt){
@@ -208,7 +229,7 @@ function importData(jsonText, merge = true){
 export {
   getProfile, setProfile, ensureProfile,
   getSessions, getSession, addSession, deleteSession, clearAll,
-  getProgress, toggleDayDone, logDay, setAdapt, currentStreak,
+  getProgress, toggleDayDone, logDay, setAdapt, startRound, currentStreak,
   getPrefs, setPrefs,
   makeThumb, exportData, downloadExport, importData,
 };

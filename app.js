@@ -1081,13 +1081,7 @@ function renderToday(){
   const cur = currentDayNumber();
 
   // 全30日完走
-  if (cur == null){
-    if (head) head.innerHTML = '30日プログラム完走！ <span class="head-deco">🎉</span>';
-    if (sub)  sub.textContent = '素晴らしい継続でした。写真でもう一度診断すると、姿勢の変化を確かめられます。';
-    els.todayGrid.innerHTML = `<div class="today-complete">👑 全30日、やり切りました！おつかれさまでした。<br>写真で再診断して、ビフォーアフターの変化を見てみましょう。</div>`;
-    if (act) act.innerHTML = '';
-    return;
-  }
+  if (cur == null){ renderCompletion(head, sub, act, doneArr); return; }
 
   const d = state.program.find(x => x.day === cur);
   if (head) head.innerHTML = `今日のあなた専用メニュー — DAY ${String(cur).padStart(2,'0')} <span class="head-deco">🎀</span>`;
@@ -1107,22 +1101,120 @@ function renderToday(){
 
   if (act){
     const streak = Store.currentStreak(progressKey());
+    const one = minimumOne(d);
     act.innerHTML = `
       <button class="btn-primary" id="btn-day-start" type="button">▶ 順番に始める（${all.length}種・${d.isRest?'ゆったり':estMinutes(all.length)}）</button>
+      ${one ? `<button class="btn-ghost" id="btn-day-min" type="button">⏱ 時間がない日はこれ1つだけ（${escapeHtml(one.displayName || one.name)}）</button>` : ''}
       <button class="btn-ghost" id="btn-day-done" type="button">✓ できた</button>
       <button class="btn-ghost sm" id="btn-day-partial" type="button">△ 一部できた</button>
       <button class="btn-ghost sm" id="btn-day-none" type="button">× できなかった</button>
-      <span class="today-progress">これまで ${doneArr.length}/30日 完了${streak >= 2 ? ` ・ 🔥 ${streak}日連続` : ''}</span>`;
+      <span class="today-progress">これまで ${doneArr.length}/30日 完了${streak >= 2 ? ` ・ 🔥 ${streak}日連続` : ''}</span>
+      ${badgeStrip(doneArr.length, streak)}`;
     document.getElementById('btn-day-start').onclick = () => {
       if (state.todayList && state.todayList.length){
         openExerciseModal(state.todayList[0], { index: 0, list: state.todayList });
       }
     };
+    const minBtn = document.getElementById('btn-day-min');
+    if (minBtn) minBtn.onclick = () => openExerciseModal(one, { index: 0, list: [one] });
     document.getElementById('btn-day-done').onclick    = () => recordDay('full');
     document.getElementById('btn-day-partial').onclick = () => recordDay('partial');
     document.getElementById('btn-day-none').onclick    = () => recordDay('none');
   }
   renderCheckpoint();
+}
+
+// ===== 30日完走後 =====
+// ここで終わらせず「①がんばりを見せる ②撮って比べる ③次の30日へ」の3本に繋ぐ
+function renderCompletion(head, sub, act, doneArr){
+  const p = Store.getProgress(progressKey());
+  const round = p.round || 1;
+  const logs = Object.values(p.logs || {});
+  const full = logs.filter(l => l.status === 'full').length;
+  const feel = (f) => logs.filter(l => l.feel === f).length;
+  const sessions = Store.getSessions();
+  const scored = sessions.filter(s => s.score != null);
+  const canCompare = sessions.length >= 2;
+
+  if (head) head.innerHTML = `${round > 1 ? `${round}周目の` : ''}30日プログラム完走！ <span class="head-deco">🎉</span>`;
+  if (sub)  sub.textContent = 'ここまで続けられたことが何よりの結果です。次の一歩を選んでください。';
+
+  els.todayGrid.innerHTML = `
+    <div class="complete-card">
+      <div class="cc-crown">👑</div>
+      <div class="cc-title">全30日、やり切りました</div>
+      <div class="cc-stats">
+        <div><strong>${doneArr.length}</strong><span>日 実施</span></div>
+        <div><strong>${full}</strong><span>日 最後まで</span></div>
+        ${feel('easy') ? `<div><strong>${feel('easy')}</strong><span>日 楽に感じた</span></div>` : ''}
+      </div>
+      <p class="cc-lead">${feel('easy') > feel('hard')
+        ? '「楽だった」日が「きつかった」日を上回りました。身体が動きに慣れてきています。'
+        : '毎日つづけたこと自体が身体への一番の投資です。'}</p>
+      ${badgeStrip(doneArr.length, Store.currentStreak(progressKey()))}
+    </div>`;
+
+  if (act){
+    act.innerHTML = `
+      <button class="btn-primary" id="cc-rephoto" type="button">📷 いまの姿勢を撮って、30日前と比べる</button>
+      ${canCompare ? '<button class="btn-ghost" id="cc-compare" type="button">📊 これまでの記録を見る</button>' : ''}
+      <button class="btn-ghost" id="cc-next" type="button">▶ 次の30日をはじめる</button>
+      <span class="today-progress">${scored.length >= 2
+        ? `前回 ${scored[scored.length-2].score}点 → 最新 ${scored[scored.length-1].score}点`
+        : '写真で診断すると、点数の変化も残ります'}</span>`;
+    document.getElementById('cc-rephoto').onclick = () => {
+      document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+    const cmp = document.getElementById('cc-compare');
+    if (cmp) cmp.onclick = openMyData;
+    document.getElementById('cc-next').onclick = startNextRound;
+  }
+}
+
+// 次の30日: 前回の体感をもとに基準を決めて、新しい30日を組み直す
+function startNextRound(){
+  const p = Store.getProgress(progressKey());
+  const logs = Object.values(p.logs || {});
+  const hard = logs.filter(l => l.feel === 'hard').length;
+  const easy = logs.filter(l => l.feel === 'easy').length;
+  const level = easy > hard ? 1 : (hard > easy * 2 ? -1 : 0);
+  const reason = level === 1 ? '前回は余裕がありそうだったので、少し歯ごたえのある基準で始めます'
+              : level === -1 ? '前回きつい日が多かったので、やさしい基準で始めます'
+              : '前回とおなじ基準で始めます';
+  Store.startRound(progressKey(), { level, reason });
+  const keys = state.problems.map(x => x.key);
+  state.program = build30DayProgram(keys, state.selectedCourse, programOpts());
+  state.currentPhase = 1;
+  renderToday();
+  renderProgram(1);
+  showRecordToast(`🌱 ${(Store.getProgress(progressKey()).round)}周目スタート。${reason}`);
+  document.querySelector('.today-card')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// 忙しい日の「最低これだけ」= その日のいちばん問題直結な1種（ゼロの日を作らないための逃げ道）
+function minimumOne(d){
+  const all = [...(d.selfcare||[]), ...(d.training||[])];
+  if (all.length <= 1) return null;
+  const t = state.program?.targeted;
+  return all.find(ex => t && t.has(ex.id)) || all[0];
+}
+
+// 達成バッジ: 節目を「もう戻れない実績」として見せる
+const BADGES = [
+  { n: 3,  icon: '🌱', label: '3日' },
+  { n: 7,  icon: '🌸', label: '1週間' },
+  { n: 14, icon: '🌿', label: '2週間' },
+  { n: 21, icon: '🌼', label: '3週間' },
+  { n: 30, icon: '👑', label: '30日完走' },
+];
+function badgeStrip(doneCount, streak){
+  const items = BADGES.map(b => {
+    const got = doneCount >= b.n;
+    return `<span class="badge ${got ? 'got' : ''}" title="${b.label}">${got ? b.icon : '🔒'}<i>${b.label}</i></span>`;
+  }).join('');
+  const next = BADGES.find(b => doneCount < b.n);
+  const hint = next ? `あと${next.n - doneCount}日で ${next.icon} ${next.label}` : '全バッジ達成！';
+  return `<div class="badge-strip"><div class="badges">${items}</div><span class="badge-hint">${hint}${streak >= 3 ? ` ・ 🔥 ${streak}日続いています` : ''}</span></div>`;
 }
 
 // 今日の分を記録（できた／一部／できなかった）。記録後に体感を1タップで聞く。
@@ -1249,7 +1341,16 @@ function renderCheckpoint(){
 }
 
 function applyAdapt(ev){
-  Store.setAdapt(progressKey(), { at: ev.at, level: ev.level, sizeDelta: ev.sizeDelta, reason: ev.reason });
+  // 評価は「今回どちらへ動かすか」の差分。前回までの調整に積み上げる
+  //（毎回上書きすると、2周目の引き継ぎ基準や前回の判断が黙って消える）
+  const cur = currentAdapt();
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  Store.setAdapt(progressKey(), {
+    at: ev.at,
+    level: clamp(cur.level + ev.level, -1, 1),
+    sizeDelta: clamp(cur.sizeDelta + ev.sizeDelta, -2, 1),
+    reason: ev.reason,
+  });
   const keys = state.problems.map(p => p.key);
   state.program = build30DayProgram(keys, state.selectedCourse, programOpts());
   renderToday();
