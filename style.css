@@ -1612,3 +1612,19 @@ body{
 .cmp-detail > summary::-webkit-details-marker{ display:none }
 .cmp-detail > summary::before{ content:'＋ '; }
 .cmp-detail[open] > summary::before{ content:'－ '; }
+
+/* ===== 結果ページ末尾の「次にやること」 ===== */
+.next-action{
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  margin-top:20px; padding:16px 18px;
+  background:linear-gradient(135deg,#FFF3F7,#FFF9F4);
+  border:1.5px solid #FFD9E4; border-radius:16px;
+}
+.na-text{ flex:1; min-width:220px; display:flex; flex-direction:column; gap:3px }
+.na-text b{ font-size:14.5px; font-weight:800; color:var(--ink) }
+.na-text span{ font-size:12.5px; color:var(--muted); line-height:1.65 }
+.next-action .btn-primary{ white-space:nowrap }
+@media (max-width:640px){
+  .next-action{ flex-direction:column; align-items:stretch; gap:12px }
+  .next-action .btn-primary{ width:100%; white-space:normal }
+}

@@ -588,7 +588,7 @@ els.btnAnalyze.addEventListener('click', async () => {
     els.results.hidden = false;
     els.results.classList.add('fade-in');
     setTimeout(() => {
-      els.results.scrollIntoView({ behavior:'smooth', block:'start' });
+      jumpTo('#results');
     }, 100);
 
   } catch (e){
@@ -616,6 +616,7 @@ function renderAll(){
   renderPhotoQuality();
   renderScoreAndType();
   renderRegionScores();
+  renderNextAction();
   renderMetrics();
   renderOverlays();
   renderSymptomSummary();
@@ -736,7 +737,7 @@ function renderPhotoQuality(){
   const rt = document.getElementById('pq-retake');
   if (rt) rt.onclick = () => {
     els.results.hidden = true;
-    document.getElementById('upload-section')?.scrollIntoView({ behavior:'smooth' });
+    jumpTo('#upload-section');
   };
 }
 
@@ -808,6 +809,31 @@ function renderRegionScores(){
       </details>
     `).join('')}
   `;
+}
+
+// --- 次にやること（結果ページは長いので、下まで読まなくても行動に移れるように） ---
+function renderNextAction(){
+  const box = document.getElementById('next-action');
+  if (!box) return;
+  const prog = state.program;
+  if (!prog || !prog.length){ box.hidden = true; box.innerHTML = ''; return; }
+  const cur = currentDayNumber();
+  const d = cur == null ? null : prog.find(x => x.day === cur);
+  box.hidden = false;
+  if (!d){
+    box.innerHTML = `
+      <div class="na-text"><b>30日プログラム、完走しています</b><span>再撮影して比べる／次の30日を始める、が選べます</span></div>
+      <button class="btn-primary" id="na-go" type="button">▶ 次の一歩を選ぶ</button>`;
+  } else {
+    const n = (d.selfcare || []).length + (d.training || []).length;
+    box.innerHTML = `
+      <div class="na-text">
+        <b>ここまでが診断結果です</b>
+        <span>この下に「なぜそうなるか」「コース選び」が続きます。先に今日の分をやってもOKです。</span>
+      </div>
+      <button class="btn-primary" id="na-go" type="button">▶ 今日のメニューへ（DAY ${cur}・${n}種・${d.isRest ? 'ゆったり' : estMinutes(n)}）</button>`;
+  }
+  document.getElementById('na-go').onclick = () => jumpTo('.today-card');
 }
 
 // --- METRICS ---
@@ -1163,7 +1189,7 @@ function renderCompletion(head, sub, act, doneArr){
         ? `前回 ${scored[scored.length-2].score}点 → 最新 ${scored[scored.length-1].score}点`
         : '写真で診断すると、点数の変化も残ります'}</span>`;
     document.getElementById('cc-rephoto').onclick = () => {
-      document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+      jumpTo('#upload-section');
     };
     const cmp = document.getElementById('cc-compare');
     if (cmp) cmp.onclick = openMyData;
@@ -1188,7 +1214,7 @@ function startNextRound(){
   renderToday();
   renderProgram(1);
   showRecordToast(`🌱 ${(Store.getProgress(progressKey()).round)}周目スタート。${reason}`);
-  document.querySelector('.today-card')?.scrollIntoView({ behavior: 'smooth' });
+  jumpTo('.today-card');
 }
 
 // 忙しい日の「最低これだけ」= その日のいちばん問題直結な1種（ゼロの日を作らないための逃げ道）
@@ -1805,24 +1831,30 @@ function openSavedSession(id){
   els.results.hidden = false;
   // 再訪者の目的は「今日のメニュー」。診断サマリーではなく今日の分へ直接着地する
   // ※長距離移動のためsmoothではなく即時ジャンプ（確実に届き、画面が流れて酔うのも防ぐ）
-  const jumpToToday = () => {
-    const t = document.querySelector('.today-card') || els.results;
-    t.scrollIntoView({ behavior:'auto', block:'start' });
-  };
-  jumpToToday();
-  // フォント/画像読込でレイアウトが動いても確実に届くよう、着地を確認しながら最大5回補正
-  let _jumpTries = 0;
-  const settleJump = () => {
-    const t = document.querySelector('.today-card');
+  jumpTo('.today-card');
+}
+
+// 長距離スクロールの共通処理。
+// smooth は環境によって効かず「押しても動かない」ように見えるので即時ジャンプにし、
+// フォント/画像の読込でレイアウトがずれても届くよう、着地を確認しながら補正する。
+function jumpTo(selector, offset = 12){
+  const get = () => document.querySelector(selector);
+  const go = () => {
+    const t = get();
     if (!t) return;
-    const top = t.getBoundingClientRect().top;
-    if (Math.abs(top) > 200 && _jumpTries < 5){
-      _jumpTries++;
-      t.scrollIntoView({ behavior:'auto', block:'start' });
-      setTimeout(settleJump, 350);
+    const y = t.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo(0, Math.max(0, y));
+  };
+  go();
+  let tries = 0;
+  const settle = () => {
+    const t = get();
+    if (!t) return;
+    if (Math.abs(t.getBoundingClientRect().top - offset) > 200 && tries < 5){
+      tries++; go(); setTimeout(settle, 350);
     }
   };
-  setTimeout(settleJump, 350);
+  setTimeout(settle, 350);
 }
 
 // 保存プラン閲覧中である旨のバナー
@@ -1840,7 +1872,7 @@ function showSavedBanner(s){
   document.getElementById('saved-new').onclick = () => {
     b.hidden = true;
     els.results.hidden = true;
-    document.getElementById('upload-section')?.scrollIntoView({ behavior:'smooth' });
+    jumpTo('#upload-section');
   };
 }
 function hideSavedBanner(){
@@ -1879,7 +1911,7 @@ function runSimpleDiagnosis(){
   showSimpleBanner();
   els.results.hidden = false;
   els.results.classList.add('fade-in');
-  els.results.scrollIntoView({ behavior:'smooth', block:'start' });
+  jumpTo('#results');
 }
 
 // 簡易プラン閲覧中である旨のバナー（写真診断への誘導つき）
@@ -1897,7 +1929,7 @@ function showSimpleBanner(){
   document.getElementById('saved-new').onclick = () => {
     b.hidden = true;
     els.results.hidden = true;
-    document.getElementById('upload-section')?.scrollIntoView({ behavior:'smooth' });
+    jumpTo('#upload-section');
   };
 }
 
@@ -2059,7 +2091,7 @@ function regionCompare(A, B){
 // ===================================================================
 els.btnRestart.addEventListener('click', () => {
   els.results.hidden = true;
-  document.getElementById('upload-section').scrollIntoView({behavior:'smooth'});
+  jumpTo('#upload-section');
 });
 els.btnPrint.addEventListener('click', () => window.print());
 
