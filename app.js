@@ -1612,6 +1612,105 @@ function showRestToast(){
   t._timer = setTimeout(() => t.classList.remove('show'), 4500);
 }
 
+// ===== 時間キープ用タイマー =====
+// 562種のうち288種(51%)が「◯秒」「◯分」指定。頭の中で数えながら姿勢を保つのは難しく、
+// 途中で切り上げたり数を見失ったりする。押すだけの大きなタイマーを用意する。
+function parseHold(duration){
+  const d = String(duration || '');
+  const m = d.match(/(\d+)\s*(秒|分)/);
+  if (!m) return null;                                   // 回数指定はタイマー不要
+  const sec = Number(m[1]) * (m[2] === '分' ? 60 : 1);
+  if (!sec || sec > 600) return null;
+  const setsM = d.match(/(\d+)\s*(?:セット|回)/);
+  const sets = setsM ? Math.min(10, Number(setsM[1])) : 1;
+  // 「各指」「各方向」は左右ではないので、右／左のラベルは出さない
+  const perSide = /左右/.test(d) || /各(?!指|方向)/.test(d);
+  return { sec, sets, perSide, rounds: perSide ? sets * 2 : sets };
+}
+function holdTimerButton(ex){
+  const h = parseHold(ex.duration);
+  if (!h) return '';
+  const label = h.sec >= 60 && h.sec % 60 === 0 ? `${h.sec / 60}分` : `${h.sec}秒`;
+  const extra = h.rounds > 1 ? `（${h.perSide ? '左右' : ''}${h.rounds}回）` : '';
+  return `<button type="button" class="hold-timer-btn" id="btn-hold-timer"
+            data-sec="${h.sec}" data-rounds="${h.rounds}" data-perside="${h.perSide ? 1 : 0}">
+            ⏱ ${label}をはかる${extra}
+          </button>`;
+}
+// カウントダウン本体。音は鳴らさず（自動再生がブロックされるため）、大きな数字と振動で伝える。
+// 残り時間は「1秒ずつ引く」のではなく開始時刻からの経過で計算する。
+// スマホは画面を離れる/暗くなるとタイマーが間引かれるため、引き算方式だと時間がずれて止まって見える。
+function startHoldTimer(sec, rounds, perSide){
+  let box = document.getElementById('hold-timer');
+  if (!box){
+    box = document.createElement('div');
+    box.id = 'hold-timer';
+    box.className = 'hold-timer';
+    document.body.appendChild(box);
+  }
+  const REST = 5;
+  // 実行→休憩→実行… の並びをあらかじめ作り、経過秒からいまどこかを求める
+  const plan = [];
+  for (let i = 1; i <= rounds; i++){
+    plan.push({ kind: 'run', sec, round: i });
+    if (i < rounds) plan.push({ kind: 'rest', sec: REST, round: i });
+  }
+  const totalSec = plan.reduce((s, p) => s + p.sec, 0);
+  const startedAt = Date.now();
+  let tick = null, lastKind = '';
+
+  const stop = () => { clearInterval(tick); box.classList.remove('show'); };
+  const buzz = (ms) => { try { navigator.vibrate?.(ms); } catch {} };
+  const sideLabel = (r) => perSide ? (r % 2 === 1 ? '右' : '左') : '';
+
+  const render = () => {
+    const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+    if (elapsed >= totalSec){
+      clearInterval(tick);
+      if (lastKind !== 'done'){ lastKind = 'done'; buzz([120, 80, 200]); }
+      draw({ kind: 'done', round: rounds, left: 0, total: sec });
+      return;
+    }
+    let acc = 0, cur = plan[0];
+    for (const p of plan){
+      if (elapsed < acc + p.sec){ cur = p; break; }
+      acc += p.sec;
+    }
+    const left = (acc + cur.sec) - elapsed;
+    if (cur.kind !== lastKind){ if (lastKind) buzz(120); lastKind = cur.kind; }
+    draw({ kind: cur.kind, round: cur.round, left, total: cur.sec });
+  };
+
+  const draw = ({ kind, round, left, total }) => {
+    const pct = Math.max(0, Math.min(100, (left / total) * 100));
+    const head = kind === 'done' ? 'おわり'
+      : `${rounds > 1 ? `${round} / ${rounds} 回目` : 'キープ'}${sideLabel(round) ? `　${sideLabel(round)}側` : ''}`;
+    box.innerHTML = `
+      <div class="ht-inner">
+        <div class="ht-round">${head}</div>
+        <div class="ht-ring ${kind}">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="52" class="ht-bg"/>
+            <circle cx="60" cy="60" r="52" class="ht-fg" stroke-dasharray="326.7"
+                    stroke-dashoffset="${(326.7 * (100 - pct) / 100).toFixed(1)}" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="ht-num">${kind === 'done' ? '✓' : left}</div>
+        </div>
+        <div class="ht-msg">${kind === 'rest' ? '反対側の準備をしてください'
+          : kind === 'done' ? 'おつかれさまでした' : '呼吸を止めずに、らくに'}</div>
+        <button type="button" class="btn-ghost" id="ht-close">${kind === 'done' ? '閉じる' : 'やめる'}</button>
+      </div>`;
+    document.getElementById('ht-close').onclick = stop;
+  };
+
+  box.classList.add('show');
+  render();
+  clearInterval(tick);
+  tick = setInterval(render, 250);
+  // 画面に戻ってきたら即座に正しい残り時間を描き直す
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+}
+
 function openExerciseModal(ex, nav){
   if (!ex) return;
   const rawTargets = ex.targets || ex.targetProblems || [];
@@ -1638,6 +1737,7 @@ function openExerciseModal(ex, nav){
     <div class="modal-section how-section">
       <h4>📋 やり方 — この手順どおりに動かしてください</h4>
       <ol class="how-steps">${(ex.how||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+      ${holdTimerButton(ex)}
       ${ex.easyOption ? `<div class="easy-opt"><span class="easy-badge">きつい場合</span>${ex.easyOption}</div>` : ''}
     </div>
     <div class="modal-section">
@@ -1669,6 +1769,10 @@ function openExerciseModal(ex, nav){
   `;
   const stopBtn = document.getElementById('btn-stop-exercise');
   if (stopBtn) stopBtn.onclick = () => showStopGuidance(ex);
+
+  const timerBtn = document.getElementById('btn-hold-timer');
+  if (timerBtn) timerBtn.onclick = () => startHoldTimer(
+    Number(timerBtn.dataset.sec), Number(timerBtn.dataset.rounds), timerBtn.dataset.perside === '1');
 
   if (nav){
     const prev = document.getElementById('gn-prev');

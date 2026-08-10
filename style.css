@@ -1628,3 +1628,36 @@ body{
   .next-action{ flex-direction:column; align-items:stretch; gap:12px }
   .next-action .btn-primary{ width:100%; white-space:normal }
 }
+
+/* ===== キープ用タイマー ===== */
+.hold-timer-btn{
+  display:block; width:100%; margin-top:12px; padding:14px 12px;
+  border:1.5px solid #FFD2E0; border-radius:13px;
+  background:#FFF6F9; color:var(--rose);
+  font-size:15px; font-weight:800; cursor:pointer;
+}
+.hold-timer-btn:active{ background:#FFE9F1 }
+.hold-timer{
+  position:fixed; inset:0; z-index:1400; display:none;
+  align-items:center; justify-content:center;
+  background:rgba(60,45,52,.72); padding:20px;
+}
+.hold-timer.show{ display:flex }
+.ht-inner{
+  background:#fff; border-radius:22px; padding:26px 20px 20px;
+  width:100%; max-width:340px; text-align:center;
+  box-shadow:0 20px 60px rgba(120,80,95,.35);
+}
+.ht-round{ font-size:14px; font-weight:800; color:var(--rose); margin-bottom:14px }
+.ht-ring{ position:relative; width:190px; height:190px; margin:0 auto }
+.ht-ring svg{ width:100%; height:100% }
+.ht-bg{ fill:none; stroke:#F3EDF0; stroke-width:9 }
+.ht-fg{ fill:none; stroke:#FF8FA8; stroke-width:9; stroke-linecap:round; transition:stroke-dashoffset .9s linear }
+.ht-ring.rest .ht-fg{ stroke:#F5C86B }
+.ht-ring.done .ht-fg{ stroke:#8FD3A8 }
+.ht-num{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-en); font-weight:800; font-size:66px; color:var(--ink);
+}
+.ht-msg{ font-size:13.5px; color:var(--muted); margin:14px 0 16px; line-height:1.6 }
+.ht-inner .btn-ghost{ width:100% }
