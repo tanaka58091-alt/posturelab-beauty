@@ -1579,3 +1579,36 @@ body{
 .cc-stats strong{ font-family:var(--font-en); font-size:28px; font-weight:800; color:var(--rose); line-height:1.1 }
 .cc-stats span{ font-size:11.5px; color:var(--muted); margin-top:3px }
 .cc-lead{ font-size:13.5px; color:#5B5257; line-height:1.75; margin:0 0 14px }
+
+/* ===== 部位ごとの前後比較 ===== */
+.region-compare{
+  background:#fff; border:1px solid var(--line); border-radius:14px;
+  padding:14px 14px 10px; margin:14px 0;
+}
+.rc-title{ font-size:14px; font-weight:800; color:var(--ink); margin-bottom:8px }
+.rc-row{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 2px; border-top:1px solid var(--line);
+  font-size:13.5px;
+}
+.rc-row:first-of-type{ border-top:none }
+.rc-label{ flex:1; font-weight:700; color:var(--ink) }
+.rc-scores{ font-family:var(--font-en); color:var(--muted); white-space:nowrap }
+.rc-scores b{ color:var(--ink); font-size:15px }
+.rc-delta{
+  min-width:3em; text-align:right; font-family:var(--font-en);
+  font-weight:800; font-size:15px;
+}
+.rc-delta.up{ color:#3F9E6B }
+.rc-delta.down{ color:#D2726F }
+.rc-delta.flat{ color:var(--muted) }
+.rc-none{ margin-left:auto; color:var(--muted); font-size:12.5px }
+.rc-lead{ font-size:12.5px; color:#5B5257; line-height:1.7; margin:10px 0 0 }
+.cmp-note{ font-size:12.5px; color:var(--muted); line-height:1.7; margin:12px 0 }
+.cmp-detail > summary{
+  cursor:pointer; font-size:13px; font-weight:700; color:var(--rose);
+  padding:8px 0; list-style:none;
+}
+.cmp-detail > summary::-webkit-details-marker{ display:none }
+.cmp-detail > summary::before{ content:'＋ '; }
+.cmp-detail[open] > summary::before{ content:'－ '; }

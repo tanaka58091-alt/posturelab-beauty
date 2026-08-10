@@ -1698,6 +1698,9 @@ function saveCurrentSession(){
       course: state.selectedCourse,
       problems: state.problems.map(p => ({ key:p.key, title:p.title || PROBLEM_LABELS[p.key] || p.key, severity:p.severity })),
       metrics,
+      // 部位別スコアも残す。次回の診断で「どこが良くなったか」を部位単位で言えるようにするため
+      regions: calcRegionScores(state.resultSide, state.resultFront, state.problems)
+        .map(r => ({ key:r.key, label:r.label, icon:r.icon, score:r.score })),
       symptoms: state.symptoms.slice(),
       symptomFree: state.symptomFree,
       painFlags: state.painFlags || {},
@@ -2016,8 +2019,39 @@ function renderComparison(idA, idB){
       </div>
       <figure>${B.thumbSide?`<img src="${B.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>After ${fmtDate(B.date)}<br><strong>${B.score!=null?B.score+'点':'簡易'}</strong></figcaption></figure>
     </div>
-    ${rows?`<table class="cmp-table"><thead><tr><th>指標</th><th>Before</th><th></th><th>After</th><th>変化</th></tr></thead><tbody>${rows}</tbody></table>`:''}
+    ${regionCompare(A, B)}
+    ${rows?`<details class="cmp-detail"><summary>くわしい数値で見る</summary><table class="cmp-table"><thead><tr><th>指標</th><th>Before</th><th></th><th>After</th><th>変化</th></tr></thead><tbody>${rows}</tbody></table></details>`:''}
   `;
+}
+
+// 部位ごとの前後比較。専門用語の指標表より先に、これを見せる
+function regionCompare(A, B){
+  const ra = A.regions, rb = B.regions;
+  if (!Array.isArray(ra) || !Array.isArray(rb) || !ra.length || !rb.length){
+    return `<p class="cmp-note">部位ごとの比較は、両方とも新しい形式で診断されたときに表示されます。もう一度写真で診断すると次回から出ます。</p>`;
+  }
+  const mapA = Object.fromEntries(ra.map(r => [r.key, r]));
+  const rows = rb.filter(r => mapA[r.key]).map(r => {
+    const before = mapA[r.key];
+    if (before.score == null || r.score == null){
+      return `<div class="rc-row"><span class="rc-label">${r.icon} ${escapeHtml(r.label)}</span><span class="rc-none">未評価</span></div>`;
+    }
+    const d = r.score - before.score;
+    const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+    return `
+      <div class="rc-row">
+        <span class="rc-label">${r.icon} ${escapeHtml(r.label)}</span>
+        <span class="rc-scores"><b>${before.score}</b> → <b>${r.score}</b></span>
+        <span class="rc-delta ${cls}">${d > 0 ? '+' : ''}${d}</span>
+      </div>`;
+  }).join('');
+  if (!rows) return '';
+  const gains = rb.filter(r => mapA[r.key] && r.score != null && mapA[r.key].score != null && r.score > mapA[r.key].score);
+  const best = gains.sort((x, y) => (y.score - mapA[y.key].score) - (x.score - mapA[x.key].score))[0];
+  const lead = best
+    ? `いちばん変わったのは <b>${best.icon} ${escapeHtml(best.label)}</b>（+${best.score - mapA[best.key].score}点）でした。`
+    : '大きな変化はまだ出ていません。姿勢は積み重ねで変わるので、続けることが効きます。';
+  return `<div class="region-compare"><div class="rc-title">部位ごとの変化</div>${rows}<p class="rc-lead">${lead}</p></div>`;
 }
 
 // ===================================================================
