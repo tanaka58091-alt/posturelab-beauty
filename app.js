@@ -4,7 +4,7 @@
 import {
   analyzeSide, analyzeFront,
   detectProblems, determinePostureType,
-  calcScore, gradeFromScore, buildMetricsList, LM
+  calcScore, calcRegionScores, gradeFromScore, buildMetricsList, LM
 } from './analyzer.js';
 import { pickTodayMenu, build30DayProgram, ALL_EXERCISES } from './program.js';
 import { getKnowledgeFor } from './knowledge.js';
@@ -260,12 +260,93 @@ function collectSymptoms(){
   state.symptomFree = (els.symptomFree.value || '').trim();
 }
 
+// ===== 初回プロフィール4問（時間/運動経験/目的/年代）=====
+// 1タップで答えられる範囲だけを聞き、メニューの量と強さに直結させる
+const PROFILE_DEFAULT = { time: '10', exp: 'none', goal: 'relief', age: '50' };
+function collectProfile(){
+  const box = document.getElementById('profile-qs');
+  const prof = { ...PROFILE_DEFAULT };
+  if (box){
+    box.querySelectorAll('.pq-opts').forEach(g => {
+      const on = g.querySelector('button.on');
+      if (on) prof[g.dataset.q] = on.dataset.v;
+    });
+  }
+  state.profile = prof;
+  Store.setPrefs(prof);
+  return prof;
+}
+// 30日プログラム生成に渡すオプション（量と強度の進み方）
+// pain/focus も必ず同梱する。痛み配慮はモジュール共有の状態に頼らず、
+// 生成のたびに処方側で設定し直させる（設定漏れ＝禁忌フィルタ無効化を防ぐ安全策）
+function programOpts(){
+  const a = currentAdapt();
+  return {
+    menuSize: adjustMenuSize(menuSizeFromProfile(), a.sizeDelta),
+    exp: adjustExp((state.profile || PROFILE_DEFAULT).exp, a.level),
+    tune: a.level,                       // 回数・秒数にも即日で反映させる
+    pain: state.painFlags || {},
+    focus: state.focusParts || [],
+  };
+}
+// 途中評価による調整（Day7/14/21のチェックポイントで決まる）
+function currentAdapt(){
+  const a = Store.getProgress(progressKey()).adapt;
+  return { level: a?.level || 0, sizeDelta: a?.sizeDelta || 0, at: a?.at || 0, reason: a?.reason || '' };
+}
+const EXP_STEPS = ['none', 'some', 'regular'];
+function adjustExp(exp, level){
+  const i = EXP_STEPS.indexOf(exp);
+  if (i < 0 || !level) return exp;
+  return EXP_STEPS[Math.max(0, Math.min(EXP_STEPS.length - 1, i + level))];
+}
+const SIZE_STEPS = [2, 4, 5, 6];
+function adjustMenuSize(size, delta){
+  const i = SIZE_STEPS.indexOf(size);
+  if (i < 0 || !delta) return size;
+  return SIZE_STEPS[Math.max(0, Math.min(SIZE_STEPS.length - 1, i + delta))];
+}
+// 1日の種目数：とれる時間から決める
+function menuSizeFromProfile(){
+  const t = (state.profile || PROFILE_DEFAULT).time;
+  return t === '5' ? 2 : t === '10' ? 4 : t === '15' ? 5 : 6;
+}
+// 目的→重点部位の傾き（見た目重視ならお腹・お尻・背中を優先）
+function goalFocusParts(){
+  const g = (state.profile || PROFILE_DEFAULT).goal;
+  return g === 'look' ? ['core', 'glutes', 'back'] : [];
+}
+(function initProfileUI(){
+  const box = document.getElementById('profile-qs');
+  if (!box) return;
+  const saved = Store.getPrefs();
+  box.querySelectorAll('.pq-opts').forEach(g => {
+    const q = g.dataset.q;
+    if (saved && saved[q]){
+      g.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === saved[q]));
+    }
+    g.querySelectorAll('button').forEach(b => {
+      b.onclick = () => {
+        g.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        collectProfile();
+      };
+    });
+  });
+  state.profile = saved ? { ...PROFILE_DEFAULT, ...saved } : { ...PROFILE_DEFAULT };
+})();
+
 // 申告された痛み部位を検出（チェック＋自由記述）。処方の禁忌フィルタに使う。
 function computePainFlags(){
   const t = state.symptomFree || '';
   const flags = {
     knee:    state.symptoms.includes('kneePain')    || /(ひざ|膝|ヒザ).{0,8}(痛|いた)/.test(t),
     lowBack: state.symptoms.includes('lowBackPain') || /(腰|こし).{0,8}(痛|いた)/.test(t) || /ぎっくり/.test(t),
+    // 自由記述から追加の配慮を検出（該当がなければ従来どおり何も変わらない）
+    neck:     /(首|くび|頸).{0,8}(痛|いた|ヘルニア)/.test(t) || /むち打ち|ムチ打ち/.test(t),
+    shoulder: /(肩|かた).{0,8}(痛|いた)/.test(t) || /四十肩|五十肩|腱板/.test(t),
+    pregnant: /妊娠|妊婦|マタニティ|産後すぐ/.test(t),
+    bloodPressure: /高血圧|血圧が高/.test(t),
   };
   state.painFlags = flags;
   setPainAvoidance(flags);
@@ -282,6 +363,7 @@ function computeFocus(){
     (def.focus.bodyPart || []).forEach(b => { if (!parts.includes(b)) parts.push(b); });
     if (def.focus.note && !notes.includes(def.focus.note)) notes.push(def.focus.note);
   });
+  goalFocusParts().forEach(b => { if (!parts.includes(b)) parts.push(b); });
   state.focusParts = parts;
   state.focusNotes = notes;
   state.focusLabels = labels;
@@ -289,7 +371,7 @@ function computeFocus(){
   return { parts, notes, labels };
 }
 
-const PAIN_LABELS = { knee:'ひざ', lowBack:'腰' };
+const PAIN_LABELS = { knee:'ひざ', lowBack:'腰', neck:'首', shoulder:'肩', pregnant:'妊娠中', bloodPressure:'血圧' };
 function painLabelList(){
   const f = state.painFlags || {};
   return Object.keys(PAIN_LABELS).filter(k => f[k]).map(k => PAIN_LABELS[k]);
@@ -347,7 +429,61 @@ async function detectPose(image){
   const lm = await loadLandmarker();
   const result = lm.detect(image);
   if (!result.landmarks || result.landmarks.length === 0) return null;
+  state._lastPoseCount = result.landmarks.length;
   return result.landmarks[0]; // 33 landmarks
+}
+
+// ===================================================================
+// 写真品質チェック（分析に適さない写真をなるべく弾く）
+// 追加ライブラリなし: MediaPipeのvisibility + canvasの輝度 + 座標の収まりだけで判定
+// ===================================================================
+function imageBrightness(img){
+  try {
+    const c = document.createElement('canvas');
+    const w = 64, h = Math.max(1, Math.round(64 * (img.height / img.width)));
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, w, h);
+    const d = ctx.getImageData(0, 0, w, h).data;
+    let sum = 0;
+    for (let i = 0; i < d.length; i += 4) sum += (d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114);
+    return sum / (d.length / 4);   // 0(暗) 〜 255(明)
+  } catch { return null; }
+}
+
+// 主要ランドマーク（頭・肩・腰・膝・足首）の信頼度と収まりを見る
+const QC_KEY_POINTS = [LM.NOSE, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP,
+                       LM.LEFT_KNEE, LM.RIGHT_KNEE, LM.LEFT_ANKLE, LM.RIGHT_ANKLE];
+
+function checkPhotoQuality(lms, img){
+  const issues = [];
+  const pts = QC_KEY_POINTS.map(i => lms[i]).filter(Boolean);
+  if (!pts.length) return issues;
+
+  // ① 信頼度: 主要点の平均visibilityが低い＝人物がはっきり写っていない
+  const vis = pts.map(p => (p.visibility ?? 1));
+  const avgVis = vis.reduce((a, b) => a + b, 0) / vis.length;
+  if (avgVis < 0.55) issues.push('人物がはっきり写っていないようです。もう少し明るい場所で、体が大きく写るように撮ってみてください。');
+
+  // ② 全身が入っているか: 足首/頭が枠外、または縦の占有が小さい
+  const ys = pts.map(p => p.y), xs = pts.map(p => p.x);
+  const top = Math.min(...ys), bottom = Math.max(...ys);
+  const ankles = [lms[LM.LEFT_ANKLE], lms[LM.RIGHT_ANKLE]].filter(Boolean);
+  const ankleVis = ankles.length ? Math.max(...ankles.map(a => a.visibility ?? 1)) : 0;
+  if (ankleVis < 0.4 || bottom > 1.02) issues.push('足元が写っていないようです。頭のてっぺんから足首まで入るように撮ってください。');
+  if (top < -0.02) issues.push('頭が切れているようです。全身が入るように少し引いて撮ってください。');
+  if ((bottom - top) < 0.45) issues.push('体が小さく写りすぎています。もう少し近づくか、縦向きで撮ってみてください。');
+  if (Math.min(...xs) < -0.02 || Math.max(...xs) > 1.02) issues.push('体の一部が左右にはみ出しています。全身が枠に収まるように撮ってください。');
+
+  // ③ 明るさ
+  const bright = imageBrightness(img);
+  if (bright != null && bright < 55) issues.push('写真が暗いようです。明るい場所や照明のある場所で撮り直すと精度が上がります。');
+  if (bright != null && bright > 235) issues.push('写真が明るすぎるようです。逆光を避けて撮り直してみてください。');
+
+  // ④ 複数人
+  if (state._lastPoseCount > 1) issues.push('複数の人が写っているようです。ひとりで写った写真をお使いください。');
+
+  return issues;
 }
 
 // ===================================================================
@@ -397,6 +533,9 @@ els.btnAnalyze.addEventListener('click', async () => {
       showAnalyzeError('nopose');
       return;
     }
+    // 写真品質チェック（不合格なら結果の信頼度を下げる警告を出す）
+    state.photoIssues = checkPhotoQuality(lmsSide, state.imgSide);
+
     state.resultSide = analyzeSide(lmsSide);
     state.resultSide.imageData = state.imgSide;
     state.resultSide.landmarksRaw = lmsSide;
@@ -415,7 +554,8 @@ els.btnAnalyze.addEventListener('click', async () => {
 
     setLoader('問題点を抽出 → セルフケア・プログラムを構築中…');
     collectSymptoms();
-    computePainFlags();   // 痛み配慮(禁忌)を処方に反映
+    collectProfile();     // 時間・運動経験・目的・年代を取得
+  computePainFlags();   // 痛み配慮(禁忌)を処方に反映
   computeFocus();       // 主訴の重点部位を処方に反映
     computeFocus();       // 主訴の重点部位を処方に反映
     state.problems = detectProblems(state.resultSide, state.resultFront);
@@ -438,7 +578,7 @@ els.btnAnalyze.addEventListener('click', async () => {
     state.recommendation = recommendCourse(probKeys);
     // 初回はトップ推奨コースを選択
     state.selectedCourse = state.recommendation.top;
-    state.program = build30DayProgram(probKeys, state.selectedCourse);
+    state.program = build30DayProgram(probKeys, state.selectedCourse, programOpts());
 
     state.savedMetrics = null; state.savedThumbs = null; // 新規診断なので保存モード解除
     hideSavedBanner();
@@ -473,7 +613,9 @@ els.btnAnalyze.addEventListener('click', async () => {
 // RENDER
 // ===================================================================
 function renderAll(){
+  renderPhotoQuality();
   renderScoreAndType();
+  renderRegionScores();
   renderMetrics();
   renderOverlays();
   renderSymptomSummary();
@@ -547,7 +689,7 @@ function renderCourses(){
       const cid = card.dataset.course;
       if (cid === state.selectedCourse) return;
       state.selectedCourse = cid;
-      state.program = build30DayProgram(state.problems.map(p=>p.key), cid);
+      state.program = build30DayProgram(state.problems.map(p=>p.key), cid, programOpts());
       state.currentPhase = 1;
       renderCourses();
       renderToday();
@@ -572,6 +714,30 @@ function renderSymptomSummary(){
 
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// --- 写真品質の注意（結果の信頼度をユーザーに伝える）---
+function renderPhotoQuality(){
+  let box = document.getElementById('photo-quality');
+  const issues = state.resultSide ? (state.photoIssues || []) : [];
+  if (!issues.length){ if (box) box.hidden = true; return; }
+  if (!box){
+    box = document.createElement('div');
+    box.id = 'photo-quality'; box.className = 'photo-quality';
+    const disc = document.querySelector('.result-disclaimer');
+    if (disc && disc.parentNode) disc.parentNode.insertBefore(box, disc.nextSibling);
+    else els.results.prepend(box);
+  }
+  box.innerHTML = `
+    <strong>📷 この写真では、結果が少しずれる可能性があります</strong>
+    <ul>${issues.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+    <button class="btn-ghost sm" id="pq-retake" type="button">写真を撮り直す</button>`;
+  box.hidden = false;
+  const rt = document.getElementById('pq-retake');
+  if (rt) rt.onclick = () => {
+    els.results.hidden = true;
+    document.getElementById('upload-section')?.scrollIntoView({ behavior:'smooth' });
+  };
 }
 
 // --- SCORE & TYPE ---
@@ -610,6 +776,38 @@ function renderScoreAndType(){
   els.postureType.textContent = state.lastType && !state.resultSide ? state.lastType : type.name;
   els.postureTypeDesc.textContent = type.desc;
   els.postureTypeTags.innerHTML = type.tags.map(t => `<span>${t}</span>`).join('');
+}
+
+// --- 部位別サブスコア ---
+// 総合点だけだと「で、どこを直すの？」が分からない。5部位に分けて
+// 見たもの／なぜその点／上げ方 を1枚に収める（タップで詳細を開く）
+function renderRegionScores(){
+  const box = document.getElementById('region-scores');
+  if (!box) return;
+  const regions = calcRegionScores(state.resultSide, state.resultFront, state.problems);
+  if (!regions.length){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  box.innerHTML = `
+    <h3 class="rs-title">部位ごとの状態</h3>
+    <p class="rs-lead">気になる部位をタップすると、「何を見てその点になったか」が開きます。</p>
+    ${regions.map(r => `
+      <details class="rs-item ${r.status}">
+        <summary>
+          <span class="rs-icon">${r.icon}</span>
+          <span class="rs-label">${r.label}</span>
+          <span class="rs-bar"><i style="width:${r.score == null ? 0 : r.score}%"></i></span>
+          <span class="rs-score">${r.score == null ? '—' : r.score}</span>
+        </summary>
+        <div class="rs-body">
+          ${r.seen.length
+            ? `<div class="rs-block"><b>📷 見たところ</b><ul>${r.seen.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul></div>`
+            : `<div class="rs-block"><b>📷 見たところ</b><p>${escapeHtml(r.seenNote)}</p></div>`}
+          <div class="rs-block"><b>📉 この点になった理由</b><p>${escapeHtml(r.why)}</p></div>
+          <div class="rs-block"><b>📈 上げるには</b><p>${escapeHtml(r.lift)}</p></div>
+        </div>
+      </details>
+    `).join('')}
+  `;
 }
 
 // --- METRICS ---
@@ -793,21 +991,40 @@ function renderProblems(){
             <span>重症度: <strong>${sevText}</strong></span>
           </div>
           <div class="problem-desc">${p.description}${p.fromSymptom && (state.focusNotes||[]).length ? ' <span class="focus-note">' + escapeHtml(state.focusNotes[0]) + '</span>' : ''}</div>
-          <div class="tissue-list">
-            <div class="tissue tight">
-              <strong>🔴 短縮 / 過緊張</strong>
-              <ul>${p.tissues.tight.map(t=>`<li>${t}</li>`).join('')||'<li>—</li>'}</ul>
-            </div>
-            <div class="tissue weak">
-              <strong>🟡 弱化 / 機能低下</strong>
-              <ul>${p.tissues.weak.map(t=>`<li>${t}</li>`).join('')||'<li>—</li>'}</ul>
-            </div>
-          </div>
+          ${evidenceBlocks(p)}
         </div>
         <div class="problem-side">${problemIllust(p.key)}</div>
       </div>
     `;
   }).join('');
+}
+
+// ===== 医療線引き：写真で確認できること／推測／分からないこと を分離して表示 =====
+// 写真から分かるのは「見た目上の位置関係」だけ。筋の硬さ・筋力・関節の状態は判定できない。
+function evidenceBlocks(p){
+  const fromPhoto = !p.fromSymptom;
+  const seen = fromPhoto
+    ? `横向き・正面の写真から計測した位置関係（${escapeHtml(p.metric)}）をもとにしています。`
+    : `写真ではなく、あなたが選んだお悩みをもとにした推定です。`;
+  const parts = [...(p.tissues?.tight || []), ...(p.tissues?.weak || [])].slice(0, 6);
+  const direction = parts.length
+    ? `この見た目の傾向がある方は、一般的に <b>${parts.map(escapeHtml).join('・')}</b> のあたりが関わりやすいと言われています。プログラムはこの周辺を整える内容にしています。`
+    : `今の姿勢を保つ土台づくりを中心にしたメニューにしています。`;
+  return `
+    <div class="evidence">
+      <div class="ev-block ev-seen">
+        <strong>📷 写真から確認できたこと</strong>
+        <p>${seen}</p>
+      </div>
+      <div class="ev-block ev-dir">
+        <strong>🎯 考えられる改善の方向</strong>
+        <p>${direction}</p>
+      </div>
+      <div class="ev-block ev-unknown">
+        <strong>❓ 写真だけでは分からないこと</strong>
+        <p>筋肉の硬さ・筋力・関節の動く範囲・痛みの原因は、写真からは判断できません。気になる症状がある場合は医療機関や専門家にご相談ください。</p>
+      </div>
+    </div>`;
 }
 
 function problemIllust(key){
@@ -850,6 +1067,11 @@ function currentDayNumber(){
   return null; // 全30日完了
 }
 
+// 種目数から所要時間のめやすを出す（プロフィールで選んだ時間と食い違わないように）
+function estMinutes(n){
+  return n <= 2 ? '約5分' : n <= 4 ? '約10分' : n <= 5 ? '約15分' : '約20分';
+}
+
 function renderToday(){
   if (!state.program || !state.program.length) return;
   const head = document.querySelector('.today-card .card-head h2');
@@ -870,9 +1092,10 @@ function renderToday(){
   const d = state.program.find(x => x.day === cur);
   if (head) head.innerHTML = `今日のあなた専用メニュー — DAY ${String(cur).padStart(2,'0')} <span class="head-deco">🎀</span>`;
   if (sub){
+    const ns = (d.selfcare || []).length, nt = (d.training || []).length;
     sub.textContent = d.isRest
-      ? `${d.theme}｜今日は休息日。やさしいセルフケアだけでOKです`
-      : `${d.theme}｜セルフケア2種＋トレーニング2種（約10〜15分）`;
+      ? `${d.theme}｜今日は休息日。やさしいセルフケア${ns}種だけでOKです`
+      : `${d.theme}｜セルフケア${ns}種＋トレーニング${nt}種（${estMinutes(ns + nt)}）`;
     const care = painLabelList();
     if (care.length) sub.textContent += `｜🛡 ${care.join('・')}に配慮した内容です`;
   }
@@ -883,27 +1106,155 @@ function renderToday(){
   bindExerciseCards(els.todayGrid);
 
   if (act){
+    const streak = Store.currentStreak(progressKey());
     act.innerHTML = `
-      <button class="btn-primary" id="btn-day-start" type="button">▶ 順番に始める（${all.length}種・${d.isRest?'ゆったり':'約10〜15分'}）</button>
-      <button class="btn-ghost" id="btn-day-done" type="button">✓ 完了にする</button>
-      <span class="today-progress">これまで ${doneArr.length}/30日 完了</span>`;
+      <button class="btn-primary" id="btn-day-start" type="button">▶ 順番に始める（${all.length}種・${d.isRest?'ゆったり':estMinutes(all.length)}）</button>
+      <button class="btn-ghost" id="btn-day-done" type="button">✓ できた</button>
+      <button class="btn-ghost sm" id="btn-day-partial" type="button">△ 一部できた</button>
+      <button class="btn-ghost sm" id="btn-day-none" type="button">× できなかった</button>
+      <span class="today-progress">これまで ${doneArr.length}/30日 完了${streak >= 2 ? ` ・ 🔥 ${streak}日連続` : ''}</span>`;
     document.getElementById('btn-day-start').onclick = () => {
       if (state.todayList && state.todayList.length){
         openExerciseModal(state.todayList[0], { index: 0, list: state.todayList });
       }
     };
-    document.getElementById('btn-day-done').onclick = completeCurrentDay;
+    document.getElementById('btn-day-done').onclick    = () => recordDay('full');
+    document.getElementById('btn-day-partial').onclick = () => recordDay('partial');
+    document.getElementById('btn-day-none').onclick    = () => recordDay('none');
   }
+  renderCheckpoint();
 }
 
-// 今日の分を完了として記録（完了ボタン／ガイド最終画面の両方から呼ばれる）
-function completeCurrentDay(){
+// 今日の分を記録（できた／一部／できなかった）。記録後に体感を1タップで聞く。
+function recordDay(status){
   const cur = currentDayNumber();
   if (cur == null) return;
-  Store.toggleDayDone(progressKey(), cur);
+  Store.logDay(progressKey(), cur, status, undefined);
+  if (status === 'none'){
+    showRecordToast('× 今日はできなかった、と記録しました。明日また DAY ' + cur + ' からで大丈夫です。');
+    renderToday(); renderProgram(state.currentPhase);
+    return;
+  }
+  askFeel(cur, status);
+}
+
+// 体感を1タップで（スキップ可）。ここが次の自動調整の材料になる。
+function askFeel(day, status){
+  let box = document.getElementById('feel-ask');
+  if (!box){
+    box = document.createElement('div');
+    box.id = 'feel-ask';
+    box.className = 'feel-ask';
+    document.body.appendChild(box);
+  }
+  box.innerHTML = `
+    <div class="feel-inner">
+      <div class="feel-title">${status === 'full' ? '🎉' : '👍'} DAY ${day} を記録しました</div>
+      <div class="feel-q">今日はどうでしたか？（あとの調整に使います）</div>
+      <div class="feel-opts">
+        <button type="button" data-feel="easy">🙂 楽だった</button>
+        <button type="button" data-feel="ok">😌 ちょうどよかった</button>
+        <button type="button" data-feel="hard">😣 きつかった</button>
+      </div>
+      <button type="button" class="feel-skip" data-feel="">答えずに閉じる</button>
+    </div>`;
+  box.classList.add('show');
+  const close = () => { box.classList.remove('show'); renderToday(); renderProgram(state.currentPhase); };
+  box.querySelectorAll('[data-feel]').forEach(b => {
+    b.onclick = () => {
+      const f = b.dataset.feel;
+      if (f) Store.logDay(progressKey(), day, status, f);
+      close();
+      const next = currentDayNumber();
+      showRecordToast(next ? `おつかれさまでした。次は DAY ${next} です` : '👑 全30日コンプリート！本当におつかれさまでした');
+    };
+  });
+}
+
+function showRecordToast(msg){
+  let t = document.getElementById('save-toast');
+  if (!t){
+    t = document.createElement('div');
+    t.id = 'save-toast'; t.className = 'save-toast';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// 完了として記録（ガイド最終画面から呼ばれる。既存の呼び出し名は維持）
+function completeCurrentDay(){
+  recordDay('full');
+}
+
+// ===== 途中評価と自動適応（Day 7 / 14 / 21）=====
+// 「計画どおり30日」ではなく「その人の実際に合わせて30日」にするための仕組み。
+const CHECKPOINTS = [7, 14, 21];
+// 直近ブロックの記録から、次の10日をどう変えるかを決める
+function evaluateBlock(cp){
+  const p = Store.getProgress(progressKey());
+  const from = cp - 6, to = cp;                 // 直近7日分を見る
+  const logs = [];
+  for (let d = from; d <= to; d++) if (p.logs[d]) logs.push(p.logs[d]);
+  const n = Math.max(1, to - from + 1);
+  const cnt = (fn) => logs.filter(fn).length;
+  const hard    = cnt(l => l.feel === 'hard') / n;
+  const easy    = cnt(l => l.feel === 'easy') / n;
+  const missed  = (n - cnt(l => l.status !== 'none')) / n;  // 未記録＋できなかった
+  const partial = cnt(l => l.status === 'partial') / n;
+
+  let level = 0, sizeDelta = 0;
+  const reasons = [];
+  if (hard >= 0.4){ level = -1; reasons.push('「きつかった」が多かったので、強度をひとつやさしくしました'); }
+  else if (easy >= 0.6){ level = 1; reasons.push('「楽だった」が続いたので、少し歯ごたえのある内容にしました'); }
+  if (missed >= 0.4){ sizeDelta = -1; reasons.push('できない日が続いたので、1日の種目数を減らしました'); }
+  else if (partial >= 0.5){ sizeDelta = -1; reasons.push('途中までの日が多かったので、1日の種目数を減らしました'); }
+  if (!reasons.length) reasons.push('よいペースです。このまま続けます');
+  return { at: cp, level, sizeDelta, reason: reasons.join('。'), stats: { hard, easy, missed, partial } };
+}
+
+// 直近で越えたチェックポイントを返す（まだ評価していないもの）
+function pendingCheckpoint(){
+  const p = Store.getProgress(progressKey());
+  const doneMax = p.done.length ? Math.max(...p.done) : 0;
+  const already = p.adapt?.at || 0;
+  for (let i = CHECKPOINTS.length - 1; i >= 0; i--){
+    const cp = CHECKPOINTS[i];
+    if (doneMax >= cp && already < cp) return cp;
+  }
+  return null;
+}
+
+function renderCheckpoint(){
+  const box = document.getElementById('checkpoint-card');
+  if (!box) return;
+  const cp = pendingCheckpoint();
+  if (!cp){ box.hidden = true; box.innerHTML = ''; return; }
+  const ev = evaluateBlock(cp);
+  const changed = ev.level !== 0 || ev.sizeDelta !== 0;
+  box.hidden = false;
+  box.innerHTML = `
+    <div class="cp-head">🎯 ${cp}日間おつかれさまでした</div>
+    <p class="cp-body">${escapeHtml(ev.reason)}。</p>
+    ${changed ? `<p class="cp-note">残りの日程をこの内容に切り替えます。合わなければ元に戻せます。</p>` : ''}
+    <div class="cp-actions">
+      <button type="button" class="btn-primary" id="cp-apply">${changed ? 'この調整で続ける' : '続ける'}</button>
+      ${changed ? '<button type="button" class="btn-ghost sm" id="cp-keep">今のままがいい</button>' : ''}
+    </div>`;
+  document.getElementById('cp-apply').onclick = () => applyAdapt(ev);
+  const keep = document.getElementById('cp-keep');
+  if (keep) keep.onclick = () => applyAdapt({ at: cp, level: 0, sizeDelta: 0, reason: '調整せずに続ける' });
+}
+
+function applyAdapt(ev){
+  Store.setAdapt(progressKey(), { at: ev.at, level: ev.level, sizeDelta: ev.sizeDelta, reason: ev.reason });
+  const keys = state.problems.map(p => p.key);
+  state.program = build30DayProgram(keys, state.selectedCourse, programOpts());
   renderToday();
   renderProgram(state.currentPhase);
-  showDoneToast(cur);
+  showRecordToast(ev.level || ev.sizeDelta ? '✅ 残りの日程を調整しました' : '✅ このまま続けます');
 }
 
 // 完了時の祝福トースト
@@ -959,10 +1310,25 @@ function exerciseCard(ex){
         </div>
         ${firstStep ? `<div class="ex-howhint"><span class="ex-howhint-badge">STEP 1</span>${firstStep}</div>` : ''}
         <div class="ex-purpose">${ex.purpose}</div>
+        ${repeatNote(ex)}
         ${exerciseProblemBadges(ex)}
       </div>
     </div>
   `;
+}
+
+// 同じ種目が何度も出てくるのは手抜きではなく「基本種目だから」。
+// 黙って繰り返すと使い回しに見えるので、回数と理由を明示する。
+function repeatNote(ex){
+  const prog = state.program;
+  if (!prog || !prog.length) return '';
+  let n = 0;
+  prog.forEach(d => { [...(d.selfcare||[]), ...(d.training||[])].forEach(e => { if (e.id === ex.id) n++; }); });
+  if (n < 3) return '';
+  const why = (prog.targeted && prog.targeted.has(ex.id))
+    ? 'あなたの姿勢に直接効く基本の種目'
+    : '身体の土台になる基本の種目';
+  return `<div class="ex-repeat">🔁 30日で${n}回入っています（${why}なので、くり返して身につけます）</div>`;
 }
 
 function bindExerciseCards(parent){
@@ -1015,7 +1381,7 @@ function dayCard(d, doneSet, curDay){
       <div class="day-num">DAY ${String(d.day).padStart(2,'0')}</div>
       <div class="day-theme">${d.theme}</div>
       <ul class="day-list">
-        ${all.slice(0,4).map(ex => `<li>${ex.name}</li>`).join('')}
+        ${all.slice(0,4).map(ex => `<li>${escapeHtml(ex.displayName || ex.name)}</li>`).join('')}
       </ul>
     </div>
   `;
@@ -1054,6 +1420,49 @@ function painCautionHTML(ex){
   if (f.lowBack && /腰/.test(txt)) parts.push('腰');
   if (!parts.length) return '';
   return `<div class="pain-caution">⚠ <strong>${parts.join('・')}に痛みがある方へ</strong>：痛みを感じたら、その場で中止してください。無理は禁物です。${ex.easyOption ? 'つらい時は下の「きつい場合」の簡単版から始めましょう。' : ''}</div>`;
+}
+
+// 実施中に異常が出たときの導線（断定せず、中止と相談を案内する）
+function showStopGuidance(ex){
+  els.modalBody.innerHTML = `
+    <div class="stop-guide">
+      <h2>今日はここで中止してください</h2>
+      <p class="sg-lead">痛み・しびれ・めまい・息苦しさが出たときは、がんばらずにやめるのが正解です。無理に続けると悪化することがあります。</p>
+      <div class="sg-box">
+        <strong>いますること</strong>
+        <ol>
+          <li>動きを止めて、らくな姿勢で座るか横になる</li>
+          <li>呼吸が落ち着くまで休む</li>
+          <li>今日はこの種目を再開しない</li>
+        </ol>
+      </div>
+      <div class="sg-box sg-warn">
+        <strong>次に当てはまる場合は、医療機関にご相談ください</strong>
+        <ul>
+          <li>痛み・しびれが休んでも続く、くり返す</li>
+          <li>手足に力が入りにくい／感覚が鈍い</li>
+          <li>強いめまい・吐き気・胸の苦しさがある</li>
+          <li>転んだ・ひねったあとに痛みが出た</li>
+        </ul>
+        <p class="sg-note">このアプリは病気の診断はできません。判断に迷うときは専門家にご相談ください。</p>
+      </div>
+      <div class="sg-actions">
+        <button class="btn-primary" data-close type="button">閉じる</button>
+        <button class="btn-ghost" id="sg-skip-today" type="button">今日はお休みにする</button>
+      </div>
+    </div>`;
+  const skip = document.getElementById('sg-skip-today');
+  if (skip) skip.onclick = () => { closeModal(); showRestToast(); };
+  showModal();
+}
+
+function showRestToast(){
+  let t = document.getElementById('save-toast');
+  if (!t){ t = document.createElement('div'); t.id='save-toast'; t.className='save-toast'; document.body.appendChild(t); }
+  t.innerHTML = '🌿 今日はお休みにしました。休むことも大切です。明日また続けましょう。';
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 4500);
 }
 
 function openExerciseModal(ex, nav){
@@ -1099,6 +1508,9 @@ function openExerciseModal(ex, nav){
       <h4>💡 なぜ効くのか</h4>
       <p>${ex.why || ''}</p>
     </div>
+    <div class="stop-row">
+      <button class="btn-stop" id="btn-stop-exercise" type="button">⚠ 痛み・しびれ・めまいが出た（中止する）</button>
+    </div>
     ${nav ? `
     <div class="guided-nav">
       <button class="btn-ghost" id="gn-prev" type="button" ${nav.index === 0 ? 'disabled' : ''}>← 前へ</button>
@@ -1108,6 +1520,9 @@ function openExerciseModal(ex, nav){
         : `<button class="btn-primary" id="gn-finish" type="button">✓ 今日の分を完了する</button>`}
     </div>` : ''}
   `;
+  const stopBtn = document.getElementById('btn-stop-exercise');
+  if (stopBtn) stopBtn.onclick = () => showStopGuidance(ex);
+
   if (nav){
     const prev = document.getElementById('gn-prev');
     const next = document.getElementById('gn-next');
@@ -1125,7 +1540,7 @@ function openDayModal(d){
     <div style="margin-bottom:24px">
       <div style="font-family:'Inter',sans-serif; font-size:12px; color:var(--brand); letter-spacing:.1em; font-weight:700">PHASE ${d.phase} · DAY ${d.day} ${d.isRest?'· REST':''}</div>
       <h2 style="margin:6px 0 4px; font-size:26px">${d.theme}</h2>
-      <p style="color:var(--muted); font-size:13px; margin:0">${d.isRest ? '今日は身体を労わる日。呼吸とゆっくりしたストレッチに集中しましょう。' : '今日のメニュー4種。各エクササイズをクリックで詳細表示。'}</p>
+      <p style="color:var(--muted); font-size:13px; margin:0">${d.isRest ? '今日は身体を労わる日。呼吸とゆっくりしたストレッチに集中しましょう。' : `この日のメニュー${all.length}種。各エクササイズをタップで詳細表示。`}</p>
     </div>
     <div style="display:grid; gap:14px">
       ${all.map(ex => exerciseCard(ex)).join('')}
@@ -1184,7 +1599,8 @@ function saveCurrentSession(){
       metrics,
       symptoms: state.symptoms.slice(),
       symptomFree: state.symptomFree,
-      painFlags: state.painFlags || { knee:false, lowBack:false },
+      painFlags: state.painFlags || {},
+      profile: state.profile || PROFILE_DEFAULT,
       focusParts: state.focusParts || [],
       focusNotes: state.focusNotes || [],
       thumbSide: Store.makeThumb(state.imgSide),
@@ -1259,8 +1675,9 @@ function openSavedSession(id){
 
   state.symptoms    = s.symptoms || [];
   state.symptomFree = s.symptomFree || '';
-  state.painFlags   = s.painFlags || { knee:false, lowBack:false };
+  state.painFlags   = s.painFlags || {};
   setPainAvoidance(state.painFlags);   // 保存プランでも痛み配慮を維持
+  state.profile    = s.profile || Store.getPrefs() || PROFILE_DEFAULT;
   state.focusParts = s.focusParts || [];
   state.focusNotes = s.focusNotes || [];
   setFocusParts(state.focusParts);     // 主訴の重点も維持
@@ -1268,7 +1685,7 @@ function openSavedSession(id){
   state.recommendation = recommendCourse(keys);
   state.selectedCourse = s.course || state.recommendation.top;
   state.currentPhase   = 1;
-  state.program = build30DayProgram(keys, state.selectedCourse);
+  state.program = build30DayProgram(keys, state.selectedCourse, programOpts());
 
   // 写真なしモード
   state.resultSide = null; state.resultFront = null;
@@ -1331,6 +1748,7 @@ function hideSavedBanner(){
 function runSimpleDiagnosis(){
   hideAnalyzeError();
   collectSymptoms();
+  collectProfile();     // 時間・運動経験・目的・年代を取得
   computePainFlags();   // 痛み配慮(禁忌)を処方に反映
   computeFocus();       // 主訴の重点部位を処方に反映
   const entries = buildSymptomProblems();
@@ -1349,7 +1767,7 @@ function runSimpleDiagnosis(){
   state.recommendation = recommendCourse(probKeys);
   state.selectedCourse = state.recommendation.top;
   state.currentPhase = 1;
-  state.program = build30DayProgram(probKeys, state.selectedCourse);
+  state.program = build30DayProgram(probKeys, state.selectedCourse, programOpts());
 
   hideSavedBanner();
   renderAll();

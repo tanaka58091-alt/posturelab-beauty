@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PostureLab Beauty｜姿勢から、私をもっと美しく。</title>
-<link rel="stylesheet" href="style.css?v=4" />
+<link rel="stylesheet" href="style.css?v=9" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Allura&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -201,7 +201,72 @@
         <label for="symptom-free">その他のお悩み（任意）</label>
         <textarea id="symptom-free" rows="2" placeholder="例：朝起きると腰がだるい／長時間立っていると膝が痛む など"></textarea>
       </div>
+
+      <div class="profile-qs" id="profile-qs">
+        <div class="pq-lead">あと4つだけ教えてください（メニューの量と強さが変わります）</div>
+        <div class="pq-row">
+          <span class="pq-label">1日にとれる時間</span>
+          <div class="pq-opts" data-q="time">
+            <button type="button" data-v="5">5分</button>
+            <button type="button" data-v="10" class="on">10分</button>
+            <button type="button" data-v="15">15分</button>
+            <button type="button" data-v="20">20分</button>
+          </div>
+        </div>
+        <div class="pq-row">
+          <span class="pq-label">運動の経験</span>
+          <div class="pq-opts" data-q="exp">
+            <button type="button" data-v="none" class="on">ほとんどない</button>
+            <button type="button" data-v="some">ときどきする</button>
+            <button type="button" data-v="regular">習慣がある</button>
+          </div>
+        </div>
+        <div class="pq-row">
+          <span class="pq-label">いちばんの目的</span>
+          <div class="pq-opts" data-q="goal">
+            <button type="button" data-v="relief" class="on">不調をらくにしたい</button>
+            <button type="button" data-v="look">見た目を整えたい</button>
+          </div>
+        </div>
+        <div class="pq-row">
+          <span class="pq-label">年代</span>
+          <div class="pq-opts" data-q="age">
+            <button type="button" data-v="u40">〜40代</button>
+            <button type="button" data-v="50" class="on">50代</button>
+            <button type="button" data-v="60">60代</button>
+            <button type="button" data-v="70">70代〜</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <details class="shoot-guide">
+      <summary>📸 撮影のコツを見る（結果の精度が上がります）</summary>
+      <div class="sg-grid">
+        <div class="sg-col">
+          <strong>この5つだけ守れば大丈夫</strong>
+          <ol>
+            <li><b>全身を入れる</b>：頭のてっぺんから足首まで</li>
+            <li><b>3〜4m離れる</b>：スマホは床から腰の高さ、まっすぐ構える</li>
+            <li><b>明るい場所で</b>：窓を背にせず（逆光を避ける）</li>
+            <li><b>体のラインが分かる服</b>：だぼっとした服は避ける</li>
+            <li><b>いつもの立ち方で</b>：正そうとせず、力を抜いて自然に</li>
+          </ol>
+          <p class="sg-hint">ご家族に撮ってもらうか、スマホを台に立ててセルフタイマーが確実です。</p>
+        </div>
+        <div class="sg-col">
+          <strong>こんな写真は精度が落ちます</strong>
+          <ul class="sg-ng">
+            <li>足元や頭が切れている</li>
+            <li>暗い・逆光でシルエットになっている</li>
+            <li>ななめから撮っている（真横・真正面が理想）</li>
+            <li>スマホを上や下から構えている</li>
+            <li>ほかの人が一緒に写っている</li>
+          </ul>
+          <p class="sg-hint">アップロード後、自動でチェックして気になる点があればお知らせします。</p>
+        </div>
+      </div>
+    </details>
 
     <div class="upload-tips">
       <div class="tip">
@@ -274,6 +339,10 @@
 <!-- ============ RESULTS ============ -->
 <main id="results" hidden>
 
+  <div class="result-disclaimer">
+    このページは<strong>見た目の姿勢の傾向</strong>をお伝えするものです。病気の診断ではありません。痛みやしびれが続く場合は医療機関にご相談ください。
+  </div>
+
   <!-- ===== SUMMARY ===== -->
   <section class="card">
     <div class="card-head">
@@ -313,6 +382,9 @@
       </div>
 
       <div class="metrics" id="metrics-list"></div>
+
+      <!-- 部位別サブスコア（総合点の内訳。どこを直せばいいかを分かるように） -->
+      <div class="region-scores" id="region-scores"></div>
     </div>
 
     <div class="overlay-grid">
@@ -380,9 +452,11 @@
       <div class="card-num">STEP<br/>06</div>
       <div>
         <h2>今日のあなた専用メニュー <span class="head-deco">🎀</span></h2>
-        <p class="muted">セルフケア2種 ＋ トレーニング2種（約10〜15分）</p>
+        <p class="muted">あなたが選んだ時間に合わせた、今日の分だけを表示します</p>
       </div>
     </div>
+    <!-- 途中評価（Day7/14/21）: 記録をもとに残りの日程を調整する -->
+    <div class="checkpoint-card" id="checkpoint-card" hidden></div>
     <div class="today-grid" id="today-grid"></div>
     <div class="today-actions" id="today-actions"></div>
   </section>
@@ -446,7 +520,7 @@
   </div>
 </footer>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="app.js?v=6"></script>
 
 </body>
 </html>

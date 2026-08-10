@@ -67,6 +67,17 @@ function clearAll(){
   localStorage.removeItem(SESSIONS_KEY);
 }
 
+// ---------- プロフィール設定（時間/運動経験/目的/年代） ----------
+const PREFS_KEY = 'pl_prefs_v1';
+function getPrefs(){
+  try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || null; }
+  catch { return null; }
+}
+function setPrefs(prefs){
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs || {})); } catch {}
+  return prefs;
+}
+
 // ---------- 30日プログラムの進捗（診断セッションごと・端末内） ----------
 const PROGRESS_KEY = 'pl_progress_v1';
 function _readProgressAll(){
@@ -75,18 +86,63 @@ function _readProgressAll(){
 }
 function getProgress(sessionId){
   const p = _readProgressAll()[sessionId];
-  return (p && Array.isArray(p.done)) ? p : { done: [] };
+  if (!p || !Array.isArray(p.done)) return { done: [], logs: {}, adapt: null };
+  // 旧データ(doneだけ)も壊さずに読めるようにする
+  return { done: p.done, logs: p.logs || {}, adapt: p.adapt || null, updatedAt: p.updatedAt };
 }
-function toggleDayDone(sessionId, day){
+function _writeProgress(sessionId, p){
   const all = _readProgressAll();
-  const p = (all[sessionId] && Array.isArray(all[sessionId].done)) ? all[sessionId] : { done: [] };
-  const i = p.done.indexOf(day);
-  if (i >= 0) p.done.splice(i, 1); else p.done.push(day);
-  p.done.sort((a, b) => a - b);
   p.updatedAt = new Date().toISOString();
   all[sessionId] = p;
   try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch {}
   return p;
+}
+function toggleDayDone(sessionId, day){
+  const p = getProgress(sessionId);
+  const i = p.done.indexOf(day);
+  if (i >= 0) p.done.splice(i, 1); else p.done.push(day);
+  p.done.sort((a, b) => a - b);
+  return _writeProgress(sessionId, p);
+}
+// その日の記録: status='full'|'partial'|'none' / feel='easy'|'ok'|'hard'|null
+// full・partial は「進んだ」扱い(done入り)。none は記録だけ残して日は進めない。
+function logDay(sessionId, day, status, feel){
+  const p = getProgress(sessionId);
+  const prev = p.logs[day] || {};
+  p.logs[day] = {
+    status: status || prev.status || 'full',
+    feel: feel !== undefined ? feel : (prev.feel || null),
+    at: prev.at || new Date().toISOString(),
+    date: prev.date || new Date().toISOString().slice(0, 10),
+  };
+  const advanced = p.logs[day].status !== 'none';
+  const i = p.done.indexOf(day);
+  if (advanced && i < 0) p.done.push(day);
+  if (!advanced && i >= 0) p.done.splice(i, 1);
+  p.done.sort((a, b) => a - b);
+  return _writeProgress(sessionId, p);
+}
+function setAdapt(sessionId, adapt){
+  const p = getProgress(sessionId);
+  p.adapt = adapt || null;
+  return _writeProgress(sessionId, p);
+}
+// 連続実施日数（カレンダー日ベース。今日か昨日に記録があれば継続中とみなす）
+function currentStreak(sessionId){
+  const p = getProgress(sessionId);
+  const days = Object.values(p.logs)
+    .filter(l => l && l.status !== 'none' && l.date)
+    .map(l => l.date);
+  if (!days.length) return 0;
+  const set = new Set(days);
+  const today = new Date();
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const shift = (n) => { const d = new Date(today); d.setDate(d.getDate() - n); return iso(d); };
+  if (!set.has(shift(0)) && !set.has(shift(1))) return 0;   // 2日以上空いたら途切れ
+  let n = set.has(shift(0)) ? 0 : 1;
+  let streak = 0;
+  while (set.has(shift(n))){ streak++; n++; }
+  return streak;
 }
 
 // ---------- 写真サムネ生成（縮小して容量節約） ----------
@@ -152,6 +208,7 @@ function importData(jsonText, merge = true){
 export {
   getProfile, setProfile, ensureProfile,
   getSessions, getSession, addSession, deleteSession, clearAll,
-  getProgress, toggleDayDone,
+  getProgress, toggleDayDone, logDay, setAdapt, currentStreak,
+  getPrefs, setPrefs,
   makeThumb, exportData, downloadExport, importData,
 };

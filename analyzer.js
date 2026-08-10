@@ -470,6 +470,106 @@ function calcScore(sideRes, frontRes, problems){
   return Math.max(35, Math.min(100, score));
 }
 
+// ========== 部位別サブスコア ==========
+// 「総合◯点」だけでは何を直せばいいか分からないため、5領域に分けて
+// 【何を見て】【なぜその点で】【どこを改善すると上がるか】を返す。
+const REGIONS = [
+  { key:'head',     label:'頭・首',   icon:'🙂' },
+  { key:'shoulder', label:'肩',       icon:'💪' },
+  { key:'trunk',    label:'背中・体幹', icon:'🧍' },
+  { key:'pelvis',   label:'骨盤・腰',  icon:'🔺' },
+  { key:'legs',     label:'脚・足',   icon:'🦵' },
+];
+// 問題キー → どの領域に何割効くか
+const REGION_WEIGHT = {
+  forwardHead:        { head:1.0, shoulder:0.3 },
+  roundedShoulders:   { shoulder:1.0, trunk:0.3 },
+  thoracicKyphosis:   { trunk:1.0, shoulder:0.5 },
+  anteriorPelvicTilt: { pelvis:1.0, trunk:0.4 },
+  posteriorPelvicTilt:{ pelvis:1.0, trunk:0.4 },
+  swayBack:           { pelvis:1.0, trunk:0.6, legs:0.3 },
+  lateralAsymmetry:   { shoulder:0.6, pelvis:0.6, trunk:0.4 },
+  scoliosis:          { trunk:1.0, shoulder:0.4, pelvis:0.4 },
+  kneeValgus:         { legs:1.0 },
+  kneeVarus:          { legs:1.0 },
+  ankleStiffness:     { legs:1.0 },
+};
+const SEVERITY_PENALTY = { low:12, mid:26, high:42 };
+// 各領域の「その点になった根拠（写真の計測値）」
+function regionSeen(regionKey, m, fm){
+  const out = [];
+  const n = (v, d=1) => Number(v).toFixed(d);
+  if (regionKey === 'head'){
+    if (m?.forwardHeadAngle != null) out.push(`頭が肩より前に出ている角度 ${n(m.forwardHeadAngle)}°（目安 22°未満）`);
+    if (fm?.headTilt != null) out.push(`頭の左右の傾き ${n(Math.abs(fm.headTilt))}°（目安 2°未満）`);
+  }
+  if (regionKey === 'shoulder'){
+    if (m?.roundedShoulderRatio != null) out.push(`肩の前方シフト ${n(m.roundedShoulderRatio * 100)}%（目安 3%未満）`);
+    if (fm?.shoulderTilt != null) out.push(`左右の肩の高さの差 ${n(Math.abs(fm.shoulderTilt))}°（目安 2°未満）`);
+  }
+  if (regionKey === 'trunk'){
+    if (m?.cervicalAngle != null) out.push(`背中上部の丸まり（推定）${n(m.cervicalAngle)}°（目安 22°未満）`);
+    if (fm?.shoulderTilt != null && fm?.pelvicTilt != null)
+      out.push(`肩と骨盤の傾きの向き ${Math.sign(fm.shoulderTilt) === Math.sign(fm.pelvicTilt) ? '同じ' : '反対（Cカーブ傾向）'}`);
+  }
+  if (regionKey === 'pelvis'){
+    if (m?.pelvicTiltAngle != null) out.push(`骨盤の傾き ${n(m.pelvicTiltAngle)}°・${m.pelvicForward ? '前に傾く傾向' : '後ろに傾く傾向'}（目安 5°未満）`);
+    if (fm?.pelvicTilt != null) out.push(`左右の骨盤の高さの差 ${n(Math.abs(fm.pelvicTilt))}°（目安 2°未満）`);
+  }
+  if (regionKey === 'legs'){
+    if (m?.kneeFlex != null) out.push(`立ったときのひざの曲がり ${n(m.kneeFlex)}°（目安 0〜5°）`);
+    if (fm?.lKneeIn != null) out.push(`ひざの内寄り ${n(Math.max(fm.lKneeIn, fm.rKneeIn) * 100)}%（目安 3%未満）`);
+  }
+  return out;
+}
+// problems: detectProblems() の結果（簡易診断でも key/severity は入る）
+// sideRes/frontRes は写真なしのとき null
+function calcRegionScores(sideRes, frontRes, problems){
+  const m = sideRes?.metrics || null;
+  const fm = frontRes?.metrics || null;
+  const hasPhoto = !!m;
+
+  return REGIONS.map(r => {
+    let penalty = 0;
+    const causes = [];
+    (problems || []).forEach(p => {
+      const w = (REGION_WEIGHT[p.key] || {})[r.key];
+      if (!w) return;
+      const base = SEVERITY_PENALTY[p.severity] || SEVERITY_PENALTY.low;
+      penalty += base * w;
+      causes.push({ title: p.title, severity: p.severity, weight: w });
+    });
+    causes.sort((a, b) => b.weight - a.weight);
+    const seen = hasPhoto ? regionSeen(r.key, m, fm) : [];
+    // 写真がなく、お悩みにも出てこなかった部位は「見ていない」。
+    // ここで100点を出すと「見てもいないのに問題なし」と誤解させるため未評価にする。
+    const unrated = !hasPhoto && !causes.length;
+    const score = unrated ? null : Math.max(20, Math.min(100, Math.round(100 - penalty)));
+
+    let why, lift;
+    if (unrated){
+      why  = 'この部位は今回チェックしていません。';
+      lift = '写真で診断すると、この部位も点数が出ます。';
+    } else if (!causes.length){
+      why  = '気になる特徴は見つかりませんでした。';
+      lift = '今のまま維持できれば十分です。';
+    } else {
+      const names = causes.slice(0, 2).map(c => c.title).join('・');
+      why  = `${names}${causes.length > 2 ? ` ほか${causes.length - 2}件` : ''} の分を差し引いています。`;
+      lift = `まずは「${causes[0].title}」への対策が最も効きます。30日プログラムにこの部位の種目が入っています。`;
+    }
+    return {
+      key: r.key, label: r.label, icon: r.icon,
+      score,
+      status: unrated ? 'none' : score >= 85 ? 'good' : score >= 65 ? 'warn' : 'bad',
+      seen,
+      seenNote: hasPhoto ? '' : 'この部位は写真がないため、ご記入いただいたお悩みから判定しています。',
+      why, lift,
+      causeCount: causes.length,
+    };
+  });
+}
+
 function gradeFromScore(s){
   if (s >= 92) return { grade:'EXCELLENT', desc:'プロのアスリートレベル。維持を心がけましょう。' };
   if (s >= 82) return { grade:'GOOD',      desc:'良好な姿勢。微調整でさらに伸びしろあり。' };
@@ -541,6 +641,7 @@ export {
   detectProblems,
   determinePostureType,
   calcScore,
+  calcRegionScores,
   gradeFromScore,
   buildMetricsList,
 };

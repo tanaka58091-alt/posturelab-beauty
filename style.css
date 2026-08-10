@@ -1371,3 +1371,183 @@ body{
   display:inline-block; margin-top:6px;
   color:var(--rose); font-weight:700;
 }
+
+/* ===== 医療線引き：写真で分かること／推測／分からないこと ===== */
+.evidence{margin-top:14px; display:grid; gap:8px}
+.ev-block{
+  padding:11px 14px; border-radius:12px;
+  background:var(--surface-2); border:1px solid var(--line);
+}
+.ev-block strong{display:block; font-size:11.5px; letter-spacing:.04em; margin-bottom:4px; font-weight:700}
+.ev-block p{margin:0; font-size:13px; line-height:1.85; color:var(--ink-2)}
+.ev-block b{color:var(--ink); font-weight:700}
+.ev-seen strong{color:var(--rose-deep)}
+.ev-seen{background:var(--pink-soft); border-color:var(--pink-3)}
+.ev-dir strong{color:#0E7C5A}
+.ev-dir{background:#EEF9F4; border-color:#BFE6D5}
+.ev-unknown strong{color:var(--muted)}
+
+/* ===== 結果画面の免責（読む位置に置く） ===== */
+.result-disclaimer{
+  max-width:1280px; margin:0 auto 6px; padding:11px 20px;
+  font-size:12.5px; line-height:1.85; color:var(--ink-2);
+  background:var(--surface-2); border:1px solid var(--line);
+  border-radius:12px;
+}
+.result-disclaimer strong{color:var(--ink)}
+@media(max-width:900px){ .result-disclaimer{margin-left:16px; margin-right:16px} }
+
+/* ===== 実施中の中止導線 ===== */
+.stop-row{margin-top:22px; text-align:center}
+.btn-stop{
+  background:none; border:1.5px solid var(--pink-3); color:var(--ink-2);
+  padding:9px 18px; border-radius:999px; font-size:12.5px; font-weight:700;
+  cursor:pointer; font-family:inherit; transition:.15s;
+}
+.btn-stop:hover{background:#FFF4F6; border-color:var(--warn); color:var(--ink)}
+.stop-guide h2{margin:0 0 8px; font-size:22px; color:var(--ink)}
+.sg-lead{font-size:14px; color:var(--ink-2); line-height:1.95; margin:0 0 18px}
+.sg-box{padding:14px 18px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); margin-bottom:14px}
+.sg-box strong{display:block; font-size:13px; margin-bottom:8px; color:var(--ink)}
+.sg-box ol,.sg-box ul{margin:0; padding-left:20px; font-size:13.5px; line-height:2; color:var(--ink-2)}
+.sg-warn{background:#FFF8E6; border-color:var(--warn)}
+.sg-note{margin:10px 0 0; font-size:12px; color:var(--muted)}
+.sg-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:6px}
+
+/* ===== 写真品質の注意 ===== */
+.photo-quality{
+  max-width:1280px; margin:0 auto 6px; padding:14px 20px;
+  background:#FFF8E6; border:1.5px solid var(--warn); border-radius:14px;
+}
+.photo-quality strong{display:block; font-size:13.5px; color:var(--ink); margin-bottom:6px}
+.photo-quality ul{margin:0 0 10px; padding-left:20px; font-size:13px; line-height:1.9; color:var(--ink-2)}
+@media(max-width:900px){ .photo-quality{margin-left:16px; margin-right:16px} }
+
+/* ===== 撮影ガイド（折りたたみ） ===== */
+.shoot-guide{
+  margin:16px 0 4px; padding:0 18px;
+  background:var(--surface-2); border:1px solid var(--line); border-radius:14px;
+}
+.shoot-guide summary{
+  padding:13px 0; cursor:pointer; font-size:13.5px; font-weight:700; color:var(--rose-deep);
+  list-style:none;
+}
+.shoot-guide summary::-webkit-details-marker{display:none}
+.shoot-guide summary::after{content:' ▾'; color:var(--muted)}
+.shoot-guide[open] summary::after{content:' ▴'}
+.sg-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px; padding:4px 0 18px}
+.sg-col strong{display:block; font-size:12.5px; color:var(--ink); margin-bottom:8px}
+.sg-col ol,.sg-col ul{margin:0; padding-left:20px; font-size:13px; line-height:2; color:var(--ink-2)}
+.sg-col b{color:var(--ink)}
+.sg-ng li{list-style:'✕ '; padding-left:2px}
+.sg-hint{margin:10px 0 0; font-size:12px; color:var(--muted); line-height:1.8}
+@media(max-width:760px){ .sg-grid{grid-template-columns:1fr; gap:16px} }
+
+/* ===== 初回プロフィール4問（1タップで答えられる） ===== */
+.profile-qs{
+  margin-top:18px; padding:16px 18px;
+  background:var(--surface-2); border:1px solid var(--line); border-radius:16px;
+}
+.pq-lead{font-size:13px; font-weight:700; color:var(--rose-deep); margin-bottom:12px}
+.pq-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px}
+.pq-row:last-child{margin-bottom:0}
+.pq-label{font-size:12.5px; color:var(--ink-2); font-weight:700; min-width:112px}
+.pq-opts{display:flex; gap:7px; flex-wrap:wrap}
+.pq-opts button{
+  padding:7px 15px; border-radius:999px; cursor:pointer;
+  border:1.5px solid var(--line); background:var(--surface);
+  font-family:inherit; font-size:12.5px; color:var(--ink-2); transition:.15s;
+}
+.pq-opts button:hover{border-color:var(--pink-2)}
+.pq-opts button.on{
+  background:var(--pink-soft); border-color:var(--pink); color:var(--ink); font-weight:700;
+}
+@media(max-width:640px){
+  .pq-label{min-width:100%; margin-bottom:-4px}
+  .pq-opts button{padding:8px 14px}
+}
+
+/* ===== 部位別サブスコア（総合点の内訳） ===== */
+.region-scores{
+  grid-column:1 / -1;
+  background:#fff; border:1px solid var(--line);
+  border-radius:16px; padding:18px 16px; margin-top:4px;
+}
+.rs-title{ font-size:16px; font-weight:800; margin:0 0 4px; color:var(--ink) }
+.rs-lead{ font-size:12.5px; color:var(--muted); margin:0 0 12px; line-height:1.6 }
+.rs-item{ border-top:1px solid var(--line) }
+.rs-item:first-of-type{ border-top:none }
+.rs-item > summary{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 4px; cursor:pointer; list-style:none;
+  font-size:14.5px; font-weight:700; color:var(--ink);
+}
+.rs-item > summary::-webkit-details-marker{ display:none }
+.rs-icon{ font-size:18px; width:24px; text-align:center; flex:none }
+.rs-label{ flex:none; width:5.5em }
+.rs-bar{ flex:1; height:8px; border-radius:999px; background:#F3F0F2; overflow:hidden; min-width:60px }
+.rs-bar > i{ display:block; height:100%; border-radius:999px; background:#8FD3A8 }
+.rs-item.warn .rs-bar > i{ background:#F5C86B }
+.rs-item.bad  .rs-bar > i{ background:#F09A9A }
+.rs-score{
+  flex:none; width:2.6em; text-align:right;
+  font-family:var(--font-en); font-weight:800; font-size:17px; color:var(--ink);
+}
+.rs-item[open] > summary{ color:var(--rose) }
+.rs-body{ padding:2px 4px 14px 34px }
+.rs-block{ margin-bottom:10px }
+.rs-block:last-child{ margin-bottom:0 }
+.rs-block > b{ display:block; font-size:12.5px; font-weight:800; color:var(--ink); margin-bottom:3px }
+.rs-block p, .rs-block li{ font-size:13px; color:#5B5257; line-height:1.7; margin:0 }
+.rs-block ul{ margin:0; padding-left:1.1em }
+@media (max-width:640px){
+  .rs-label{ width:5.4em; font-size:12.5px; white-space:nowrap }
+  .rs-icon{ width:20px; font-size:16px }
+  .rs-item > summary{ gap:7px }
+  .rs-body{ padding-left:8px }
+}
+.rs-item.none > summary{ opacity:.62 }
+.rs-item.none .rs-bar > i{ background:#DDD6DA }
+.ex-repeat{
+  margin-top:8px; padding:7px 10px;
+  background:#FFF6F9; border:1px solid #FFE1EA; border-radius:9px;
+  font-size:12px; color:#8A6B76; line-height:1.6;
+}
+
+/* ===== 実施記録（3択＋体感）と途中評価 ===== */
+.feel-ask{
+  position:fixed; inset:0; z-index:1200;
+  display:none; align-items:center; justify-content:center;
+  background:rgba(60,45,52,.42); padding:20px;
+}
+.feel-ask.show{ display:flex }
+.feel-inner{
+  background:#fff; border-radius:20px; padding:24px 20px;
+  width:100%; max-width:380px; text-align:center;
+  box-shadow:0 18px 50px rgba(120,80,95,.28);
+}
+.feel-title{ font-size:17px; font-weight:800; color:var(--ink); margin-bottom:6px }
+.feel-q{ font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.6 }
+.feel-opts{ display:grid; gap:10px }
+.feel-opts button{
+  width:100%; padding:15px 12px; border-radius:13px;
+  border:1.5px solid var(--line); background:#fff;
+  font-size:15px; font-weight:700; color:var(--ink); cursor:pointer;
+}
+.feel-opts button:active{ background:#FFF3F7; border-color:var(--rose) }
+.feel-skip{
+  margin-top:14px; background:none; border:none;
+  font-size:12.5px; color:var(--muted); text-decoration:underline; cursor:pointer;
+}
+.checkpoint-card{
+  background:linear-gradient(135deg,#FFF6F9,#FFF9F4);
+  border:1.5px solid #FFD9E4; border-radius:16px;
+  padding:16px 16px 14px; margin-bottom:16px;
+}
+.cp-head{ font-size:15.5px; font-weight:800; color:var(--ink); margin-bottom:6px }
+.cp-body{ font-size:13.5px; color:#5B5257; line-height:1.75; margin:0 0 6px }
+.cp-note{ font-size:12.5px; color:var(--muted); line-height:1.65; margin:0 0 12px }
+.cp-actions{ display:flex; flex-wrap:wrap; gap:8px; align-items:center }
+@media (max-width:640px){
+  .cp-actions .btn-primary{ width:100% }
+}

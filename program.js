@@ -10,6 +10,8 @@ import {
   ALL_EXERCISES,
   buildPrescriptionPool,
   buildAnchors,
+  setPainAvoidance,
+  setFocusParts,
 } from './prescription-matrix.js';
 
 // ----- 内部: 最少使用の1件を返す（除外・アンカー優先・主訴rank優先） -----
@@ -70,21 +72,76 @@ function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantT
 }
 
 // ===== 今日のメニュー: セルフケア2 + トレーニング2（各1件は問題直結）=====
-function pickTodayMenu(problemKeys, course='mixed'){
-  const prog = build30DayProgram(problemKeys, course);
+function pickTodayMenu(problemKeys, course='mixed', opts){
+  const prog = build30DayProgram(problemKeys, course, opts);
   const d1 = prog.find(d => !d.isRest) || prog[0];
   return { selfcare: d1.selfcare, training: d1.training };
 }
 
+// ===== 段階的負荷（フェーズごとに強度の上限を上げていく）=====
+// Phase1 解放: やさしい動きで慣れる / Phase2 活性化: 標準 / Phase3 統合: 少し歯ごたえを
+// 運動経験(exp)で全体の天井を前後させる（初心者は最後まで無理をさせない）
+// 40〜70代女性向けの安全フィルタを通したあとの強度は実質 1〜2 の2段階しかない。
+// そのため「上限だけ」だと軽い種目が終盤に流れ込んで逆行する。[下限, 上限]の帯で明示する。
+// （帯に収まる種目が6件未満なら banded() が自動で緩めるので、枠不足にはならない）
+const INTENSITY_BAND = {
+  none:    { 1: [1, 1], 2: [1, 2], 3: [2, 2] },   // 未経験: ゆっくり上げる
+  some:    { 1: [1, 1], 2: [2, 2], 3: [2, 2] },   // ときどき: 標準
+  regular: { 1: [1, 2], 2: [2, 2], 3: [2, 3] },   // 習慣あり: 最初から少し歯ごたえを
+};
+function intensityBandFor(phase, exp){
+  const t = INTENSITY_BAND[exp] || INTENSITY_BAND.none;
+  return t[phase] || [1, 2];
+}
+// 反復回数・秒数を、進み具合に応じて少しずつ増やす（DBの文字列を書き換えて表示）
+// 例) Phase1「10回」→ Phase3「13回」 / 「20秒」→「26秒」
+// tune: 途中評価による調整（-1=やさしく / +1=歯ごたえを）。強度は実質2段階しかないため、
+// 「やさしくした／歯ごたえを出した」を回数・秒数で確実に体感できるようにする。
+function scaleDuration(duration, phase, exp, tune){
+  if (!duration) return duration;
+  let f = phase === 1 ? 1.0 : phase === 2 ? 1.15 : 1.3;
+  if (exp === 'none') f = 1 + (f - 1) * 0.6;       // 初心者はゆるやかに
+  if (exp === 'regular') f = 1 + (f - 1) * 1.3;    // 習慣がある人は少し速く
+  if (tune === -1) f *= 0.85;
+  if (tune === 1)  f *= 1.15;
+  if (f === 1) return duration;
+  return String(duration).replace(/(\d+)\s*(回|秒|分)/g, (m, n, unit) => {
+    const v = Number(n);
+    if (unit === '分') return m;                    // 「1分」等は据え置き（刻みが粗くなるため）
+    const step = unit === '秒' ? 5 : 1;             // 秒は5秒刻み・回は1回刻み
+    const scaled = Math.round(v * f / step) * step;
+    // 通常は元の値を下回らせない。ただし「やさしく」調整時だけは6割まで下げてよい
+    const lo = tune === -1 ? Math.max(step, Math.round(v * 0.6 / step) * step) : v;
+    return `${Math.max(lo, scaled)}${unit}`;
+  });
+}
+// その日の表示用に duration だけ差し替えたコピーを返す（DBは書き換えない）
+function withProgression(ex, phase, exp, tune){
+  const scaled = scaleDuration(ex.duration, phase, exp, tune);
+  if (scaled === ex.duration) return ex;
+  return Object.assign(Object.create(Object.getPrototypeOf(ex)), ex, { duration: scaled, _baseDuration: ex.duration });
+}
+
 // ===== 30日プログラム生成 =====
-function build30DayProgram(problemKeys, course='mixed'){
+// opts: { menuSize: 2|4|5|6, exp: 'none'|'some'|'regular' }
+function build30DayProgram(problemKeys, course='mixed', opts){
+  const o = opts || {};
+  const menuSize = [2,4,5,6].includes(o.menuSize) ? o.menuSize : 4;
+  const exp = o.exp || 'none';
+  const tune = o.tune === -1 || o.tune === 1 ? o.tune : 0;
+  // 痛み配慮・主訴フォーカスは、プールを作る直前にここで設定する。
+  // （呼び出し側が別インスタンスの prescription-matrix を触っていても必ず効くようにするため）
+  if (o.pain) setPainAvoidance(o.pain);
+  if (o.focus) setFocusParts(o.focus);
   const pool = buildPrescriptionPool(problemKeys, course);
   const anchors = buildAnchors(problemKeys, course);
   const targeted = pool.targeted || new Set();
   const rank = pool.rank || new Map();
   const focusRank = pool.focusRank || null;
-  const sList = pool.selfcare;
-  const tList = pool.training;
+  const sListAll = pool.selfcare;
+  const tListAll = pool.training;
+  const sList = sListAll;
+  const tList = tListAll;
 
   const sUsage = Object.fromEntries(sList.map(ex => [ex.id, 0]));
   const tUsage = Object.fromEntries(tList.map(ex => [ex.id, 0]));
@@ -105,24 +162,43 @@ function build30DayProgram(problemKeys, course='mixed'){
       ? [...(prev.selfcare||[]), ...(prev.training||[])].map(e => e.id)
       : [];
 
+    // フェーズが進むほど強度帯を上げる（上限＋下限の両方で帯を作る）
+    const [floor, cap] = intensityBandFor(phase, exp);
+    const banded = (list) => {
+      const within = list.filter(ex => { const i = ex.intensity || 1; return i <= cap && i >= floor; });
+      if (within.length >= 6) return within;
+      const capOnly = list.filter(ex => (ex.intensity || 1) <= cap);   // 帯が狭すぎたら上限だけ
+      return capOnly.length >= 6 ? capOnly : list;
+    };
+    const sPool = banded(sList), tPool = banded(tList);
+
+    // 1日の種目数: とれる時間から決める（休息日はセルフケアのみ）
+    const sCount = isRest ? Math.min(2, menuSize) : Math.ceil(menuSize / 2);
+    const tCount = isRest ? 0 : menuSize - sCount;
+
     let selfcare, training;
+    selfcare = pickBalanced(sPool, targeted, sUsage, sCount, anchors, prevIds, sHasTargeted ? 1 : 0, rank, focusRank);
     if (isRest) {
-      selfcare = pickBalanced(sList, targeted, sUsage, 2, anchors, prevIds, sHasTargeted ? 1 : 0, rank, focusRank);
       training = [];
     } else {
-      selfcare = pickBalanced(sList, targeted, sUsage, 2, anchors, prevIds, sHasTargeted ? 1 : 0, rank, focusRank);
       const sameDayIds = selfcare.map(e => e.id);
-      training = pickBalanced(tList, targeted, tUsage, 2, anchors, [...prevIds, ...sameDayIds], tHasTargeted ? 1 : 0, rank, focusRank);
+      training = pickBalanced(tPool, targeted, tUsage, tCount, anchors, [...prevIds, ...sameDayIds], tHasTargeted ? 1 : 0, rank, focusRank);
     }
 
     selfcare.forEach(ex => { sUsage[ex.id] = (sUsage[ex.id]||0) + 1; });
     training.forEach(ex => { tUsage[ex.id] = (tUsage[ex.id]||0) + 1; });
+
+    // 回数・秒数をフェーズに応じて漸増（表示用のコピーに差し替え）
+    selfcare = selfcare.map(ex => withProgression(ex, phase, exp, tune));
+    training = training.map(ex => withProgression(ex, phase, exp, tune));
 
     const theme = themeFor(phase, dayInPhase, isRest, course);
 
     days.push({ day, phase, isRest, theme, selfcare, training, course });
   }
 
+  // UI が「この種目はあなたの姿勢に直結」と説明できるように、問題直結idを添える
+  days.targeted = targeted;
   return days;
 }
 

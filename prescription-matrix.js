@@ -125,14 +125,26 @@ function isSeniorSafe(ex){
 // ===== 痛み配慮（禁忌）フィルタ =====
 // ユーザーが申告した痛み部位に強い負荷がかかる種目を処方から外す。
 // フラグは診断のたびに app.js が setPainAvoidance() で設定する（既定は全てfalse=挙動不変）。
-let PAIN_AVOID = { knee: false, lowBack: false };
+let PAIN_AVOID = { knee: false, lowBack: false, neck: false, shoulder: false, pregnant: false, bloodPressure: false };
 function setPainAvoidance(flags){
-  PAIN_AVOID = { knee: !!(flags && flags.knee), lowBack: !!(flags && flags.lowBack) };
+  const f = flags || {};
+  PAIN_AVOID = {
+    knee: !!f.knee, lowBack: !!f.lowBack, neck: !!f.neck, shoulder: !!f.shoulder,
+    pregnant: !!f.pregnant, bloodPressure: !!f.bloodPressure,
+  };
 }
-// 部位ごとの高負荷種目（表示名/正式名で判定）
+// 部位・状態ごとの高負荷/不適切種目（表示名・正式名・手順文で判定）
 const PAIN_EXCLUDE = {
   knee:    /スクワット|ランジ|踏み込|踏み出|空気イス|立ち座り|ステップ|踏み台|しゃがん|ひざ立ち|もも上げ/,
   lowBack: /上体起こし|起き上が|ロールアップ|レッグレイズ|両脚下ろし|下ろし上げ|Ｖ字|V字|ジャックナイフ|スーパーマン/,
+  // 首: 頭の重さを支える/首を大きく動かす/頭を下げる系
+  neck:    /首.*(回|まわ|ぐるぐる)|頭を持ち上げ|頭と肩を|クランチ|上体起こし|プランク|四つ這いで腕|うつ伏せ.*頭|ドルフィン|ダウンドッグ|前屈/,
+  // 肩: 体重を腕で支える/頭上へ大きく上げる系
+  shoulder:/腕立て|プランク|ディップ|ダウンドッグ|ドルフィン|四つ這いで腕|腕を頭の上|バンザイ|肩の高さより上/,
+  // 妊娠中: うつ伏せ・強い腹圧・仰向け長時間・強いねじり
+  pregnant:/うつ伏せ|腹ばい|クランチ|上体起こし|レッグレイズ|プランク|ねじ(り|る)|ツイスト|Ｖ字|V字|腹筋/,
+  // 高血圧: 息こらえ・頭が心臓より下・逆位・強い等尺
+  bloodPressure:/ダウンドッグ|ドルフィン|前屈|逆立|頭を下げ|息を止め|カパラバティ|火の呼吸|空気イス|プランク/,
 };
 // ===== 主訴フォーカス（同じ問題キーでも「何に困って来たか」で重点部位を変える）=====
 // 例: 腰痛の人は腰まわり/体幹、下腹ぽっこりの人はお腹まわり を優先して当てる。
@@ -150,8 +162,14 @@ function focusRank(ex){
 
 function passesPainRules(ex){
   const name = `${ex.displayName || ''} ${ex.name || ''}`;
-  if (PAIN_AVOID.knee && PAIN_EXCLUDE.knee.test(name)) return false;
-  if (PAIN_AVOID.lowBack && PAIN_EXCLUDE.lowBack.test(name)) return false;
+  // 首・肩・妊娠中・高血圧は動作の中身にも現れるため手順文まで見る
+  const deep = `${name} ${Array.isArray(ex.how) ? ex.how.join(' ') : ''}`;
+  for (const key of ['knee', 'lowBack']){
+    if (PAIN_AVOID[key] && PAIN_EXCLUDE[key].test(name)) return false;
+  }
+  for (const key of ['neck', 'shoulder', 'pregnant', 'bloodPressure']){
+    if (PAIN_AVOID[key] && PAIN_EXCLUDE[key].test(deep)) return false;
+  }
   return true;
 }
 
@@ -163,15 +181,69 @@ function filterByCourse(exList, course){
   return exList.filter(ex => ex.courses && ex.courses.includes(course));
 }
 
+// ===== コースらしさ（4プランの性格づけ）=====
+// 問題: sn_(高齢者向け安全種目175種)は全4コースにタグ付けされているため、
+// どのコースを選んでも同じ顔ぶれになっていた（各プールの67〜73%が共通）。
+// 対策: 「専用DB由来 → そのコースの中核」「sn_ → 動きの性格でコースへ振り分け」の2段階で優先度をつける。
+const NATIVE_DB = { st:'seitai', pt:'personal', yg:'yoga', pl:'pilates' };
+// sn_ をどのコースの性格として扱うか（technique基準）
+const SN_CHARACTER = {
+  seitai:   new Set(['release','stretch','mobility']),            // ゆるめる・動かす
+  personal: new Set(['strength','isometric','cardio','balance']), // 鍛える・支える
+  yoga:     new Set(['stretch','pranayama','meditation','balance']), // のばす・呼吸・静止
+  pilates:  new Set(['core','breath','mobility']),                // 体幹・呼吸・背骨
+};
+// 0 = そのコースの中核 / 1 = 性格が合う / 2 = 合わない（他コース由来）
+function courseAffinity(ex, course){
+  if (!course || course === 'mixed') return 0;
+  const p = String(ex.id || '').slice(0, 2);
+  const native = NATIVE_DB[p];
+  if (native) return native === course ? 0 : 2;
+  if (p === 'sn') return (SN_CHARACTER[course] || new Set()).has(ex.technique) ? 1 : 2;
+  return 2;
+}
+// コースの中核から順に、必要数(minN)まで採用する。中核だけで足りなければ性格の近いもので補う。
+// 各段階の中では「問題直結(targeted)」を先に残し、オーダーメイド性を落とさない。
+// MIN_TARGETED: 問題直結の種目がこれを下回ると、毎日同じ1種目ばかりになるため、
+// コース外からでも問題直結種目を確保する（オーダーメイド性と変化の両立）
+function applyCourseCharacter(list, course, minN, targeted, minTargeted = 8){
+  if (!course || course === 'mixed') return list;
+  const isT = (ex) => !!(targeted && targeted.has(ex.id));
+  const tier = [[], [], []];
+  list.forEach(ex => tier[courseAffinity(ex, course)].push(ex));
+  tier.forEach(t => t.sort((a, b) => (isT(a) ? 0 : 1) - (isT(b) ? 0 : 1)));
+  const out = tier[0].slice();
+  const seen = new Set(out.map(ex => ex.id));
+  const add = (ex) => { if (!seen.has(ex.id)){ seen.add(ex.id); out.push(ex); } };
+  // ① 問題直結の最低数を確保（足りなければコース外からも引く）
+  let tn = out.filter(isT).length;
+  for (const t of [tier[1], tier[2]]){
+    for (const ex of t){
+      if (tn >= minTargeted) break;
+      if (isT(ex)){ add(ex); tn++; }
+    }
+  }
+  // ② 変化の幅を必要数まで確保
+  for (const t of [tier[1], tier[2]]){
+    for (const ex of t){
+      if (out.length >= minN) break;
+      add(ex);
+    }
+  }
+  return out.length ? out : list;
+}
+
 // 問題キーに対するエクササイズプール作成（40〜70代女性・道具なし対応）
 function buildPoolForProblem(problemKey, course){
   const matches = ALL_EXERCISES_LIST.filter(ex =>
     ex.targetProblems && ex.targetProblems.includes(problemKey)
   );
   const filtered = filterByCourse(matches, course).filter(isSeniorSafe).filter(passesPainRules);
+  // コースの中核種目を先頭へ（アンカー＝各問題の代表種目が「そのコースらしい」ものになる）
+  const byCourse = filtered.slice().sort((a, b) => courseAffinity(a, course) - courseAffinity(b, course));
   return {
-    selfcare: filtered.filter(isSelfcare),
-    training: filtered.filter(isTraining),
+    selfcare: byCourse.filter(isSelfcare),
+    training: byCourse.filter(isTraining),
   };
 }
 
@@ -223,9 +295,15 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
     }
   }
 
+  // ③ コースの性格づけ: 中核種目を残しつつ、変化の幅(TARGET数)は確保する
+  //    ここを通すことで「整体を選んだ人」と「ヨガを選んだ人」の顔ぶれが実際に変わる
+  const TARGET_SELF = 32, TARGET_TRAIN = 28;
+  const selfcare = applyCourseCharacter(Array.from(selfSet.values()), course, TARGET_SELF, targeted);
+  const training = applyCourseCharacter(Array.from(trainSet.values()), course, TARGET_TRAIN, targeted);
+
   return {
-    selfcare: Array.from(selfSet.values()),
-    training: Array.from(trainSet.values()),
+    selfcare,
+    training,
     targeted, // 問題直結種目のidセット(オーダーメイドの核)
     rank,     // id → 引き込んだ問題の順位(0=主訴)。補充分は未登録
     focusRank,// 関数: 種目→主訴フォーカス順位(0が最優先/99=該当なし)
