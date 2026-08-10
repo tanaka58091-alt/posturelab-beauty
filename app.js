@@ -420,10 +420,30 @@ function loadLandmarker(silent = false){
 }
 
 // ページ表示後にバックグラウンドで先読み（解析クリック時の待ちをなくす）
+// ただしAIモデルは約10MB。写真を使わない人（簡易診断だけの人／今日のメニューを見に来ただけの
+// 再訪者）にまで無条件でダウンロードさせないよう、「これから撮る／選ぶ」気配があるときだけ動かす。
+let _preloadStarted = false;
 function preloadLandmarker(){
+  if (_preloadStarted) return;
+  _preloadStarted = true;
   loadLandmarker(true).catch(e => console.warn('model preload failed (クリック時に再試行します)', e));
 }
-window.addEventListener('load', () => setTimeout(preloadLandmarker, 1500));
+// 写真を選ぶ動作に触れた時点で先読みを開始する（タップの前に間に合わせる）
+function armPreloadTriggers(){
+  const zone = document.getElementById('upload-section');
+  if (!zone) return;
+  const on = () => preloadLandmarker();
+  ['pointerenter', 'pointerdown', 'focusin', 'touchstart'].forEach(ev =>
+    zone.addEventListener(ev, on, { once: true, passive: true }));
+  document.querySelectorAll('#file-side, #file-front').forEach(i =>
+    i.addEventListener('change', on, { once: true }));
+}
+window.addEventListener('load', () => {
+  armPreloadTriggers();
+  // 初回訪問（保存プランなし）は写真診断に進む可能性が高いので、これまでどおり先読みする
+  const firstTime = (() => { try { return Store.getSessions().length === 0; } catch { return true; } })();
+  if (firstTime) setTimeout(preloadLandmarker, 1500);
+});
 
 async function detectPose(image){
   const lm = await loadLandmarker();

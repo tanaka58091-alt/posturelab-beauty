@@ -460,14 +460,19 @@ function determinePostureType(problems){
 }
 
 // ========== SCORE ==========
+// 下限35で単純に切り捨てると、問題が5個の人も14個の人も同じ「35点」になり、
+// 14個→6個に改善しても点数が1点も動かない（前後比較が意味を失う）。
+// 50点以上はこれまでどおり（既存ユーザーの点数を動かさない）、
+// 50点未満だけ 35〜50 に圧縮して順序を残す。不安を煽らないため35は下回らせない。
 function calcScore(sideRes, frontRes, problems){
-  let score = 100;
+  let raw = 100;
   problems.forEach(p => {
-    if (p.severity === 'low')  score -= 4;
-    if (p.severity === 'mid')  score -= 9;
-    if (p.severity === 'high') score -= 16;
+    if (p.severity === 'low')  raw -= 4;
+    if (p.severity === 'mid')  raw -= 9;
+    if (p.severity === 'high') raw -= 16;
   });
-  return Math.max(35, Math.min(100, score));
+  if (raw >= 50) return Math.min(100, raw);
+  return Math.max(35, Math.round(35 + 15 * Math.exp((raw - 50) / 30)));
 }
 
 // ========== 部位別サブスコア ==========
@@ -570,12 +575,14 @@ function calcRegionScores(sideRes, frontRes, problems){
   });
 }
 
+// 点数が低い人ほどアプリを必要としている。ここで怖がらせて離脱させないよう、
+// 事実（気になる点の多さ）は伝えつつ、断定的・警告的な表現は使わない。
 function gradeFromScore(s){
-  if (s >= 92) return { grade:'EXCELLENT', desc:'プロのアスリートレベル。維持を心がけましょう。' };
-  if (s >= 82) return { grade:'GOOD',      desc:'良好な姿勢。微調整でさらに伸びしろあり。' };
-  if (s >= 70) return { grade:'FAIR',      desc:'いくつか改善ポイントあり。30日プログラムで明確に改善できます。' };
-  if (s >= 58) return { grade:'NEEDS WORK',desc:'複数の逸脱を検出。集中的なケアが必要です。' };
-  return         { grade:'CRITICAL',       desc:'多面的な機能不全。専門家との併用を推奨します。' };
+  if (s >= 92) return { grade:'とても良い',   desc:'目立つクセは見当たりません。この状態を保つ軽いメニューをご用意します。' };
+  if (s >= 82) return { grade:'良い',         desc:'おおむね整っています。あと少しの調整で、もっと楽になります。' };
+  if (s >= 70) return { grade:'伸びしろあり', desc:'気になる点がいくつかあります。30日プログラムで整えていきましょう。' };
+  if (s >= 58) return { grade:'じっくり整えたい', desc:'気になる点が重なっています。やさしい動きから、少しずつ進めます。' };
+  return         { grade:'変えがいがある',    desc:'整えたい点が多めです。無理のない範囲で大丈夫。痛みが続くときは専門家にもご相談ください。' };
 }
 
 // ========== METRICS DISPLAY ==========
