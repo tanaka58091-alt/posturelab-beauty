@@ -2,3 +2,8 @@
 .claude/
 node_modules/
 *.log
+
+# 生成画像の元ファイル（大きいので配信しない。webpのみコミット）
+ex-img/raw/
+ex-img/log/
+ex-img/_status.json

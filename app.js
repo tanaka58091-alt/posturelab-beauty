@@ -1440,11 +1440,31 @@ function exerciseProblemBadges(ex){
   return `<div class="ex-links">${hit.slice(0,3).map(k => `<span class="ex-link">${PROBLEM_LABELS[k] || k}</span>`).join('')}</div>`;
 }
 
+// ===== 生成イラスト（ex-img/<id>.webp）: あれば画像、なければ従来のSVG指導図 =====
+// manifest.json に載っている種目だけ画像を使う（存在しないファイルへの404を出さない）
+state.artIds = new Set();
+(async function loadArtManifest(){
+  try {
+    const r = await fetch('ex-img/manifest.json', { cache: 'no-cache' });
+    if (!r.ok) return;
+    const m = await r.json();
+    state.artIds = new Set(Array.isArray(m.ids) ? m.ids : []);
+    // 先に描画済みなら差し替える
+    if (state.program && state.program.length){ renderToday(); renderProgram(state.currentPhase); }
+  } catch (e) { /* 画像なし＝SVGのまま */ }
+})();
+function artHTML(ex){
+  if (state.artIds && state.artIds.has(ex.id)){
+    return `<img class="ex-art-img" src="ex-img/${ex.id}.webp" alt="" width="1200" height="600" decoding="async">`;
+  }
+  return ex.illustration || '';
+}
+
 function exerciseCard(ex){
   const firstStep = (ex.how && ex.how[0]) ? ex.how[0] : '';
   return `
     <div class="exercise-card" data-ex="${ex.id}">
-      <div class="ex-illust">${ex.illustration || ''}</div>
+      <div class="ex-illust">${artHTML(ex)}</div>
       <div class="ex-info">
         <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
         <h4>${ex.displayName || ex.name}</h4>
@@ -1717,7 +1737,7 @@ function openExerciseModal(ex, nav){
   }).join('');
   els.modalBody.innerHTML = `
     <div class="modal-ex-head">
-      <div class="modal-ex-illust">${ex.illustration || ''}<span class="illust-note">図はイメージ</span></div>
+      <div class="modal-ex-illust">${artHTML(ex)}<span class="illust-note">図はイメージ</span></div>
       <div class="modal-ex-info">
         <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
         <h2>${ex.displayName || ex.name}</h2>
