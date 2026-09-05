@@ -13,33 +13,33 @@ import { DIAGRAMS } from './art-diagrams.js';
 
 const _DEF = `<defs>
   <marker id="mv" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-    <path d="M1,1 L11,6 L1,11 z" fill="#ef4444"/>
+    <path d="M1,1 L11,6 L1,11 z" fill="#D0554B"/>
   </marker>
   <marker id="mv2" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-    <path d="M1,1 L11,6 L1,11 z" fill="#0ea5e9"/>
+    <path d="M1,1 L11,6 L1,11 z" fill="#C9A86A"/>
   </marker>
   <style>
-    .limb{stroke:#334155;stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .limbF{stroke:#f97316;stroke-width:8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .head{fill:#fde9c8;stroke:#334155;stroke-width:2.5}
-    .face{fill:#334155}
-    .torso{fill:#bfdbfe;stroke:#334155;stroke-width:2.5;stroke-linejoin:round}
-    .torsoF{fill:#fed7aa;stroke:#f97316;stroke-width:3;stroke-linejoin:round}
-    .ghost{stroke:#cbd5e1;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 7}
-    .ghostH{fill:none;stroke:#cbd5e1;stroke-width:2.5;stroke-dasharray:2 5}
-    .ground{stroke:#cbd5e1;stroke-width:3;fill:none;stroke-linecap:round}
-    .mat{fill:#eef2f7;stroke:#d4dbe4;stroke-width:1.5}
-    .arrow{stroke:#ef4444;stroke-width:3.5;fill:none;stroke-linecap:round}
-    .arrowB{stroke:#0ea5e9;stroke-width:3.5;fill:none;stroke-linecap:round}
-    .breath{fill:#fdb4c4;opacity:.5}
-    .tool{fill:#34d399;stroke:#334155;stroke-width:2}
-    .roller{fill:#22d3ee;stroke:#334155;stroke-width:2}
-    .wall{fill:#e2e8f0}
-    .lbl{font-size:13px;fill:#475569;font-family:-apple-system,sans-serif;font-weight:700;text-anchor:middle}
+    .limb{stroke:#B08A80;stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .limbF{stroke:#C98680;stroke-width:8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .head{fill:#F3D9C8;stroke:#8A6A5E;stroke-width:2}
+    .face{fill:#5A4038}
+    .torso{fill:#FFFFFF;stroke:#8A6A5E;stroke-width:2;stroke-linejoin:round}
+    .torsoF{fill:rgba(217,159,154,.45);stroke:#C98680;stroke-width:2.5;stroke-linejoin:round}
+    .ghost{stroke:#D8C6BF;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 7}
+    .ghostH{fill:none;stroke:#D8C6BF;stroke-width:2.5;stroke-dasharray:2 5}
+    .ground{stroke:#E3D6CE;stroke-width:3;fill:none;stroke-linecap:round}
+    .mat{fill:#DDD3CF;stroke:#CDBDB8;stroke-width:1.5}
+    .arrow{stroke:#D0554B;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-dasharray:6 4}
+    .arrowB{stroke:#C9A86A;stroke-width:3.5;fill:none;stroke-linecap:round}
+    .breath{fill:#D99F9A;opacity:.45}
+    .tool{fill:#CDB9AF;stroke:#8A6A5E;stroke-width:2}
+    .roller{fill:#CDB9AF;stroke:#8A6A5E;stroke-width:2}
+    .wall{fill:#EADFD8}
+    .lbl{font-size:13px;fill:#7A5C52;font-family:-apple-system,sans-serif;font-weight:700;text-anchor:middle}
   </style>
 </defs>`;
 
-const _wrap = (inner) => `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${_DEF}${inner}</svg>`;
+const _wrap = (inner) => `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${_DEF}<rect x="0" y="0" width="200" height="200" rx="12" fill="#FDF9F7"/>${inner}</svg>`;
 
 // 顔つきの頭(向きを示す目つき)。dir: 'R'(右向き) 'F'(正面) 'L'(左向き)
 const _head = (cx, cy, r, dir='R', cls='head') => {

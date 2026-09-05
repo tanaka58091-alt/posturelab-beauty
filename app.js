@@ -1422,16 +1422,13 @@ function showDoneToast(day){
 }
 
 // カテゴリ表記マッピング (新DB対応)
+// 表示は「セルフケア」「トレーニング」の2択に寄せる（英語のカテゴリ名をそのまま出さない）
+const TRAINING_CATS = new Set(['training','strength','core','balance','integration','cardio']);
 function categoryLabel(ex){
-  const cat = ex.category;
-  if (cat === 'selfcare' || cat === 'mobility' || cat === 'breath' || cat === 'meditation') return 'セルフケア';
-  if (cat === 'strength' || cat === 'core' || cat === 'balance' || cat === 'integration') return 'トレーニング';
-  return cat;
+  return TRAINING_CATS.has(ex.category) ? 'トレーニング' : 'セルフケア';
 }
 function categoryClass(ex){
-  const cat = ex.category;
-  if (cat === 'selfcare' || cat === 'mobility' || cat === 'breath' || cat === 'meditation') return 'selfcare';
-  return 'training';
+  return TRAINING_CATS.has(ex.category) ? 'training' : 'selfcare';
 }
 
 // ⑤ このメニューが「あなたのどの問題」に効くかのバッジ

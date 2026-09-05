@@ -6,36 +6,85 @@
 // 座標系: 各パネル 0..200(x) / 0..205(y)、床は下・y増加で下方向。
 // ===================================================================
 const NS = 'http://www.w3.org/2000/svg';
-const C = { skin:'#f4d3a8', body:'#3b4a5a', line:'#2b3642', accent:'#ea5b0c',
-  arrow:'#e23b2e', guide:'#9aa7b4', floor:'#c7ccd1', prop:'#b9c2cc' };
+
+// ===== 固定ブロック: 画風（全562種の図で1文字も変えずに共有する）=====
+// 参考にした画風:
+//   ・クリーム色の無地背景（#FDF9F7系）／柔らかいブラウンの細い輪郭
+//   ・若い女性1名。髪は低いお団子。白のフィットしたトップ＋くすみピンクのレギンス＋白スニーカー
+//   ・効いている部位は半透明のローズで淡くハイライト
+//   ・動きは赤い点線の矢印。開始位置は薄いガイド線
+//   ・文字は番号バッジと1行の説明だけ（それ以外は絵で伝える）
+const C = {
+  bg:'#FDF9F7',                  // クリーム背景
+  skin:'#F3D9C8',                // 肌
+  hair:'#5A4038',                // 髪（低いお団子）
+  top:'#FFFFFF',                 // 白のフィットしたトップ
+  legs:'#D99F9A',                // くすみピンクのレギンス
+  shoe:'#FFFFFF',                // 白スニーカー
+  body:'#FFFFFF',                // （互換用）胴体＝トップの色
+  line:'#8A6A5E',                // 柔らかいブラウンの細い輪郭
+  accent:'#C98680',              // 効いている部位（ローズ）
+  glow:'rgba(217,159,154,.38)',  // 部位ハイライトの淡い光
+  arrow:'#D0554B',               // 赤い点線矢印
+  guide:'#D8C6BF',               // 開始位置のガイド（薄いローズグレー）
+  floor:'#E3D6CE',               // 床の線
+  mat:'#DDD3CF',                 // 床運動のマット
+  prop:'#CDB9AF',                // 壁・椅子
+  gold:'#C9A86A',                // 番号バッジ（ウォームゴールド）
+  text:'#7A5C52',                // 説明文
+  divider:'#EADFD8',             // 2コマの区切り
+};
 
 // P: {head,neck,hip,sh,el,ha, kn,ft,  el2,ha2,kn2,ft2}（2=反対/対角側）
+// 「輪郭 → 塗り」の2層で描く。先に全部位の輪郭、あとで全部位の塗りを重ねると関節がつながって見える。
 function fig(P, opt = {}) {
-  const g = [], w = opt.limbW || 7, tw = opt.torsoW || 16;
-  const L = (a,b,col,width) => `<path d="M${a[0]},${a[1]} L${b[0]},${b[1]}" stroke="${col}" stroke-width="${width}" fill="none" stroke-linecap="round"/>`;
-  if (P.neck && P.hip) g.push(L(P.neck,P.hip,C.body,tw));
-  if (P.hip && P.kn)  g.push(L(P.hip,P.kn,C.line,w));
-  if (P.kn && P.ft)   g.push(L(P.kn,P.ft,C.line,w));
-  if (P.kn2){ g.push(L(P.hip,P.kn2,opt.leg2Accent?C.accent:C.line,w)); if(P.ft2)g.push(L(P.kn2,P.ft2,opt.leg2Accent?C.accent:C.line,w)); }
-  const foot = (k,f) => { if(!k||!f) return ''; const dx=Math.sign(f[0]-k[0])||1; return `<path d="M${f[0]},${f[1]} L${f[0]+dx*10},${f[1]}" stroke="${C.line}" stroke-width="${w}" stroke-linecap="round"/>`; };
-  g.push(foot(P.kn,P.ft)); if(P.kn2) g.push(foot(P.kn2,P.ft2));
+  const w = opt.limbW || 7, tw = opt.torsoW || 16, o = 1.6;   // o = 輪郭の片側の太さ
+  const seg = (a,b,col,width) => `<path d="M${a[0]},${a[1]} L${b[0]},${b[1]}" stroke="${col}" stroke-width="${width}" fill="none" stroke-linecap="round"/>`;
   const sh = P.sh || P.neck;
-  if (sh && P.el) g.push(L(sh,P.el,opt.armAccent?C.accent:C.line,w));
-  if (P.el && P.ha) g.push(L(P.el,P.ha,opt.armAccent?C.accent:C.line,w));
-  if (P.el2){ g.push(L(sh,P.el2,opt.arm2Accent?C.accent:C.line,w)); if(P.ha2)g.push(L(P.el2,P.ha2,opt.arm2Accent?C.accent:C.line,w)); }
-  if (P.head) g.push(`<circle cx="${P.head[0]}" cy="${P.head[1]}" r="${opt.headR||13}" fill="${C.skin}" stroke="${C.line}" stroke-width="2.5"/>`);
+  const parts = [];
+  const add = (a,b,fill,width,accent) => { if (a && b) parts.push({a,b,fill,width,accent:!!accent}); };
+  // 胴体（白いトップ）
+  add(P.neck, P.hip, C.top, tw);
+  // 脚（くすみピンクのレギンス）
+  add(P.hip, P.kn, C.legs, w);  add(P.kn, P.ft, C.legs, w);
+  if (P.kn2){ const lc = opt.leg2Accent ? C.accent : C.legs; add(P.hip, P.kn2, lc, w, opt.leg2Accent); add(P.kn2, P.ft2, lc, w, opt.leg2Accent); }
+  // 足（白スニーカー）
+  const foot = (k,f) => { if(!k||!f) return; const dx = Math.sign(f[0]-k[0]) || 1; add(f, [f[0]+dx*10, f[1]], C.shoe, w); };
+  foot(P.kn, P.ft); if (P.kn2) foot(P.kn2, P.ft2);
+  // 腕（肌。効かせる腕はローズ）
+  const ac = opt.armAccent ? C.accent : C.skin;
+  add(sh, P.el, ac, w, opt.armAccent); add(P.el, P.ha, ac, w, opt.armAccent);
+  if (P.el2){ const ac2 = opt.arm2Accent ? C.accent : C.skin; add(sh, P.el2, ac2, w, opt.arm2Accent); add(P.el2, P.ha2, ac2, w, opt.arm2Accent); }
+
+  const g = [];
+  parts.filter(p => p.accent).forEach(p => g.push(seg(p.a, p.b, C.glow, p.width + 12)));   // ① 淡いハイライト
+  parts.forEach(p => g.push(seg(p.a, p.b, C.line, p.width + o*2)));                         // ② 輪郭
+  parts.forEach(p => g.push(seg(p.a, p.b, p.fill, p.width)));                               // ③ 塗り
+  // ④ 頭: 肌 ＋ 髪（頭頂を覆う三日月）＋ 低いお団子
+  if (P.head){
+    const [hx,hy] = P.head, r = opt.headR || 13;
+    g.push(`<circle cx="${hx}" cy="${hy}" r="${r}" fill="${C.skin}" stroke="${C.line}" stroke-width="2"/>`);
+    g.push(`<path d="M${hx-r},${hy} A${r},${r} 0 0 1 ${hx+r},${hy} A${(r*1.02).toFixed(1)},${(r*0.6).toFixed(1)} 0 0 0 ${hx-r},${hy} Z" fill="${C.hair}"/>`);
+    g.push(`<circle cx="${(hx-r*0.62).toFixed(1)}" cy="${(hy-r*0.78).toFixed(1)}" r="${(r*0.36).toFixed(1)}" fill="${C.hair}" stroke="${C.line}" stroke-width="1"/>`);
+  }
   return g.join('');
 }
-const floor = (y, x0=8, x1=192) => `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${C.floor}" stroke-width="4" stroke-linecap="round"/>`;
+// 床。y が低い（=床運動）ときはマットも敷く
+const floor = (y, x0=8, x1=192) => (y <= 165
+  ? `<rect x="${x0}" y="${y-2}" width="${x1-x0}" height="8" rx="4" fill="${C.mat}"/>`
+  : '') + `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${C.floor}" stroke-width="4" stroke-linecap="round"/>`;
 const wall  = (x, y0=18, y1=182) => `<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" stroke="${C.prop}" stroke-width="5" stroke-linecap="round"/>`;
 const chair = (x,y) => `<path d="M${x},${y} l0,-34 l30,0 l0,34 M${x+30},${y-34} l0,-26" stroke="${C.prop}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
-const arrow = (a,b) => `<path d="M${a[0]},${a[1]} L${b[0]},${b[1]}" stroke="${C.arrow}" stroke-width="5" fill="none" stroke-linecap="round" marker-end="url(#ar)"/>`;
-const arc = (cx,cy,r) => `<path d="M${cx-r},${cy} A${r},${r} 0 1 1 ${cx+r},${cy}" stroke="${C.arrow}" stroke-width="4" fill="none" marker-end="url(#ar)"/>`;
+// 動きは赤い点線矢印
+const arrow = (a,b) => `<path d="M${a[0]},${a[1]} L${b[0]},${b[1]}" stroke="${C.arrow}" stroke-width="4" stroke-dasharray="7 5" fill="none" stroke-linecap="round" marker-end="url(#ar)"/>`;
+const arc = (cx,cy,r) => `<path d="M${cx-r},${cy} A${r},${r} 0 1 1 ${cx+r},${cy}" stroke="${C.arrow}" stroke-width="3.5" stroke-dasharray="7 5" fill="none" marker-end="url(#ar)"/>`;
 const guide = (a,b) => `<path d="M${a[0]},${a[1]} L${b[0]},${b[1]}" stroke="${C.guide}" stroke-width="2.5" stroke-dasharray="4 4" fill="none"/>`;
-const badge = (n,x=18,y=22) => `<circle cx="${x}" cy="${y}" r="12" fill="${C.accent}"/><text x="${x}" y="${y+4}" font-size="14" fill="#fff" text-anchor="middle" font-weight="700">${n}</text>`;
-const cap = (t,x=100) => `<text x="${x}" y="198" font-size="11.5" fill="#6a747d" text-anchor="middle">${t}</text>`;
+// 番号バッジ（ウォームゴールド）
+const badge = (n,x=18,y=22) => `<circle cx="${x}" cy="${y}" r="12.5" fill="${C.gold}" stroke="#fff" stroke-width="2"/><text x="${x}" y="${y+4.5}" font-size="13" fill="#fff" text-anchor="middle" font-weight="700" font-family="-apple-system,Inter,sans-serif">${n}</text>`;
+const cap = (t,x=100) => `<text x="${x}" y="198" font-size="11.5" fill="${C.text}" text-anchor="middle">${t}</text>`;
 const DEF = `<defs><marker id="ar" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="${C.arrow}"/></marker></defs>`;
-const twoPanel = (p1,p2) => `<svg viewBox="0 0 410 205" xmlns="${NS}">${DEF}<g>${p1}</g><g transform="translate(210,0)">${p2}</g><line x1="205" y1="15" x2="205" y2="190" stroke="#e5e7eb" stroke-width="2"/></svg>`;
+// クリーム背景の2コマ
+const twoPanel = (p1,p2) => `<svg viewBox="0 0 410 205" xmlns="${NS}">${DEF}<rect x="0" y="0" width="410" height="205" rx="14" fill="${C.bg}"/><g>${p1}</g><g transform="translate(210,0)">${p2}</g><line x1="205" y1="15" x2="205" y2="190" stroke="${C.divider}" stroke-width="2"/></svg>`;
 
 // ---- 姿勢プリセット(開始姿勢のjoint dictを返す。必要な関節だけ上書きして使う) ----
 const P = {

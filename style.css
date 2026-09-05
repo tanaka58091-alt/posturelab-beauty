@@ -5,10 +5,10 @@ html,body{margin:0;padding:0}
 
 :root{
   /* Beauty Pink Palette */
-  --bg:#FFF7FA;
+  --bg:#FDF9F7;              /* クリーム */
   --bg-2:#FFEEF3;
   --surface:#ffffff;
-  --surface-2:#FFF7FA;
+  --surface-2:#FDF9F7;
   --ink:#4A2C3A;
   --ink-2:#7A5566;
   --muted:#A88895;
@@ -21,7 +21,7 @@ html,body{margin:0;padding:0}
   --pink-soft:#FFE0E6;      /* ソフト */
   --rose:#E07A8A;           /* ダークローズ */
   --rose-deep:#C75B72;      /* 強調 */
-  --gold:#FFD93D;           /* ゴールドアクセント */
+  --gold:#C9A86A;           /* ウォームゴールド */
   --good:#A8D8B9;
   --warn:#FFC966;
   --bad:#FF8AA0;
@@ -652,8 +652,8 @@ body{
   box-shadow:var(--shadow-lg); border-color:var(--pink-2);
 }
 .ex-illust{
-  background:#fff;
-  border:1px solid var(--pink-3); border-radius:16px;
+  background:#FDF9F7;
+  border:1px solid #EADFD8; border-radius:16px;
   display:flex; align-items:center; justify-content:center;
   width:100%; aspect-ratio:410/205; padding:10px;
 }
@@ -739,15 +739,15 @@ body{
 .modal-ex-head{display:flex; flex-direction:column; gap:16px; margin-bottom:24px}
 .modal-ex-illust{
   position:relative;
-  background:#fff; border:1px solid var(--pink-3); border-radius:18px;
+  background:#FDF9F7; border:1px solid #EADFD8; border-radius:18px;
   padding:12px; display:flex; align-items:center; justify-content:center;
   width:100%; max-width:560px; aspect-ratio:410/205; margin:0 auto;
 }
 .modal-ex-illust svg{width:100%; height:100%}
 .modal-ex-illust .ex-art-img{width:100%; height:100%; object-fit:contain; border-radius:12px}
 .illust-note{
-  position:absolute; bottom:6px; right:7px; pointer-events:none;
-  font-size:9px; color:var(--muted); background:rgba(255,255,255,.78);
+  position:absolute; top:6px; right:8px; pointer-events:none;
+  font-size:9px; color:var(--muted); background:rgba(253,249,247,.85);
   padding:1px 6px; border-radius:6px;
 }
 .modal-ex-info h2{margin:8px 0 6px; font-size:24px; font-weight:700; color:var(--ink)}
