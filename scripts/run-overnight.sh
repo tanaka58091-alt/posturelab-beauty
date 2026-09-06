@@ -44,8 +44,15 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>" >/dev/null 2>&1; then ech
       now=$(date +%s)
       if [ -n "$t" ]; then
         [ "$t" -le "$now" ] && t=$((t+86400))
-        wait_sec=$((t-now+120)); [ "$wait_sec" -gt 21600 ] && wait_sec=21600; [ "$wait_sec" -lt 300 ] && wait_sec=300
+        wait_sec=$((t-now+120)); [ "$wait_sec" -lt 300 ] && wait_sec=300
       fi
+    fi
+    # 復活が12時間以上先＝週間上限。空ラウンドとして数えず、その時刻まで1時間刻みで待つ
+    if [ "$wait_sec" -gt 43200 ]; then
+      echo "WEEKLY_LIMIT until '${reset}' waiting $((wait_sec/3600))h $(date '+%F %T')" >> "$LOG"
+      empty=0
+      while [ "$wait_sec" -gt 0 ]; do s=$(( wait_sec > 3600 ? 3600 : wait_sec )); sleep "$s"; wait_sec=$((wait_sec-s)); done
+      continue
     fi
     echo "LIMIT_WAIT reset='${reset:-不明}' sleeping $((wait_sec/60))min (empty=$empty) $(date '+%T')" >> "$LOG"; sleep "$wait_sec"
   else
