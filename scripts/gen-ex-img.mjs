@@ -30,12 +30,19 @@ const CONC = Number(opt('--concurrency', 2));
 const TIMEOUT = Number(opt('--timeout', 420)) * 1000;
 const NOREF = args.includes('--noref');
 const IDS = opt('--ids', null);
+const statusPath = path.join(ROOT, 'ex-img', '_status.json');
+const status = fs.existsSync(statusPath) ? JSON.parse(fs.readFileSync(statusPath, 'utf8')) : {};
+const failedTwice = (id) => (status[id]?.fails || 0) >= 2;
+// 枠切れ（レート制限・利用上限）の兆候。これが出たら同じ回で先へ進んでも無駄なので止める
+const LIMIT_RE = /rate.?limit|usage.?limit|limit (reached|exceeded|hit)|\b429\b|quota|too many requests|insufficient_quota|exhausted|try again (later|in)|capacity|reached your/i;
 
 let order = [];
 if (IDS) order = IDS.split(',').map(s => s.trim()).filter(Boolean);
-else order = JSON.parse(fs.readFileSync(path.join(ROOT, 'ex-img', '_order.json'), 'utf8')).filter(r => r.freq > 0).map(r => r.id);
+else order = JSON.parse(fs.readFileSync(path.join(ROOT, 'ex-img', '_order.json'), 'utf8')).map(r => r.id);   // 全562種（頻度順・処方に出ない種目は最後）
 
-const todo = order.filter(id => !fs.existsSync(path.join(RAW, id + '.png'))).slice(0, LIMIT);
+const remainingAll = order.filter(id => !fs.existsSync(path.join(RAW, id + '.png')) && !failedTwice(id));
+if (args.includes('--count-remaining')){ console.log(remainingAll.length); process.exit(0); }
+const todo = remainingAll.slice(0, LIMIT);
 console.log(`対象 ${todo.length} 件（並列 ${CONC}・参考画像 ${NOREF ? 'なし' : (fs.existsSync(REF) ? 'あり' : '★見つからない')}）`);
 if (!NOREF && !fs.existsSync(REF)) { console.error('ex-img/_ref.png がありません。まず --noref で基準画像を作ってください'); process.exit(1); }
 
@@ -69,16 +76,24 @@ function runOne(id){
       }
       const ok = fs.existsSync(out) && fs.statSync(out).size > 20000;
       const sec = Math.round((Date.now() - started) / 1000);
-      console.log(`${ok ? '✅' : '❌'} ${id}  ${sec}s${ok ? '' : ` (exit ${code})`}`);
-      resolve({ id, ok, sec, code });
+      let limited = false;
+      if (!ok){
+        let logTxt = ''; try { logTxt = fs.readFileSync(path.join(LOG, id + '.log'), 'utf8').slice(-4000); } catch {}
+        limited = LIMIT_RE.test(logTxt);
+        if (limited){ limitHit = true; console.log(`⛔ LIMIT_HIT ${id}  ${sec}s（利用上限の兆候。この回はここで止めます）`); }
+        else { status[id] = Object.assign({}, status[id], { fails: (status[id]?.fails || 0) + 1 }); }
+      }
+      if (!limited) console.log(`${ok ? '✅' : '❌'} ${id}  ${sec}s${ok ? '' : ` (exit ${code}・失敗${status[id]?.fails}回目)`}`);
+      resolve({ id, ok, sec, code, limited });
     });
   });
 }
 
 const results = [];
 let cursor = 0;
+let limitHit = false;
 async function worker(){
-  while (cursor < todo.length){
+  while (cursor < todo.length && !limitHit){
     const id = todo[cursor++];
     results.push(await runOne(id));
   }
@@ -86,7 +101,6 @@ async function worker(){
 await Promise.all(Array.from({ length: Math.min(CONC, todo.length) }, worker));
 const ok = results.filter(r => r.ok).length;
 console.log(`\n完了: 成功 ${ok} / 失敗 ${results.length - ok}`);
-const statusPath = path.join(ROOT, 'ex-img', '_status.json');
-const prev = fs.existsSync(statusPath) ? JSON.parse(fs.readFileSync(statusPath, 'utf8')) : {};
-results.forEach(r => { prev[r.id] = { ok: r.ok, sec: r.sec, at: new Date().toISOString() }; });
-fs.writeFileSync(statusPath, JSON.stringify(prev, null, 1));
+results.forEach(r => { status[r.id] = Object.assign({}, status[r.id], { ok: r.ok, sec: r.sec, at: new Date().toISOString() }); });
+fs.writeFileSync(statusPath, JSON.stringify(status, null, 1));
+if (limitHit) console.log('LIMIT_HIT_ROUND');
