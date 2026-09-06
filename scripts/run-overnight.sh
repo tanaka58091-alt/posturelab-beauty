@@ -30,10 +30,17 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>" >/dev/null 2>&1; then ech
     empty=$((empty+1))
     if [ "$empty" -ge 8 ]; then echo "GIVE_UP empty_rounds=$empty total=$after $(date '+%F %T')" >> "$LOG"; break; fi
     # Codex の「try again at 4:12 AM」のような案内があれば、その時刻＋2分まで待つ（無ければ30分）
-    reset=$(grep -h -oE "try again at [0-9]{1,2}:[0-9]{2} ?[AP]M" $(ls -t ex-img/log/*.log 2>/dev/null | head -5) 2>/dev/null | head -1 | sed -E 's/try again at //')
+    # Codex の案内から復活時刻を読む。形式は2種類ある:
+    #   「try again at 4:12 AM」 / 「try again at Sep 7th, 2026 12:22 AM」
+    reset=$(grep -h -oE "try again at [^.]*[AP]M" $(ls -t ex-img/log/*.log 2>/dev/null | head -6) 2>/dev/null | head -1 | sed -E 's/try again at //')
     wait_sec=1800
     if [ -n "$reset" ]; then
-      t=$(date -j -f "%Y-%m-%d %I:%M %p" "$(date '+%Y-%m-%d') $reset" +%s 2>/dev/null)
+      clean=$(echo "$reset" | sed -E 's/([0-9]+)(st|nd|rd|th)/\1/')
+      if echo "$clean" | grep -qE '^[0-9]{1,2}:[0-9]{2} ?[AP]M$'; then
+        t=$(date -j -f "%Y-%m-%d %I:%M %p" "$(date '+%Y-%m-%d') $clean" +%s 2>/dev/null)
+      else
+        t=$(date -j -f "%b %d, %Y %I:%M %p" "$clean" +%s 2>/dev/null)
+      fi
       now=$(date +%s)
       if [ -n "$t" ]; then
         [ "$t" -le "$now" ] && t=$((t+86400))
