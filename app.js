@@ -7,7 +7,6 @@ import {
   calcScore, calcRegionScores, gradeFromScore, buildMetricsList, LM
 } from './analyzer.js';
 import { pickTodayMenu, build30DayProgram, ALL_EXERCISES } from './program.js';
-import { getKnowledgeFor } from './knowledge.js';
 import { COURSES, COURSE_ORDER, recommendCourse } from './courses.js';
 import { getPoolStats, setPainAvoidance, setFocusParts } from './prescription-matrix.js';
 import * as Store from './storage.js';
@@ -42,7 +41,6 @@ const els = {
   frontPane: $('#front-pane'),
 
   problemsList: $('#problems-list'),
-  knowledgeGrid: $('#knowledge-grid'),
   todayGrid: $('#today-grid'),
   programGrid: $('#program-grid'),
   phaseTabs: $('#phase-tabs'),
@@ -168,17 +166,17 @@ function buildSymptomProblems(){
 
 // 症状起源の問題エントリ(姿勢解析が反応しなかったが本人の自覚あり)
 const SYMPTOM_PROBLEM_META = {
-  forwardHead:        { title:'頭部前方位（前方頭位）', desc:'お悩みから推定。首・肩のこりや頭痛は頭部前方位が原因の可能性が高いです。', tissues:{tight:['上部僧帽筋','肩甲挙筋','胸鎖乳突筋','後頭下筋群'], weak:['深部頸屈筋','下部僧帽筋']} },
-  roundedShoulders:   { title:'巻き肩', desc:'お悩みから推定。胸の前面が縮こまり、肩甲骨が外に開いている状態です。', tissues:{tight:['大胸筋','小胸筋','広背筋上部'], weak:['菱形筋','下部僧帽筋','前鋸筋']} },
-  thoracicKyphosis:   { title:'胸椎後弯（猫背）', desc:'お悩みから推定。背中の丸まりが、疲労感や呼吸の浅さに繋がります。', tissues:{tight:['脊柱起立筋下部','大胸筋','腹直筋上部'], weak:['脊柱起立筋上部','下部僧帽筋','菱形筋']} },
-  anteriorPelvicTilt: { title:'骨盤前傾（反り腰）', desc:'お悩みから推定。腰の反りが強く、腰痛・下腹ぽっこりの原因に。', tissues:{tight:['腸腰筋','大腿直筋','脊柱起立筋腰部'], weak:['大臀筋','腹横筋','ハムストリングス']} },
-  posteriorPelvicTilt:{ title:'骨盤後傾', desc:'お悩みから推定。骨盤が後ろに倒れ、ヒップが下がりやすい状態。', tissues:{tight:['ハムストリングス','腹直筋'], weak:['腸腰筋','脊柱起立筋','大臀筋']} },
-  swayBack:           { title:'スウェイバック姿勢', desc:'お悩みから推定。骨盤が前に押し出され、上体が後ろに倒れる楽な立ち姿。', tissues:{tight:['ハムストリングス','腹斜筋'], weak:['大臀筋','腸腰筋','腹横筋']} },
-  lateralAsymmetry:   { title:'左右非対称', desc:'お悩みから推定。骨盤や肩の高さに左右差を感じている状態。', tissues:{tight:['腰方形筋(片側)','中臀筋(片側)'], weak:['中臀筋(反対側)','腹斜筋']} },
-  kneeValgus:         { title:'膝の内向き（Knee-in）', desc:'お悩みから推定。膝が内に入りやすく、痛みやO脚・X脚の一因に。', tissues:{tight:['内転筋','大腿筋膜張筋'], weak:['中臀筋','大臀筋','後脛骨筋']} },
-  ankleStiffness:     { title:'足首背屈制限', desc:'お悩みから推定。足首が固いと、ふくらはぎの浮腫みや膝痛の原因に。', tissues:{tight:['腓腹筋','ヒラメ筋','足底筋膜'], weak:['前脛骨筋','長腓骨筋']} },
-  kneeVarus:          { title:'O脚（Knee-out）', desc:'お悩みから推定。膝が外側に開き、内ももの筋力低下と外側組織の硬さが原因。', tissues:{tight:['大腿筋膜張筋','腸脛靱帯','外側ハムストリングス','梨状筋'], weak:['内転筋群','内側広筋','中臀筋後部繊維']} },
-  scoliosis:          { title:'側弯傾向（Cカーブ）', desc:'お悩みから推定。背骨が左右にカーブする傾向。左右の筋バランス崩れが原因です。', tissues:{tight:['凸側 腰方形筋','凸側 広背筋','凸側 腹斜筋'], weak:['凹側 腰方形筋','凹側 腹斜筋','凹側 中臀筋']} },
+  forwardHead:        { title:'頭が前に出ている', desc:'スマホやパソコンを見る時間が長いと起こりやすいクセです。首や肩がこりやすく、疲れやすさにつながります。', tissues:{tight:['上部僧帽筋','肩甲挙筋','胸鎖乳突筋','後頭下筋群'], weak:['深部頸屈筋','下部僧帽筋']} },
+  roundedShoulders:   { title:'肩が前に巻いている（巻き肩）', desc:'肩が内側に巻き込まれ、胸が縮こまった状態です。呼吸が浅くなったり、肩がこりやすくなります。', tissues:{tight:['大胸筋','小胸筋','広背筋上部'], weak:['菱形筋','下部僧帽筋','前鋸筋']} },
+  thoracicKyphosis:   { title:'背中が丸くなっている（猫背）', desc:'背中の上のほうが丸まった状態です。見た目の印象に出やすく、肩こりや疲れやすさにもつながります。', tissues:{tight:['脊柱起立筋下部','大胸筋','腹直筋上部'], weak:['脊柱起立筋上部','下部僧帽筋','菱形筋']} },
+  anteriorPelvicTilt: { title:'腰が反っている（反り腰）', desc:'骨盤が前に傾き、腰のカーブが強くなった状態です。腰の張りや、お腹が前に出て見える原因になります。', tissues:{tight:['腸腰筋','大腿直筋','脊柱起立筋腰部'], weak:['大臀筋','腹横筋','ハムストリングス']} },
+  posteriorPelvicTilt:{ title:'骨盤が後ろに倒れている', desc:'骨盤が後ろに傾き、腰のカーブが少なくなった状態です。長く座る習慣で起こりやすく、腰のだるさにつながります。', tissues:{tight:['ハムストリングス','腹直筋'], weak:['腸腰筋','脊柱起立筋','大臀筋']} },
+  swayBack:           { title:'骨盤が前に出た立ち方', desc:'骨盤を前に押し出して、上半身を後ろにあずけた「楽な立ち方」のクセです。腰やひざに負担がかかりやすくなります。', tissues:{tight:['ハムストリングス','腹斜筋'], weak:['大臀筋','腸腰筋','腹横筋']} },
+  lateralAsymmetry:   { title:'左右の高さがちがう', desc:'肩や骨盤の高さに左右差がある状態です。荷物を片側で持つ、脚を組むなどの習慣で起こりやすいです。', tissues:{tight:['腰方形筋(片側)','中臀筋(片側)'], weak:['中臀筋(反対側)','腹斜筋']} },
+  kneeValgus:         { title:'ひざが内に入っている（X脚ぎみ）', desc:'ひざが内側に入りやすい状態です。お尻の横の筋肉が働きにくいと起こりやすく、ひざの負担につながります。', tissues:{tight:['内転筋','大腿筋膜張筋'], weak:['中臀筋','大臀筋','後脛骨筋']} },
+  ankleStiffness:     { title:'足首がかたい', desc:'足首の曲がりが少ない状態です。しゃがみにくさや、ひざ・腰への負担につながります。', tissues:{tight:['腓腹筋','ヒラメ筋','足底筋膜'], weak:['前脛骨筋','長腓骨筋']} },
+  kneeVarus:          { title:'ひざが外に開いている（O脚ぎみ）', desc:'ひざが外側に開きやすい状態です。内ももやお尻の筋肉を使えるようにすると整いやすくなります。', tissues:{tight:['大腿筋膜張筋','腸脛靱帯','外側ハムストリングス','梨状筋'], weak:['内転筋群','内側広筋','中臀筋後部繊維']} },
+  scoliosis:          { title:'背骨が横にカーブしている', desc:'背骨が横に少しカーブしている傾向です。左右の筋肉の使い方の偏りで起こることが多く、整える余地があります。', tissues:{tight:['凸側 腰方形筋','凸側 広背筋','凸側 腹斜筋'], weak:['凹側 腰方形筋','凹側 腹斜筋','凹側 中臀筋']} },
 };
 
 function makeSymptomProblem(key, votes = 1){
@@ -641,7 +639,6 @@ function renderAll(){
   renderOverlays();
   renderSymptomSummary();
   renderProblems();
-  renderKnowledge();
   renderCourses();
   renderToday();
   renderProgram(state.currentPhase);
@@ -1022,19 +1019,18 @@ function drawLabel(ctx, p, text){
 // --- PROBLEMS ---
 function renderProblems(){
   els.problemsList.innerHTML = state.problems.map(p => {
-    const sevText = p.severity === 'high' ? '重' : p.severity === 'mid' ? '中' : '軽';
+    const sevText = p.severity === 'high' ? '大' : p.severity === 'mid' ? '中' : '小';
     const sevPct  = p.severity === 'high' ? '85' : p.severity === 'mid' ? '55' : '30';
     return `
       <div class="problem sev-${p.severity==='high'?'high':p.severity==='mid'?'mid':'low'}">
         <div class="problem-sev">
-          <strong>${sevPct}</strong>
-          <span>${sevText}度</span>
+          <strong>${sevText}</strong>
+          <span>気になる度</span>
         </div>
         <div class="problem-body">
           <h3>${p.title}</h3>
           <div class="problem-meta">
-            <span>計測値: <strong>${p.metric}</strong></span>
-            <span>重症度: <strong>${sevText}</strong></span>
+            <span>${p.fromSymptom ? 'もとにした情報' : '写真での数値'}: <strong>${p.fromSymptom ? 'あなたのお悩み' : p.metric}</strong></span>
           </div>
           <div class="problem-desc">${p.description}${p.fromSymptom && (state.focusNotes||[]).length ? ' <span class="focus-note">' + escapeHtml(state.focusNotes[0]) + '</span>' : ''}</div>
           ${evidenceBlocks(p)}
@@ -1047,28 +1043,36 @@ function renderProblems(){
 
 // ===== 医療線引き：写真で確認できること／推測／分からないこと を分離して表示 =====
 // 写真から分かるのは「見た目上の位置関係」だけ。筋の硬さ・筋力・関節の状態は判定できない。
+// 「これから整えていくこと」の予備文（analyzer 側が direction を付けない旧キャッシュでも表示が壊れないように）
+const DIRECTION_FALLBACK = {
+  forwardHead: '首の後ろと胸の前をゆるめて、あごを引く力をつけていきます。',
+  roundedShoulders: '胸の前をゆるめて、肩甲骨を寄せる力をつけていきます。',
+  thoracicKyphosis: '背中の上のほうを動かしやすくして、背すじを支える力をつけていきます。',
+  anteriorPelvicTilt: '脚の付け根と腰まわりをゆるめて、お腹とお尻の力をつけていきます。',
+  posteriorPelvicTilt: 'もも裏をゆるめて、骨盤を起こす力をつけていきます。',
+  swayBack: '骨盤を真ん中に戻す感覚を練習し、お腹と脚の付け根の力をつけていきます。',
+  lateralAsymmetry: '左右差を感じながら、弱いほうを使う動きを増やしていきます。',
+  scoliosis: '体の横をのばし、左右の体幹を均等に使う動きを増やしていきます。',
+  kneeValgus: 'お尻の横の筋肉を目覚めさせ、ひざが内に入らない動きを練習します。',
+  kneeVarus: '内ももとお尻の筋肉を使えるようにし、足裏でしっかり立つ練習をします。',
+  ankleStiffness: 'ふくらはぎをゆるめて、足首をよく動かしていきます。',
+  general: '今の姿勢を保つ土台づくりを中心にします。',
+};
 function evidenceBlocks(p){
   const fromPhoto = !p.fromSymptom;
   const seen = fromPhoto
-    ? `横向き・正面の写真から計測した位置関係（${escapeHtml(p.metric)}）をもとにしています。`
-    : `写真ではなく、あなたが選んだお悩みをもとにした推定です。`;
-  const parts = [...(p.tissues?.tight || []), ...(p.tissues?.weak || [])].slice(0, 6);
-  const direction = parts.length
-    ? `この見た目の傾向がある方は、一般的に <b>${parts.map(escapeHtml).join('・')}</b> のあたりが関わりやすいと言われています。プログラムはこの周辺を整える内容にしています。`
-    : `今の姿勢を保つ土台づくりを中心にしたメニューにしています。`;
+    ? `写真から測った数値（${escapeHtml(p.metric)}）がもとになっています。`
+    : `あなたが選んだお悩みをもとにしています（写真の計測ではありません）。`;
+  const direction = p.direction || DIRECTION_FALLBACK[p.key] || '今の姿勢を保つ土台づくりを中心にします。';
   return `
     <div class="evidence">
       <div class="ev-block ev-seen">
-        <strong>📷 写真から確認できたこと</strong>
+        <strong>📷 見たところ</strong>
         <p>${seen}</p>
       </div>
       <div class="ev-block ev-dir">
-        <strong>🎯 考えられる改善の方向</strong>
-        <p>${direction}</p>
-      </div>
-      <div class="ev-block ev-unknown">
-        <strong>❓ 写真だけでは分からないこと</strong>
-        <p>筋肉の硬さ・筋力・関節の動く範囲・痛みの原因は、写真からは判断できません。気になる症状がある場合は医療機関や専門家にご相談ください。</p>
+        <strong>🎯 これから整えていくこと</strong>
+        <p>${escapeHtml(direction)}</p>
       </div>
     </div>`;
 }
@@ -1091,17 +1095,6 @@ function problemIllust(key){
 }
 
 // --- KNOWLEDGE ---
-function renderKnowledge(){
-  const cards = getKnowledgeFor(state.problems.map(p=>p.key));
-  els.knowledgeGrid.innerHTML = cards.map(c => `
-    <div class="know-card">
-      <span class="know-tag">${c.tag}</span>
-      <div class="know-emoji">${c.emoji}</div>
-      <h3>${c.title}</h3>
-      <p>${c.body}</p>
-    </div>
-  `).join('');
-}
 
 // --- TODAY MENU ---
 // ===== 進捗（30日プログラムの現在地） =====
@@ -1561,17 +1554,17 @@ els.phaseTabs.addEventListener('click', e => {
 // MODAL
 // ===================================================================
 const PROBLEM_LABELS = {
-  forwardHead:'頭部前方位(FHP)',
+  forwardHead:'頭が前',
   roundedShoulders:'巻き肩',
-  thoracicKyphosis:'猫背(胸椎後弯)',
-  anteriorPelvicTilt:'反り腰(骨盤前傾)',
-  posteriorPelvicTilt:'骨盤後傾',
-  swayBack:'スウェイバック',
-  lateralAsymmetry:'左右非対称',
-  kneeValgus:'Knee-in (内向き)',
-  kneeVarus:'O脚 (Knee-out)',
-  scoliosis:'側弯傾向',
-  ankleStiffness:'足首背屈制限',
+  thoracicKyphosis:'猫背',
+  anteriorPelvicTilt:'反り腰',
+  posteriorPelvicTilt:'骨盤が後ろ倒れ',
+  swayBack:'骨盤が前出し',
+  lateralAsymmetry:'左右差',
+  kneeValgus:'ひざ内向き',
+  kneeVarus:'ひざ外向き',
+  scoliosis:'背骨のカーブ',
+  ankleStiffness:'足首かたい',
   general:'全身バランス',
 };
 

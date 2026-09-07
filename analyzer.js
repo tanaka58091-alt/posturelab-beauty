@@ -213,7 +213,7 @@ function detectProblems(sideRes, frontRes){
   if (m.forwardHeadAngle != null) {
     const a = m.forwardHeadAngle;
     if (a > 28) {
-      problems.push(makeProblem('forwardHead', a, [10,20,28], '頭部前方位（前方頭位）', m));
+      problems.push(makeProblem('forwardHead', a, [10,20,28], '頭が前に出ている', m, 28));
     }
   }
 
@@ -221,13 +221,13 @@ function detectProblems(sideRes, frontRes){
   if (m.roundedShoulderRatio != null) {
     const r = m.roundedShoulderRatio;
     if (r > 0.05) {
-      problems.push(makeProblem('roundedShoulders', r, [0.02,0.08,0.15], '巻き肩（肩甲骨前方位）', m));
+      problems.push(makeProblem('roundedShoulders', r, [0.02,0.08,0.15], '肩が前に巻いている（巻き肩）', m, 0.05));
     }
   }
 
   // 3. Thoracic Kyphosis (頭部前方が強い場合は胸椎後弯も疑う)
   if (m.cervicalAngle != null && m.cervicalAngle > 22) {
-    problems.push(makeProblem('thoracicKyphosis', m.cervicalAngle, [10,20,30], '胸椎後弯（猫背）', m));
+    problems.push(makeProblem('thoracicKyphosis', m.cervicalAngle, [10,20,30], '背中が丸くなっている（猫背）', m, 22));
   }
 
   // 4. Pelvic Tilt
@@ -237,37 +237,37 @@ function detectProblems(sideRes, frontRes){
   const isSway = m.swayBackScore != null && m.swayBackScore > 0.05;
   if (!isSway && m.pelvicTiltAngle > 5){
     if (m.pelvicForward){
-      problems.push(makeProblem('anteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤前傾（反り腰）', m));
+      problems.push(makeProblem('anteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '腰が反っている（反り腰）', m, 5));
     } else {
-      problems.push(makeProblem('posteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤後傾', m));
+      problems.push(makeProblem('posteriorPelvicTilt', m.pelvicTiltAngle, [3,8,15], '骨盤が後ろに倒れている', m, 5));
     }
   }
 
   // 5. Sway Back
   if (m.swayBackScore && m.swayBackScore > 0.05) {
-    problems.push(makeProblem('swayBack', m.swayBackScore, [0.05, 0.1, 0.2], 'スウェイバック姿勢', m));
+    problems.push(makeProblem('swayBack', m.swayBackScore, [0.05, 0.1, 0.2], '骨盤が前に出た立ち方', m, 0.05));
   }
 
   // 6. Front view based
   if (fm) {
     if (Math.abs(fm.shoulderTilt) > 2 || Math.abs(fm.pelvicTilt) > 2) {
       const v = Math.max(Math.abs(fm.shoulderTilt), Math.abs(fm.pelvicTilt));
-      problems.push(makeProblem('lateralAsymmetry', v, [2,4,7], '左右非対称', fm));
+      problems.push(makeProblem('lateralAsymmetry', v, [2,4,7], '左右の高さがちがう', fm, 2));
     }
     if (fm.lKneeIn > 0.05 || fm.rKneeIn > 0.05) {
       const v = Math.max(fm.lKneeIn, fm.rKneeIn);
-      problems.push(makeProblem('kneeValgus', v, [0.03,0.08,0.15], '膝の内向き（Knee-in）', fm));
+      problems.push(makeProblem('kneeValgus', v, [0.03,0.08,0.15], 'ひざが内に入っている（X脚ぎみ）', fm, 0.05));
     }
     // O脚（膝外向き = Knee Varus）: 両膝が外側に開く
     if (fm.lKneeIn < -0.03 && fm.rKneeIn < -0.03) {
       const v = Math.abs(Math.min(fm.lKneeIn, fm.rKneeIn));
-      problems.push(makeProblem('kneeVarus', v, [0.03,0.06,0.12], 'O脚（Knee-out）', fm));
+      problems.push(makeProblem('kneeVarus', v, [0.03,0.06,0.12], 'ひざが外に開いている（O脚ぎみ）', fm, 0.03));
     }
     // 側弯傾向: 肩と骨盤の傾きが逆方向(Cカーブ代償)
     if (Math.abs(fm.shoulderTilt) > 1.5 && Math.abs(fm.pelvicTilt) > 1.5
         && Math.sign(fm.shoulderTilt) !== Math.sign(fm.pelvicTilt)) {
       const v = (Math.abs(fm.shoulderTilt) + Math.abs(fm.pelvicTilt)) / 2;
-      problems.push(makeProblem('scoliosis', v, [2,4,7], '側弯傾向（Cカーブ）', fm));
+      problems.push(makeProblem('scoliosis', v, [2,4,7], '背骨が横にカーブしている', fm, 1.5));
     }
   }
 
@@ -280,7 +280,7 @@ function detectProblems(sideRes, frontRes){
     const horizDiff = Math.abs(knee.x - ankle.x);
     const trunkLen = dist(sideRes.landmarks.shoulder, sideRes.landmarks.hip);
     if (trunkLen > 0 && horizDiff/trunkLen > 0.18) {
-      problems.push(makeProblem('ankleStiffness', horizDiff/trunkLen, [0.1,0.18,0.3], '足首背屈制限', m));
+      problems.push(makeProblem('ankleStiffness', horizDiff/trunkLen, [0.1,0.18,0.3], '足首がかたい', m, 0.18));
     }
   }
 
@@ -289,8 +289,8 @@ function detectProblems(sideRes, frontRes){
     problems.push({
       key:'general',
       severity:'low',
-      title:'全体的に良好な姿勢',
-      description:'明確な逸脱は検出されませんでした。さらに磨きをかける軽い維持メニューを提案します。',
+      title:'大きなクセは見当たりません',
+      description:'目立つクセは見当たりません。今の良い状態を保つ、軽めのメニューをご用意します。',
       metric:'OK',
       tissues:{ tight:[], weak:[] },
     });
@@ -308,7 +308,7 @@ function severityFrom(value, thresholds){
 
 const PROBLEM_TEMPLATES = {
   forwardHead: {
-    description:'頭が肩より前方に位置する状態。長時間のスマホ・PC使用が主原因で、首の負担は最大15kgに達します。眼精疲労・頭痛・肩こりの根本原因。',
+    description:'スマホやパソコンを見る時間が長いと起こりやすいクセです。首や肩がこりやすく、疲れやすさにつながります。',
     tissues:{
       tight:['上部僧帽筋','肩甲挙筋','胸鎖乳突筋','後頭下筋群','頸半棘筋'],
       weak:['深部頸屈筋(頸長筋/頭長筋)','下部僧帽筋','前鋸筋'],
@@ -316,7 +316,7 @@ const PROBLEM_TEMPLATES = {
     unit:'°',
   },
   roundedShoulders: {
-    description:'肩が前方に巻き込まれた状態。胸郭の動きを制限し呼吸を浅くします。胸郭出口症候群・肩関節インピンジメントの原因にも。',
+    description:'肩が内側に巻き込まれ、胸が縮こまった状態です。呼吸が浅くなったり、肩がこりやすくなります。',
     tissues:{
       tight:['大胸筋','小胸筋','烏口腕筋','広背筋上部','肩甲下筋'],
       weak:['菱形筋','下部僧帽筋','棘下筋','小円筋','前鋸筋'],
@@ -324,7 +324,7 @@ const PROBLEM_TEMPLATES = {
     unit:'',
   },
   thoracicKyphosis: {
-    description:'胸椎が過度に後弯した猫背。肺活量を制限し、慢性疲労や集中力低下に直結。30代以降は転倒リスクも上昇。',
+    description:'背中の上のほうが丸まった状態です。見た目の印象に出やすく、肩こりや疲れやすさにもつながります。',
     tissues:{
       tight:['脊柱起立筋(下部胸椎)','大胸筋','小胸筋','腹直筋上部'],
       weak:['脊柱起立筋(上部胸椎)','下部僧帽筋','菱形筋','多裂筋'],
@@ -332,7 +332,7 @@ const PROBLEM_TEMPLATES = {
     unit:'°',
   },
   anteriorPelvicTilt: {
-    description:'骨盤が前に傾き、腰椎が過度に反った状態(反り腰)。腸腰筋短縮と臀筋弱化のコンビネーション。腰痛・坐骨神経痛の主因。',
+    description:'骨盤が前に傾き、腰のカーブが強くなった状態です。腰の張りや、お腹が前に出て見える原因になります。',
     tissues:{
       tight:['腸腰筋(腸骨筋/大腰筋)','大腿直筋','脊柱起立筋(腰部)','大腿筋膜張筋','腰方形筋'],
       weak:['大臀筋','腹直筋','腹横筋','ハムストリングス'],
@@ -340,7 +340,7 @@ const PROBLEM_TEMPLATES = {
     unit:'°',
   },
   posteriorPelvicTilt: {
-    description:'骨盤が後ろに傾き、腰椎の生理的湾曲が失われた状態。長時間座位で多発。椎間板への圧が増し、慢性的な腰のだるさに。',
+    description:'骨盤が後ろに傾き、腰のカーブが少なくなった状態です。長く座る習慣で起こりやすく、腰のだるさにつながります。',
     tissues:{
       tight:['ハムストリングス','腹直筋','大臀筋(上部繊維)'],
       weak:['腸腰筋','脊柱起立筋(腰部)','多裂筋'],
@@ -348,7 +348,7 @@ const PROBLEM_TEMPLATES = {
     unit:'°',
   },
   swayBack: {
-    description:'骨盤が前方にシフトし、上半身が後ろに倒れる代償姿勢。筋ではなく関節包と靱帯で立っているため、椎間板変性のリスクが極めて高い。',
+    description:'骨盤を前に押し出して、上半身を後ろにあずけた「楽な立ち方」のクセです。腰やひざに負担がかかりやすくなります。',
     tissues:{
       tight:['ハムストリングス','腹直筋上部','広背筋'],
       weak:['腸腰筋','腹斜筋','下部脊柱起立筋','多裂筋'],
@@ -356,7 +356,7 @@ const PROBLEM_TEMPLATES = {
     unit:'',
   },
   lateralAsymmetry: {
-    description:'肩や骨盤の左右の高さに差がある状態。長期化すると側弯・椎間板の不均一摩耗を招きます。',
+    description:'肩や骨盤の高さに左右差がある状態です。荷物を片側で持つ、脚を組むなどの習慣で起こりやすいです。',
     tissues:{
       tight:['腰方形筋(高い側)','広背筋(高い側)','中臀筋(低い側)'],
       weak:['腰方形筋(低い側)','中臀筋(高い側)','腹斜筋(反対側)'],
@@ -364,7 +364,7 @@ const PROBLEM_TEMPLATES = {
     unit:'°',
   },
   kneeValgus: {
-    description:'膝が内側に入る(X脚傾向)。中臀筋・深層外旋六筋の機能不全が原因。膝痛・ACL損傷・偏平足への連鎖。',
+    description:'ひざが内側に入りやすい状態です。お尻の横の筋肉が働きにくいと起こりやすく、ひざの負担につながります。',
     tissues:{
       tight:['内転筋群','大腿筋膜張筋','腓腹筋(内側頭)'],
       weak:['中臀筋','深層外旋六筋','大臀筋(下部繊維)','後脛骨筋'],
@@ -372,7 +372,7 @@ const PROBLEM_TEMPLATES = {
     unit:'',
   },
   ankleStiffness: {
-    description:'足首の背屈可動域制限。しゃがむ・階段下りで代償が出る。連鎖的に膝・腰の負担増。',
+    description:'足首の曲がりが少ない状態です。しゃがみにくさや、ひざ・腰への負担につながります。',
     tissues:{
       tight:['腓腹筋','ヒラメ筋','後脛骨筋','足底筋膜'],
       weak:['前脛骨筋','長腓骨筋'],
@@ -380,7 +380,7 @@ const PROBLEM_TEMPLATES = {
     unit:'',
   },
   kneeVarus: {
-    description:'O脚(膝が外側に開く)。中臀筋・内側広筋・内転筋下部の機能不全、外側組織の過緊張が原因。膝内側痛・変形性膝関節症のリスク増。',
+    description:'ひざが外側に開きやすい状態です。内ももやお尻の筋肉を使えるようにすると整いやすくなります。',
     tissues:{
       tight:['大腿筋膜張筋','腸脛靱帯','外側ハムストリングス','腓骨筋','梨状筋'],
       weak:['内転筋群下部','内側広筋','中臀筋後部繊維','内側ハムストリングス','後脛骨筋'],
@@ -388,7 +388,7 @@ const PROBLEM_TEMPLATES = {
     unit:'',
   },
   scoliosis: {
-    description:'脊柱の左右への弯曲傾向(機能性側弯)。左右の筋バランス崩れが原因で、長期化すると肋骨変形・呼吸機能低下のリスク。',
+    description:'背骨が横に少しカーブしている傾向です。左右の筋肉の使い方の偏りで起こることが多く、整える余地があります。',
     tissues:{
       tight:['凸側 腰方形筋','凸側 広背筋','凸側 腹斜筋','凸側 腸腰筋'],
       weak:['凹側 腰方形筋','凹側 腹斜筋','凹側 中臀筋','凹側 多裂筋'],
@@ -397,15 +397,40 @@ const PROBLEM_TEMPLATES = {
   },
 };
 
-function makeProblem(key, value, thresholds, title, metrics){
+// 「考えられる改善の方向」を平易な言葉で（筋肉名を並べない）
+const PLAIN_DIRECTION = {
+  forwardHead: '首の後ろと胸の前をゆるめて、あごを引く力をつけていきます。',
+  roundedShoulders: '胸の前をゆるめて、肩甲骨を寄せる力をつけていきます。',
+  thoracicKyphosis: '背中の上のほうを動かしやすくして、背すじを支える力をつけていきます。',
+  anteriorPelvicTilt: '脚の付け根と腰まわりをゆるめて、お腹とお尻の力をつけていきます。',
+  posteriorPelvicTilt: 'もも裏をゆるめて、骨盤を起こす力をつけていきます。',
+  swayBack: '骨盤を真ん中に戻す感覚を練習し、お腹と脚の付け根の力をつけていきます。',
+  lateralAsymmetry: '左右差を感じながら、弱いほうを使う動きを増やしていきます。',
+  scoliosis: '体の横をのばし、左右の体幹を均等に使う動きを増やしていきます。',
+  kneeValgus: 'お尻の横の筋肉を目覚めさせ、ひざが内に入らない動きを練習します。',
+  kneeVarus: '内ももとお尻の筋肉を使えるようにし、足裏でしっかり立つ練習をします。',
+  ankleStiffness: 'ふくらはぎをゆるめて、足首をよく動かしていきます。',
+  general: '今の姿勢を保つ土台づくりを中心にします。',
+};
+
+// detect: 検出のしきい値。減点は「検出した瞬間に一気に引く」のではなく、
+// しきい値で0 → 重い値(severe)で最大 まで連続的に増やす（写真の微妙なズレで点数が跳ねないように）
+function makeProblem(key, value, thresholds, title, metrics, detect){
   const tpl = PROBLEM_TEMPLATES[key];
-  const severity = severityFrom(value, thresholds);
+  const [lo, mid, hi] = thresholds;
+  const start = (detect != null) ? detect : mid;
+  const severe = Math.max(hi, start * 1.6);
+  const level = Math.max(0, Math.min(1, (value - start) / (severe - start)));   // 0=出始め 〜 1=はっきり
+  const severity = level < 0.34 ? 'low' : level < 0.67 ? 'mid' : 'high';
   return {
     key, severity, title,
     description: tpl.description,
     tissues: tpl.tissues,
+    direction: PLAIN_DIRECTION[key] || '',
     metric: typeof value==='number' ? value.toFixed(1) + tpl.unit : value,
     rawValue: value,
+    level,
+    penalty: 16 * level,          // 0〜16点（出始めはほぼ減点なし、はっきりしていれば16点）
   };
 }
 
@@ -424,57 +449,57 @@ function determinePostureType(problems){
   if (hasFH && (hasRS || hasTK)) {
     if (hasAPT) {
       return {
-        name:'上部交差＋下部交差症候群',
-        desc:'頭部前方位・巻き肩と反り腰が併存。デスクワーカーに最も多い「複合タイプ」。胸椎モビリティと股関節屈筋の解放が鍵。',
-        tags:['Upper Crossed Syndrome','Lower Crossed Syndrome','複合型'],
+        name:'首・肩・腰をまとめて整えたいタイプ',
+        desc:'頭が前・肩が丸い・腰が反る、が一緒に出ています。デスクワークの方に多い組み合わせです。',
+        tags:['首・肩','腰・骨盤'],
       };
     }
     return {
-      name:'上部交差症候群（Upper Crossed Syndrome）',
-      desc:'頭部前方位・胸椎後弯・肩甲骨前方位の典型パターン。Janda博士による分類。スマホ・PC作業で誰もが進行する現代病。',
-      tags:['Upper Crossed Syndrome','頭部前方位','巻き肩'],
+      name:'首・肩タイプ',
+      desc:'頭が前に出て、肩が丸まりやすい組み合わせです。スマホやパソコンの時間が長い方によく見られます。',
+      tags:['頭が前','巻き肩'],
     };
   }
 
   // 2. 下部交差症候群
   if (hasAPT) {
     return {
-      name:'下部交差症候群（Lower Crossed Syndrome）',
-      desc:'腸腰筋・脊柱起立筋の短縮と、腹筋・臀筋の弱化が交差したパターン。反り腰・腰痛・坐骨神経痛の温床。',
-      tags:['Lower Crossed Syndrome','反り腰','骨盤前傾'],
+      name:'腰・骨盤タイプ',
+      desc:'骨盤が前に傾いて、腰が反りやすい組み合わせです。腰の張りや、お腹の見え方に関わります。',
+      tags:['反り腰','骨盤'],
     };
   }
 
   // 3. スウェイバック
   if (hasSway) {
     return {
-      name:'スウェイバック姿勢',
-      desc:'骨盤を前に押し出し、上半身が後ろに倒れた「楽な立ち方」。靱帯と関節包に依存する危険な姿勢パターン。',
-      tags:['Sway Back','骨盤前方シフト'],
+      name:'骨盤を前に出して立つタイプ',
+      desc:'骨盤を前に押し出し、上半身を後ろにあずける立ち方のクセです。腰やひざに負担がかかりやすくなります。',
+      tags:['立ち方のクセ'],
     };
   }
 
   // 4. 左右非対称
   if (hasAsym || hasKV) {
     return {
-      name:'機能的左右非対称型',
-      desc:'肩・骨盤・膝のいずれかに左右差が顕著。生活習慣の偏り(片側荷重・足組み等)が定着したパターン。',
-      tags:['Lateral Asymmetry','機能不全'],
+      name:'左右差タイプ',
+      desc:'肩・骨盤・ひざのどこかに左右差が出ています。片側に体重をかける習慣が関わります。',
+      tags:['左右差'],
     };
   }
 
   if (hasTK || hasRS){
     return {
-      name:'軽度猫背・巻き肩タイプ',
-      desc:'胸椎の柔軟性低下と肩甲骨周囲の弱化が見られます。早期介入で十分に改善可能。',
-      tags:['軽症','胸椎モビリティ要'],
+      name:'ちょっと猫背タイプ',
+      desc:'背中の上のほうが少し丸まりやすい状態です。早めに整えると楽になります。',
+      tags:['軽め','猫背'],
     };
   }
 
   return {
-    name:'良好な姿勢',
-    desc:'明確な逸脱は見つかりません。維持メニューで現状をキープしましょう。',
-    tags:['Good','維持期'],
+    name:'整っているタイプ',
+    desc:'大きなクセは見当たりません。今の状態を保つメニューで続けましょう。',
+    tags:['キープ'],
   };
 }
 
@@ -486,10 +511,11 @@ function determinePostureType(problems){
 function calcScore(sideRes, frontRes, problems){
   let raw = 100;
   problems.forEach(p => {
-    if (p.severity === 'low')  raw -= 4;
-    if (p.severity === 'mid')  raw -= 9;
-    if (p.severity === 'high') raw -= 16;
+    if (p.key === 'general') return;                       // 「問題なし」は減点しない（理想で100点）
+    if (typeof p.penalty === 'number') raw -= p.penalty;   // 連続減点（2〜16点）
+    else raw -= p.severity === 'high' ? 16 : p.severity === 'mid' ? 9 : 4;   // 旧データ／お悩み由来
   });
+  raw = Math.round(raw);
   if (raw >= 50) return Math.min(100, raw);
   return Math.max(35, Math.round(35 + 15 * Math.exp((raw - 50) / 30)));
 }
@@ -559,7 +585,7 @@ function calcRegionScores(sideRes, frontRes, problems){
     (problems || []).forEach(p => {
       const w = (REGION_WEIGHT[p.key] || {})[r.key];
       if (!w) return;
-      const base = SEVERITY_PENALTY[p.severity] || SEVERITY_PENALTY.low;
+      const base = (typeof p.level === 'number') ? 12 + 30 * p.level : (SEVERITY_PENALTY[p.severity] || SEVERITY_PENALTY.low);
       penalty += base * w;
       causes.push({ title: p.title, severity: p.severity, weight: w });
     });
@@ -612,46 +638,46 @@ function buildMetricsList(sideRes, frontRes){
 
   if (m) {
     list.push({
-      name:'頭部前方位角(CVA)',
+      name:'頭の前出し',
       value: m.forwardHeadAngle.toFixed(1) + '°',
-      detail:'臨床基準: 正常<22° / 軽度22-28° / 中等度28-35° / 重度>35°',
+      detail:'目安: 22°未満ならOK',
       pct: Math.min(100, m.forwardHeadAngle / 45 * 100),
       sev: m.forwardHeadAngle < 22 ? 'good' : m.forwardHeadAngle < 28 ? 'warn' : 'bad',
     });
     list.push({
-      name:'肩-骨盤垂直線逸脱',
+      name:'肩の前出し',
       value: (m.roundedShoulderRatio*100).toFixed(1) + '%',
-      detail:'体幹長に対する肩の前方シフト率。正常<3%',
+      detail:'目安: 3%未満ならOK',
       pct: Math.min(100, m.roundedShoulderRatio * 400),
       sev: m.roundedShoulderRatio < 0.03 ? 'good' : m.roundedShoulderRatio < 0.08 ? 'warn' : 'bad',
     });
     list.push({
-      name:'骨盤大腿角',
+      name:'骨盤の傾き',
       value: m.pelvicTiltAngle.toFixed(1) + '°',
-      detail:m.pelvicForward ? '前傾傾向' : '後傾傾向',
+      detail:(m.pelvicForward ? '前に傾きぎみ' : '後ろに傾きぎみ') + '／目安: 5°未満ならOK',
       pct: Math.min(100, m.pelvicTiltAngle / 20 * 100),
       sev: m.pelvicTiltAngle < 5 ? 'good' : m.pelvicTiltAngle < 10 ? 'warn' : 'bad',
     });
     list.push({
-      name:'膝関節屈曲(立位)',
+      name:'ひざの伸び',
       value: m.kneeFlex.toFixed(1) + '°',
-      detail:'正常範囲: 0-5° / 過伸展<0° / 屈曲位>5°',
+      detail:'目安: 0〜5°ならOK',
       pct: Math.min(100, Math.abs(m.kneeFlex) / 20 * 100),
       sev: Math.abs(m.kneeFlex) < 5 ? 'good' : Math.abs(m.kneeFlex) < 10 ? 'warn' : 'bad',
     });
   }
   if (fm) {
     list.push({
-      name:'肩の水平度',
+      name:'肩の高さの左右差',
       value: Math.abs(fm.shoulderTilt).toFixed(1) + '°',
-      detail:'左右の肩の高さの差。正常<2°',
+      detail:'目安: 2°未満ならOK',
       pct: Math.min(100, Math.abs(fm.shoulderTilt) / 8 * 100),
       sev: Math.abs(fm.shoulderTilt) < 2 ? 'good' : Math.abs(fm.shoulderTilt) < 4 ? 'warn' : 'bad',
     });
     list.push({
-      name:'骨盤の水平度',
+      name:'骨盤の高さの左右差',
       value: Math.abs(fm.pelvicTilt).toFixed(1) + '°',
-      detail:'左右の骨盤の高さの差。正常<2°',
+      detail:'目安: 2°未満ならOK',
       pct: Math.min(100, Math.abs(fm.pelvicTilt) / 8 * 100),
       sev: Math.abs(fm.pelvicTilt) < 2 ? 'good' : Math.abs(fm.pelvicTilt) < 4 ? 'warn' : 'bad',
     });
@@ -661,6 +687,7 @@ function buildMetricsList(sideRes, frontRes){
 }
 
 export {
+  PLAIN_DIRECTION,
   LM,
   analyzeSide,
   analyzeFront,
