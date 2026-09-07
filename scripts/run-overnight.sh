@@ -8,6 +8,8 @@
 # ===================================================================
 cd "$(dirname "$0")/.." || exit 1
 LOG=ex-img/log/_overnight.txt
+# 二重起動ガード（launchd の予約起動と手動起動が重ならないように）
+if [ "$(pgrep -f "run-overnigh[t].sh" | wc -l | tr -d " ")" -gt 1 ]; then echo "already running $(date "+%F %T")" >> "$LOG"; exit 0; fi
 echo "=== overnight start $(date '+%F %T') ===" >> "$LOG"
 while pgrep -f "node scripts/gen-ex-im[g]" >/dev/null; do sleep 60; done
 echo "既存バッチ終了を確認 $(date '+%T')" >> "$LOG"
@@ -51,10 +53,12 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>" >/dev/null 2>&1; then ech
     if [ "$wait_sec" -gt 43200 ]; then
       echo "WEEKLY_LIMIT until '${reset}' waiting $((wait_sec/3600))h $(date '+%F %T')" >> "$LOG"
       empty=0
-      while [ "$wait_sec" -gt 0 ]; do s=$(( wait_sec > 3600 ? 3600 : wait_sec )); sleep "$s"; wait_sec=$((wait_sec-s)); done
+      target=$(( $(date +%s) + wait_sec ))
+      while [ "$(date +%s)" -lt "$target" ]; do sleep 600; done
       continue
     fi
-    echo "LIMIT_WAIT reset='${reset:-不明}' sleeping $((wait_sec/60))min (empty=$empty) $(date '+%T')" >> "$LOG"; sleep "$wait_sec"
+    echo "LIMIT_WAIT reset='${reset:-不明}' sleeping $((wait_sec/60))min (empty=$empty) $(date '+%T')" >> "$LOG"
+    target=$(( $(date +%s) + wait_sec )); while [ "$(date +%s)" -lt "$target" ]; do sleep 300; done
   else
     empty=0
     sleep 20
