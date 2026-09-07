@@ -1453,8 +1453,26 @@ function artHTML(ex){
   return ex.illustration || '';
 }
 
+// ===== やり方の「かんたん版」 =====
+// 全562種の手順は 中央値6手順・約320文字 と長く、「読むのがしんどい」と指摘があった。
+// 各手順は「最初の1文＝やること、その後＝細かい注意」という構造なので、
+// 最初の1文だけを並べた版を標準表示にし、全文は「くわしく見る」に畳む（内容は削らない）。
+function firstSentence(step){
+  const s = String(step || '').replace(/\s+/g, '').trim();
+  let f = s.split(/(?<=[。！!])/)[0].replace(/[。！!]$/, '');
+  if (f.length > 72){ const cut = f.lastIndexOf('、', 64); if (cut > 20) f = f.slice(0, cut) + '…'; }   // 「…」で切れる行を 55→12/2967 に
+  return f;
+}
+function compactSteps(ex){
+  return (ex.how || []).map(firstSentence).filter(Boolean).slice(0, 7);
+}
+// 「ここだけ注意」= やりがちなミスの最初の1文
+function keyCaution(ex){
+  return firstSentence(ex.cues?.dont || '');
+}
+
 function exerciseCard(ex){
-  const firstStep = (ex.how && ex.how[0]) ? ex.how[0] : '';
+  const firstStep = compactSteps(ex)[0] || '';
   return `
     <div class="exercise-card" data-ex="${ex.id}">
       <div class="ex-illust">${artHTML(ex)}</div>
@@ -1745,25 +1763,30 @@ function openExerciseModal(ex, nav){
     </div>
     ${painCautionHTML(ex)}
     <div class="modal-section how-section">
-      <h4>📋 やり方 — この手順どおりに動かしてください</h4>
-      <ol class="how-steps">${(ex.how||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+      <h4>📋 やり方</h4>
+      <ol class="how-compact">${compactSteps(ex).map(st => `<li>${escapeHtml(st)}</li>`).join('')}</ol>
+      ${keyCaution(ex) ? `<div class="how-caution">⚠ ここだけ注意：${escapeHtml(keyCaution(ex))}</div>` : ''}
       ${holdTimerButton(ex)}
-      ${ex.easyOption ? `<div class="easy-opt"><span class="easy-badge">きつい場合</span>${ex.easyOption}</div>` : ''}
-    </div>
-    <div class="modal-section">
-      <h4>✨ 効かせるコツ</h4>
-      <div class="modal-cues">
-        <div class="cue-box do"><strong>✅ こうする</strong>${ex.cues?.do || ''}</div>
-        <div class="cue-box dont"><strong>❌ やりがちなミス</strong>${ex.cues?.dont || ''}</div>
-      </div>
-    </div>
-    <div class="modal-section">
-      <h4>🎯 対応する姿勢の問題</h4>
-      <ul>${targets.map(t=>`<li>${t}</li>`).join('') || '<li>—</li>'}</ul>
-    </div>
-    <div class="modal-section">
-      <h4>💡 なぜ効くのか</h4>
-      <p>${ex.why || ''}</p>
+      <details class="how-more">
+        <summary>くわしいやり方・コツを見る</summary>
+        <ol class="how-steps">${(ex.how||[]).map(st=>`<li>${st}</li>`).join('')}</ol>
+        ${ex.easyOption ? `<div class="easy-opt"><span class="easy-badge">きつい場合</span>${ex.easyOption}</div>` : ''}
+        <div class="modal-section">
+          <h4>✨ 効かせるコツ</h4>
+          <div class="modal-cues">
+            <div class="cue-box do"><strong>✅ こうする</strong>${ex.cues?.do || ''}</div>
+            <div class="cue-box dont"><strong>❌ やりがちなミス</strong>${ex.cues?.dont || ''}</div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <h4>💡 なぜ効くのか</h4>
+          <p>${ex.why || ''}</p>
+        </div>
+        <div class="modal-section">
+          <h4>🎯 対応する姿勢の問題</h4>
+          <ul>${targets.map(t=>`<li>${t}</li>`).join('') || '<li>—</li>'}</ul>
+        </div>
+      </details>
     </div>
     <div class="stop-row">
       <button class="btn-stop" id="btn-stop-exercise" type="button">⚠ 痛み・しびれ・めまいが出た（中止する）</button>
