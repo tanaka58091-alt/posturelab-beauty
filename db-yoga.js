@@ -41,7 +41,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_warrior3', name:'ウォリアーIII', displayName:"戦士のポーズ3(片脚立ちで前に倒れる)", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','posteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','posteriorPelvicTilt','ankleStiffness'],
     category:'asana', technique:'standing', bodyPart:'fullbody', intensity:3,
     equipment:'マット', position:'standing', duration:'各30秒',
     illustration: SVG2.warrior3,
@@ -63,7 +63,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_revolved_triangle', name:'リバースド三角', displayName:"ねじる三角のポーズ", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'asana', technique:'standing', bodyPart:'fullbody', intensity:3,
     equipment:'マット', position:'standing', duration:'各30秒',
     illustration: SVG2.spineTwist,
@@ -74,7 +74,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_chair', name:'ウトカターサナ(椅子)', displayName:"いすに座るように腰を落とすポーズ", courses:['yoga'],
-    targetProblems:['posteriorPelvicTilt','roundedShoulders'],
+    targetProblems:['posteriorPelvicTilt'],
     category:'asana', technique:'standing', bodyPart:'leg', intensity:2,
     equipment:'マット', position:'standing', duration:'45秒',
     illustration: SVG2.chairPose,
@@ -85,7 +85,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_tree', name:'ヴルクシャーサナ(木)', displayName:"木のポーズ（片脚立ち）", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','general'],
+    targetProblems:['lateralAsymmetry','general','ankleStiffness'],
     category:'asana', technique:'standing', bodyPart:'leg', intensity:2,
     equipment:'マット', position:'standing', duration:'各45秒',
     illustration: SVG2.treePose,
@@ -197,7 +197,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_seated_twist_y', name:'マリーチアーサナ(座位ツイスト)', displayName:"座ってねじるストレッチ", courses:['yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'asana', technique:'seated', bodyPart:'back', intensity:2,
     equipment:'マット', position:'sitting', duration:'各45秒',
     illustration: SVG2.seatedTwist,
@@ -263,7 +263,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_seated_side', name:'座位サイドベンド', displayName:"座って行う体の横のばし", courses:['yoga'],
-    targetProblems:['lateralAsymmetry'],
+    targetProblems:['lateralAsymmetry','scoliosis'],
     category:'asana', technique:'seated', bodyPart:'back', intensity:1,
     equipment:'マット', position:'sitting', duration:'各30秒',
     illustration: SVG2.sideStretch,
@@ -397,7 +397,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_spinal_twist', name:'仰向け脊柱ねじり', displayName:"仰向けの背骨ねじり", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'asana', technique:'twist', bodyPart:'back', intensity:1,
     equipment:'マット', position:'supine', duration:'各1分',
     illustration: SVG2.spineTwist,
@@ -599,7 +599,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_warrior_reverse', beginnerSafe:false, easyOption:'支えなしでぐらつくのがこわければ、前足の内側にイスを置いて行います。上げないほうの手の指先を軽くイスに添え、体重は預けず支えにする程度にします。歩幅は狭めにし、前ひざはつま先が見える範囲で浅く曲げます。上げる腕は天井まで上げず、楽に上がる高さで止め、上体を後ろへ倒す動きも小さくします。キープは１０秒を３回に分け、反対側も同様に行います。', name:'リバースウォリアー', displayName:"リバースウォリアー", courses:['yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'asana', technique:'stretch', bodyPart:'core', intensity:2,
     equipment:'マット', position:'standing', duration:'各30秒',
     illustration: SVG2.reverseWarrior,
@@ -610,7 +610,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_extended_side_angle', beginnerSafe:false, easyOption:'支えなしでバランスがこわければ、前足の外側にイスを置いて行います。歩幅は狭めにし、前ひざはつま先が見える範囲で浅く曲げます。前側のひじを太ももに乗せる代わりに、前側の手をイスの座面に置いて体を支えます。後ろ側の腕は天井まで伸ばさず、腰に当てておきます。後ろのかかとは床につけたまま、キープは１０秒を３回に分けて行い、反対側も同様にします。イスには体重を預けきらず、支えにする程度にします。', name:'パールシュヴァコナーサナ', displayName:"わき腹を長く伸ばすポーズ", courses:['yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'asana', technique:'stretch', bodyPart:'core', intensity:2,
     equipment:'マット', position:'standing', duration:'各30秒',
     illustration: SVG2.triangle,
@@ -621,7 +621,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_revolved_triangle', name:'パリヴリッタトリコナーサナ', displayName:"ねじる三角のポーズ", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','roundedShoulders'],
+    targetProblems:['lateralAsymmetry','roundedShoulders','scoliosis'],
     category:'asana', technique:'integration', bodyPart:'core', intensity:3,
     equipment:'マット', position:'standing', duration:'各30秒',
     illustration: SVG2.triangle,
@@ -665,7 +665,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_chair_twist', name:'ねじった椅子のポーズ', displayName:"ねじった椅子のポーズ", courses:['yoga'],
-    targetProblems:['roundedShoulders','lateralAsymmetry'],
+    targetProblems:['roundedShoulders','lateralAsymmetry','scoliosis'],
     category:'asana', technique:'integration', bodyPart:'core', intensity:2,
     equipment:'マット', position:'standing', duration:'各30秒',
     illustration: SVG2.spineTwist,
@@ -744,7 +744,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_bow_pose', name:'ダヌラーサナ（弓）', displayName:"弓のポーズ", courses:['yoga'],
-    targetProblems:['thoracicKyphosis','anteriorPelvicTilt'],
+    targetProblems:['thoracicKyphosis'],
     category:'asana', technique:'stretch', bodyPart:'chest', intensity:3,
     equipment:'マット', position:'prone', duration:'30秒 × 3セット',
     illustration: SVG2.bow,
@@ -755,7 +755,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_locust_pose', name:'シャラバーサナ（バッタ）', displayName:"バッタのポーズ", courses:['yoga'],
-    targetProblems:['thoracicKyphosis','posteriorPelvicTilt'],
+    targetProblems:['thoracicKyphosis','posteriorPelvicTilt','forwardHead'],
     category:'asana', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'30秒 × 3セット',
     illustration: SVG2.locust,
@@ -789,7 +789,7 @@ const DB_YOGA = [
   {
     id:'yg_supported_bridge', name:'セツバンダーサナ', displayName:"お尻を持ち上げる橋のポーズ", courses:['yoga'],
     targetProblems:['thoracicKyphosis','posteriorPelvicTilt'],
-    category:'asana', technique:'stretch', bodyPart:'chest', intensity:1,
+    category:'asana', technique:'stretch', bodyPart:'hip', intensity:1,
     equipment:'マット', position:'supine', duration:'2分',
     illustration: SVG2.bridge,
     purpose:'軽い後屈で胸を開く。',
@@ -856,7 +856,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_side_plank_yoga', name:'ヴァシシュターサナ（横向き板）', displayName:"横向きの板のポーズ", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','roundedShoulders'],
+    targetProblems:['lateralAsymmetry','roundedShoulders','scoliosis'],
     category:'core', technique:'isometric', bodyPart:'core', intensity:3,
     equipment:'マット', position:'side', duration:'各30秒',
     illustration: SVG2.sidePlank,
@@ -902,7 +902,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_lunge_low', name:'アンジャネヤーサナ（三日月）', displayName:"三日月のポーズ", courses:['yoga'],
-    targetProblems:['anteriorPelvicTilt','thoracicKyphosis'],
+    targetProblems:['anteriorPelvicTilt'],
     category:'asana', technique:'stretch', bodyPart:'hip', intensity:1,
     equipment:'マット', position:'kneeling', duration:'各1分',
     illustration: SVG2.lungeStretch,
@@ -936,7 +936,7 @@ const DB_YOGA = [
   {
     id:'yg_cow_face', name:'ゴームカーサナ（牛面）', displayName:"背中で手を組むストレッチ", courses:['yoga'],
     targetProblems:['lateralAsymmetry','roundedShoulders'],
-    category:'asana', technique:'stretch', bodyPart:'hip', intensity:2,
+    category:'asana', technique:'stretch', bodyPart:'shoulder', intensity:2,
     equipment:'マット', position:'sitting', duration:'各1分',
     illustration: SVG2.shoulderBlade,
     purpose:'お尻と肩を同時に開く。',
@@ -957,7 +957,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_half_lord_of_fishes', easyOption:'立てた右ひざにひじを引っかけず、右手を右ひざの上にそっと置くだけにします。吐きながら3秒かけて背中が丸まらない範囲で軽く右へ回し、10秒キープ→正面に戻す、を3回。左右入れかえて反対側も同じに行います。', name:'アルダマツィエンドラーサナ', displayName:"座ってねじるポーズ", courses:['yoga'],
-    targetProblems:['lateralAsymmetry','roundedShoulders'],
+    targetProblems:['lateralAsymmetry','roundedShoulders','scoliosis'],
     category:'asana', technique:'integration', bodyPart:'core', intensity:2,
     equipment:'マット', position:'sitting', duration:'各1分',
     illustration: SVG2.seatedTwist,
@@ -990,7 +990,7 @@ const DB_YOGA = [
   },
   {
     id:'yg_reclining_hero', name:'スプタヴィーラーサナ', displayName:"かかとの間に座って寝ころぶポーズ（英雄座から）", courses:['yoga'],
-    targetProblems:['anteriorPelvicTilt','thoracicKyphosis'],
+    targetProblems:['anteriorPelvicTilt','thoracicKyphosis','ankleStiffness'],
     category:'asana', technique:'stretch', bodyPart:'leg', intensity:3,
     equipment:'マット', position:'supine', duration:'2分',
     illustration: SVG2.fish,

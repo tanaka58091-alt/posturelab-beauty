@@ -136,7 +136,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_seated_side_stretch', name:'座位サイドストレッチ', displayName:"イスでわき腹のばし", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'core', intensity:1,
     equipment:'なし', position:'sitting', duration:'各30秒',
     illustration: SVG2.sideStretch,
@@ -158,7 +158,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_seated_twist_easy', name:'やさしい座位ねじり', displayName:"イスでやさしく体ねじり", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','roundedShoulders'],
+    targetProblems:['lateralAsymmetry','roundedShoulders','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'core', intensity:1,
     equipment:'なし', position:'sitting', duration:'各30秒',
     illustration: SVG2.seatedTwist,
@@ -169,7 +169,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_quadruped_thread_needle', name:'スレッドニードル', displayName:"四つん這いで腕を通すねじりストレッチ", courses:ALL_COURSES,
-    targetProblems:['roundedShoulders','thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'back', intensity:1,
     equipment:'マット', position:'kneeling', duration:'各45秒',
     illustration: SVG2.threadNeedle,
@@ -259,7 +259,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_clam_easy', name:'やさしいクラム', displayName:"横向きでひざを開く運動", courses:ALL_COURSES,
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:1,
     equipment:'マット', position:'side', duration:'各15回',
     illustration: SVG2.clamShell,
@@ -272,7 +272,7 @@ const DB_SENIOR = [
   // ============== 脚・足の機能回復 ==============
   {
     id:'sn_ankle_rotation', name:'足首回し', displayName:"足首回し", courses:ALL_COURSES,
-    targetProblems:['ankleStiffness','general'],
+    targetProblems:['ankleStiffness','general','kneeVarus'],
     category:'selfcare', technique:'mobility', bodyPart:'ankle', intensity:1,
     equipment:'なし', position:'sitting', duration:'各5周',
     illustration: SVG2.ankleRotation,
@@ -283,7 +283,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_toe_curl', name:'タオルなしのタオルギャザー', displayName:"タオルなしの足指にぎり", courses:ALL_COURSES,
-    targetProblems:['ankleStiffness','kneeValgus'],
+    targetProblems:['ankleStiffness','kneeValgus','kneeVarus'],
     category:'training', technique:'strength', bodyPart:'foot', intensity:1,
     equipment:'なし', position:'sitting', duration:'20回',
     illustration: SVG2.footToes,
@@ -395,7 +395,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_wall_free_pushup_knee', name:'膝つき腕立て', displayName:"膝つき腕立て", courses:ALL_COURSES,
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders'],
     category:'training', technique:'strength', bodyPart:'arm', intensity:2,
     equipment:'マット', position:'kneeling', duration:'8回 × 2セット',
     illustration: SVG2.pushup,
@@ -408,7 +408,7 @@ const DB_SENIOR = [
   // ============== 立位機能・バランス ==============
   {
     id:'sn_one_leg_balance', name:'片脚バランス', displayName:"片脚バランス", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','kneeValgus','general'],
+    targetProblems:['lateralAsymmetry','kneeValgus','general','ankleStiffness'],
     category:'training', technique:'balance', bodyPart:'leg', intensity:1,
     equipment:'なし', position:'standing', duration:'各30秒',
     illustration: SVG2.singleLegBalance,
@@ -441,7 +441,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_mini_squat', name:'ミニスクワット', displayName:"ミニスクワット", courses:ALL_COURSES,
-    targetProblems:['kneeValgus','posteriorPelvicTilt'],
+    targetProblems:['kneeValgus','posteriorPelvicTilt','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:1,
     equipment:'なし', position:'standing', duration:'12回',
     illustration: SVG2.squat,
@@ -658,7 +658,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_back_extension_prone', name:'うつ伏せ背筋', displayName:"うつ伏せ背筋", courses:ALL_COURSES,
-    targetProblems:['thoracicKyphosis','roundedShoulders','swayBack'],
+    targetProblems:['thoracicKyphosis','roundedShoulders','swayBack','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:1,
     equipment:'マット', position:'prone', duration:'8回',
     illustration: SVG2.cobra,
@@ -669,7 +669,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_prone_arm_lift', name:'うつ伏せアームリフト', displayName:"うつ伏せで腕を浮かせる運動", courses:ALL_COURSES,
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:1,
     equipment:'マット', position:'prone', duration:'各10回',
     illustration: SVG2.cobra,
@@ -680,7 +680,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_pelvic_drop', beginnerSafe:false, name:'骨盤ドロップ', displayName:"片脚立ちで腰を上げ下げ", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','kneeVarus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:1,
     equipment:'なし', position:'standing', duration:'各12回',
     illustration: SVG2.warrior,
@@ -691,7 +691,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_supine_leg_to_side', name:'仰向け膝倒し', displayName:"仰向け膝倒し", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'core', intensity:1,
     equipment:'マット', position:'supine', duration:'各30秒',
     illustration: SVG2.spineTwist,
@@ -702,7 +702,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_supine_windshield', name:'ワイパー運動', displayName:"ワイパー運動", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'core', intensity:1,
     equipment:'マット', position:'supine', duration:'10往復',
     illustration: SVG2.spineTwist,
@@ -792,7 +792,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_standing_side_bend_easy', name:'立位サイドベンド', displayName:"立って体の横を伸ばすストレッチ", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'core', intensity:1,
     equipment:'なし', position:'standing', duration:'各30秒',
     illustration: SVG2.sideStretch,
@@ -803,7 +803,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_standing_twist', name:'立位ねじり', displayName:"立って体をねじる運動", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','roundedShoulders'],
+    targetProblems:['lateralAsymmetry','roundedShoulders','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'core', intensity:1,
     equipment:'なし', position:'standing', duration:'10回',
     illustration: SVG2.spineTwist,
@@ -871,7 +871,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_quadruped_arm_lift', name:'四つん這いアームリフト', displayName:"四つん這いアームリフト", courses:ALL_COURSES,
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:1,
     equipment:'マット', position:'kneeling', duration:'各10回',
     illustration: SVG2.birdDog,
@@ -904,7 +904,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_modified_side_plank', name:'やさしいサイドプランク', displayName:"やさしいサイドプランク", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','scoliosis'],
     category:'training', technique:'isometric', bodyPart:'core', intensity:2,
     equipment:'マット', position:'side', duration:'各20秒',
     illustration: SVG2.sidePlank,
@@ -915,7 +915,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_supine_pillow_squeeze', name:'仰向け内ももスクイーズ', displayName:"仰向け内ももスクイーズ", courses:ALL_COURSES,
-    targetProblems:['kneeValgus','anteriorPelvicTilt'],
+    targetProblems:['kneeValgus','anteriorPelvicTilt','kneeVarus'],
     category:'training', technique:'isometric', bodyPart:'leg', intensity:1,
     equipment:'マット', position:'supine', duration:'10秒 × 5回',
     illustration: SVG2.bridge,
@@ -1002,7 +1002,7 @@ const DB_SENIOR = [
   // ============== 下肢強化(スクワット・ランジ系) ==============
   {
     id:'sn_wide_squat', name:'ワイドスクワット', displayName:"ワイドスクワット", courses:ALL_COURSES,
-    targetProblems:['posteriorPelvicTilt','kneeValgus','general'],
+    targetProblems:['posteriorPelvicTilt','kneeValgus','general','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'15回 × 3セット',
     illustration: SVG2.sumoSquat,
@@ -1013,7 +1013,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_sumo_squat', name:'相撲スクワット', displayName:"相撲スクワット", courses:ALL_COURSES,
-    targetProblems:['posteriorPelvicTilt','general'],
+    targetProblems:['posteriorPelvicTilt','general','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'12回 × 3セット',
     illustration: SVG2.sumoSquat,
@@ -1046,7 +1046,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_reverse_lunge', beginnerSafe:false, name:'リバースランジ', displayName:"後ろに足を引いてしゃがむ運動", courses:ALL_COURSES,
-    targetProblems:['posteriorPelvicTilt','lateralAsymmetry','general'],
+    targetProblems:['posteriorPelvicTilt','lateralAsymmetry','general','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'各10回 × 3セット',
     illustration: SVG2.lunge,
@@ -1068,7 +1068,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_lateral_lunge', name:'サイドランジ', displayName:"横に踏み出してしゃがむ運動", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','kneeValgus','general'],
+    targetProblems:['lateralAsymmetry','kneeValgus','general','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'各10回 × 3セット',
     illustration: SVG2.sideLunge,
@@ -1079,7 +1079,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_split_squat_easy', beginnerSafe:false, name:'スプリットスクワット', displayName:"足を前後に開いて深く沈むスクワット", courses:ALL_COURSES,
-    targetProblems:['posteriorPelvicTilt','general'],
+    targetProblems:['posteriorPelvicTilt','general','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'各10回 × 2セット',
     illustration: SVG2.lunge,
@@ -1101,7 +1101,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_chair_squat_strong', name:'立ち座りスクワット', displayName:"立ち座りスクワット", courses:ALL_COURSES,
-    targetProblems:['posteriorPelvicTilt','general'],
+    targetProblems:['posteriorPelvicTilt','general','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'15回 × 3セット',
     illustration: SVG2.squatHold,
@@ -1145,7 +1145,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_curtsy_lunge_easy', name:'やさしいカーツィー', displayName:"斜め後ろに足を交差してしゃがむ運動", courses:ALL_COURSES,
-    targetProblems:['posteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['posteriorPelvicTilt','lateralAsymmetry','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'各10回 × 2セット',
     illustration: SVG2.lunge,
@@ -1202,7 +1202,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_fire_hydrant', name:'ファイヤーハイドラント', displayName:"四つん這いで脚を横に開く", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','kneeValgus','general'],
+    targetProblems:['lateralAsymmetry','kneeValgus','general','kneeVarus'],
     category:'strength', technique:'strength', bodyPart:'glutes', intensity:2,
     equipment:'マット', position:'quadruped', duration:'各12回 × 2セット',
     illustration: SVG2.fireHydrant,
@@ -1224,7 +1224,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_lateral_leg_raise', easyOption:'各15回×2セットがきつければ、上げる高さをこぶし1つ分（10cmほど）に小さくし、各側10回だけ・1セットにします。かかとは最後まで壁につけたまま、上げ下げをそれぞれ2秒でゆっくり行います。ふらつくときは、上の手を胸の前の床にしっかりついて体を支えます。', name:'サイドレッグレイズ', displayName:"横向きで脚を上げる", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','kneeVarus'],
     category:'strength', technique:'strength', bodyPart:'glutes', intensity:2,
     equipment:'マット', position:'side', duration:'各15回 × 2セット',
     illustration: SVG2.legRaise,
@@ -1235,7 +1235,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_clam_strong', easyOption:'各20回×2セットがきつければ、開く幅をこぶし半分（5cmほど）に小さくし、各側10回だけ・1セットにします。両方のかかとはぴったり合わせ、背中とお尻を壁につけたまま行います。開き下ろしはそれぞれ2秒でかまいません。', name:'クラムシェル強化', displayName:"横向きで膝を開く（強め）", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','kneeValgus','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','kneeValgus','anteriorPelvicTilt','kneeVarus'],
     category:'strength', technique:'strength', bodyPart:'glutes', intensity:2,
     equipment:'マット', position:'side', duration:'各20回 × 2セット',
     illustration: SVG2.clamShell,
@@ -1246,7 +1246,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_reverse_clam', beginnerSafe:false, easyOption:'回数や動きがきつい場合は、まず各10回の1セットだけにします。動きが分かりにくければ、タオルをはさまずに行ってもかまいません。上のひざ頭を正面へ向けたまま、すねだけをドアが開くように、上の足の親指が下の足の親指1つ分だけ離れる高さまで動かせば十分です。慣れて物足りなくなったら、タオルをはさみ、回数を各15回・2セットへ増やします。', name:'リバースクラム', displayName:"横向きで足を上げる", courses:ALL_COURSES,
-    targetProblems:['kneeValgus'],
+    targetProblems:['kneeValgus','kneeVarus'],
     category:'strength', technique:'strength', bodyPart:'glutes', intensity:2,
     equipment:'マット', position:'side', duration:'各15回 × 2セット',
     illustration: SVG2.clamShell,
@@ -1314,7 +1314,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_side_plank_knee', beginnerSafe:false, name:'膝つきサイドプランク', displayName:"膝つき横向きキープ", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','general'],
+    targetProblems:['lateralAsymmetry','general','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:2,
     equipment:'マット', position:'side', duration:'各30秒 × 2セット',
     illustration: SVG2.plank,
@@ -1325,7 +1325,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_side_plank_full', name:'フルサイドプランク', displayName:"横向き体まっすぐキープ", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry'],
+    targetProblems:['lateralAsymmetry','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:2,
     equipment:'マット', position:'side', duration:'各20秒 × 2セット',
     illustration: SVG2.plank,
@@ -1336,7 +1336,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_bird_dog_strong', name:'バードドッグ強化', displayName:"四つん這いで手足のばし", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','general'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','general','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:2,
     equipment:'マット', position:'quadruped', duration:'各10回 × 2セット',
     illustration: SVG2.birdDog,
@@ -1380,7 +1380,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_bicycle_easy', name:'やさしい自転車漕ぎ', displayName:"やさしい自転車漕ぎ", courses:ALL_COURSES,
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:2,
     equipment:'マット', position:'supine', duration:'各15回 × 2セット',
     illustration: SVG2.deadBug,
@@ -1437,7 +1437,7 @@ const DB_SENIOR = [
   // ============== 上半身強化(プッシュ・プル系) ==============
   {
     id:'sn_incline_pushup_floor', name:'インクラインプッシュアップ', displayName:"ひざつき腕立てふせ（やさしめ）", courses:ALL_COURSES,
-    targetProblems:['roundedShoulders','forwardHead','general'],
+    targetProblems:['roundedShoulders','general'],
     category:'strength', technique:'strength', bodyPart:'chest', intensity:2,
     equipment:'マット', position:'prone', duration:'12回 × 3セット',
     illustration: SVG2.pushup,
@@ -1471,7 +1471,7 @@ const DB_SENIOR = [
   {
     id:'sn_pushup_hold', name:'プッシュアップホールド', displayName:"腕立ての途中で止めるキープ", courses:ALL_COURSES,
     targetProblems:['roundedShoulders','anteriorPelvicTilt','general'],
-    category:'core', technique:'isometric', bodyPart:'chest', intensity:2,
+    category:'core', technique:'isometric', bodyPart:'core', intensity:2,
     equipment:'マット', position:'prone', duration:'30秒 × 2セット',
     illustration: SVG2.plank,
     purpose:'プッシュアップ中間位置でキープ。',
@@ -1547,7 +1547,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_swimming_back', name:'スイミングバック', displayName:"スイミングバック", courses:ALL_COURSES,
-    targetProblems:['thoracicKyphosis','roundedShoulders','general'],
+    targetProblems:['thoracicKyphosis','roundedShoulders','general','forwardHead'],
     category:'strength', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'30秒 × 2セット',
     illustration: SVG2.swimming,
@@ -1558,7 +1558,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_superman_pulse', name:'スーパーマンパルス', displayName:"スーパーマンパルス", courses:ALL_COURSES,
-    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    targetProblems:['thoracicKyphosis','roundedShoulders','forwardHead'],
     category:'strength', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'20回 × 2セット',
     illustration: SVG2.swimming,
@@ -1569,7 +1569,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_cobra_strong', beginnerSafe:false, easyOption:'腰に不安があるときは、高さと回数を下げて行う。起こす高さを本文の半分（おへそから指3本分下が床から離れない範囲のさらに手前）にとどめ、5回で1セット。30秒休んで2セット（合計10回）にする。ひじはわき腹につけたまま、手は床に添えるだけにする。腰に少しでも張りや痛みが出たら、その場で下ろしてやめる。', name:'コブラ強化', displayName:"コブラ強化", courses:ALL_COURSES,
-    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    targetProblems:['thoracicKyphosis','roundedShoulders','forwardHead'],
     category:'strength', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'10回 × 3セット',
     illustration: SVG2.cobra,
@@ -1593,7 +1593,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_step_in_place_fast', name:'早足足踏み', displayName:"早足足踏み", courses:ALL_COURSES,
-    targetProblems:['general'],
+    targetProblems:['general','ankleStiffness'],
     category:'cardio', technique:'cardio', bodyPart:'fullBody', intensity:2,
     equipment:'なし', position:'standing', duration:'2分',
     illustration: SVG2.marchHighKnee,
@@ -1648,7 +1648,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_punch_squat', name:'パンチスクワット', displayName:"パンチスクワット", courses:ALL_COURSES,
-    targetProblems:['general'],
+    targetProblems:['general','ankleStiffness'],
     category:'cardio', technique:'cardio', bodyPart:'fullBody', intensity:2,
     equipment:'なし', position:'standing', duration:'1分 × 2セット',
     illustration: SVG2.squatHold,
@@ -1661,7 +1661,7 @@ const DB_SENIOR = [
   // ============== バランス強化 ==============
   {
     id:'sn_single_leg_strong', name:'片脚バランス強化', displayName:"片脚バランス強化", courses:ALL_COURSES,
-    targetProblems:['lateralAsymmetry','general'],
+    targetProblems:['lateralAsymmetry','general','ankleStiffness'],
     category:'balance', technique:'balance', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'各45秒',
     illustration: SVG2.singleLegBalance,
@@ -1718,7 +1718,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_wall_angel_strong', name:'壁エンジェル強化', displayName:"壁エンジェル強化", courses:ALL_COURSES,
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'strength', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'なし', position:'standing', duration:'12回 × 3セット',
     illustration: SVG2.wallAngel,
@@ -1762,7 +1762,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_glute_clam_45deg', easyOption:'回数と開く量を減らします。上のひざを開く高さを、こぶし半分ほどの小さな範囲にとどめ、片側8回だけ行います。反対の横向きになり8回。かかとどうしは最後まで離しません。休みをはさんで、余裕があれば同じ8回ずつをもう1度だけ足します(多くても合計2度まで)。足首や腰に痛みが出たら中止します。', name:'45度クラム', displayName:"ひざ45度の貝の口開き", courses:ALL_COURSES,
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'strength', technique:'strength', bodyPart:'glutes', intensity:2,
     equipment:'マット', position:'side', duration:'各15回 × 2セット',
     illustration: SVG2.clamShell,
@@ -1876,7 +1876,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_squat_inner_thigh', name:'内もも意識スクワット', displayName:"内もも意識スクワット", courses:ALL_COURSES,
-    targetProblems:['kneeVarus','posteriorPelvicTilt'],
+    targetProblems:['kneeVarus','posteriorPelvicTilt','ankleStiffness'],
     category:'strength', technique:'strength', bodyPart:'legs', intensity:2,
     equipment:'なし', position:'standing', duration:'12回 × 3セット',
     illustration: SVG2.squatHold,
@@ -1968,7 +1968,7 @@ const DB_SENIOR = [
   },
   {
     id:'sn_uneven_arm_reach', name:'非対称アームリーチ', displayName:"うつ伏せ片腕上げ", courses:ALL_COURSES,
-    targetProblems:['scoliosis','roundedShoulders'],
+    targetProblems:['scoliosis','roundedShoulders','forwardHead'],
     category:'strength', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'凸側 10回 × 2セット',
     illustration: SVG2.swimming,

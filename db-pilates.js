@@ -54,7 +54,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_spine_twist_supine', name:'スパインツイスト(仰向け)', displayName:"あおむけひざ倒しねじり", courses:['pilates','seitai'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'mobility', technique:'pilates', bodyPart:'spine', intensity:1,
     equipment:'マット', position:'supine', duration:'各5回',
     illustration: SVG2.twist,
@@ -144,7 +144,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_criss_cross', name:'クリスクロス', displayName:"ひじとひざのななめ腹筋", courses:['pilates'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:2,
     equipment:'マット', position:'supine', duration:'各10回',
     illustration: SVG2.bicycle,
@@ -335,7 +335,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_side_kick_up_down', easyOption:'上げる高さをこぶし2つ分（約20cm）までにします。頭・背中・お尻を壁につけたまま、上の脚を真上へ上げ、3秒かけて下ろして下の脚に軽く触れたら1回です。各脚6回行い、壁からお尻が離れたら高さを半分にします。', name:'サイドキック(上下)', displayName:"サイドキック(上下)", courses:['pilates'],
-    targetProblems:['kneeValgus','anteriorPelvicTilt'],
+    targetProblems:['kneeValgus','anteriorPelvicTilt','kneeVarus'],
     category:'strength', technique:'pilates', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'sidelying', duration:'各10回',
     illustration: SVG2.sideLeg,
@@ -346,7 +346,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_side_kick_circle', easyOption:'円をやめて、上下だけにします。上の脚をこぶし2つ分（約20cm）持ち上げ、かかとは壁に軽く触れたまま、3秒かけて下の脚に触れる所まで下ろします。各脚6回。背中とお尻は壁につけたままにします。', name:'サイドキックサークル', displayName:"サイドキックサークル", courses:['pilates'],
-    targetProblems:['kneeValgus','anteriorPelvicTilt'],
+    targetProblems:['kneeValgus','anteriorPelvicTilt','kneeVarus'],
     category:'core', technique:'pilates', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'sidelying', duration:'各方向5回',
     illustration: SVG2.sideLeg,
@@ -357,7 +357,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_side_bend', beginnerSafe:false, name:'サイドベンド', displayName:"サイドベンド", courses:['pilates','yoga'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:2,
     equipment:'マット', position:'sidelying', duration:'各5回',
     illustration: SVG2.sidePlank,
@@ -368,7 +368,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_mermaid', name:'マーメイド', displayName:"マーメイド", courses:['pilates','yoga'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'mobility', technique:'pilates', bodyPart:'spine', intensity:1,
     equipment:'マット', position:'sitting', duration:'各5回',
     illustration: SVG2.mermaid,
@@ -379,7 +379,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_saw', name:'ソー', displayName:"ソー", courses:['pilates','yoga'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'mobility', technique:'pilates', bodyPart:'spine', intensity:2,
     equipment:'マット', position:'sitting', duration:'各5回',
     illustration: SVG2.twist,
@@ -390,7 +390,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_spine_twist', name:'スパインツイスト', displayName:"背骨ねじり", courses:['pilates','yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'mobility', technique:'pilates', bodyPart:'spine', intensity:2,
     equipment:'マット', position:'sitting', duration:'各5回',
     illustration: SVG2.twist,
@@ -401,7 +401,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_corkscrew', name:'コークスクリュー', displayName:"コークスクリュー", courses:['pilates'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:3,
     equipment:'マット', position:'supine', duration:'各方向5回',
     illustration: SVG2.legLower,
@@ -504,7 +504,7 @@ const DB_PILATES = [
   // ============== 立位/フィニッシュ (6種) ==============
   {
     id:'pl_standing_balance', name:'スタンディングバランス', displayName:"片脚立ちバランス", courses:['pilates'],
-    targetProblems:['kneeValgus','anteriorPelvicTilt'],
+    targetProblems:['kneeValgus','anteriorPelvicTilt','ankleStiffness'],
     category:'balance', technique:'pilates', bodyPart:'leg', intensity:2,
     equipment:'マット', position:'standing', duration:'各20秒',
     illustration: SVG2.stand,
@@ -526,7 +526,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_squat_pilates', name:'ピラティススクワット', displayName:"ピラティススクワット", courses:['pilates','personal'],
-    targetProblems:['anteriorPelvicTilt','kneeValgus'],
+    targetProblems:['anteriorPelvicTilt','kneeValgus','ankleStiffness'],
     category:'strength', technique:'pilates', bodyPart:'leg', intensity:2,
     equipment:'マット', position:'standing', duration:'12回',
     illustration: SVG2.squat,
@@ -649,7 +649,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_chest_lift_oblique', easyOption:'ねじりを加えず、まっすぐ起こすだけにします。あごの下にこぶし1つ分のすき間を保ったまま、息を吐いて3秒かけて頭と胸を持ち上げ、両ひざが目に入ったら3秒かけて頭を床へ下ろします。10回行います。', name:'チェストリフト・オブリーク', displayName:"お腹の斜め起こし", courses:['pilates'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:2,
     equipment:'マット', position:'supine', duration:'各10回',
     illustration: SVG2.crunch,
@@ -682,7 +682,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_corkscrew_advanced', name:'コークスクリュー上級', displayName:"両脚まわし下ろし（上級）", courses:['pilates'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:3,
     equipment:'マット', position:'supine', duration:'各3周',
     illustration: SVG2.legLower,
@@ -739,7 +739,7 @@ const DB_PILATES = [
   // ============== EXPANSION PACK 1 — マット古典追加2 ==============
   {
     id:'pl_swimming_slow', easyOption:'おでこを床につけたまま、片方の腕だけを3秒かけて床から数cm離し、3秒かけて下ろします。脚は床につけたまま動かしません。左右の腕を交互に、各10回行います。', name:'スイミング（スロー）', displayName:"スイミング（スロー）", courses:['pilates'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:2,
     equipment:'マット', position:'prone', duration:'各15回',
     illustration: SVG2.superman,
@@ -783,7 +783,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_side_kick_circles', name:'サイドキック・サークル', displayName:"横向き脚まわし", courses:['pilates'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','kneeVarus'],
     category:'mobility', technique:'pilates', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'side', duration:'各5周',
     illustration: SVG2.sideLeg,
@@ -794,7 +794,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_side_kick_lift', easyOption:'１５回がきつい場合は、上げる高さを小さくする。上側の脚が床から握りこぶし１つ分ほど上がれば十分とし、そこから３秒かけて下ろす。回数も各８回に減らし、途中でつらくなったら数を待たずに脚を下ろして休む。慣れてきたら少しずつ高さと回数を増やす。反対向きも同様に行う。', name:'サイドキック・リフト', displayName:"横向き脚上げ", courses:['pilates'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','kneeVarus'],
     category:'core', technique:'pilates', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'side', duration:'各15回',
     illustration: SVG2.sideLeg,
@@ -805,7 +805,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_inner_thigh_lift', beginnerSafe:false, easyOption:'15回がきつい、または上の脚をまたがせるのがつらい場合は、またがずに行います。上側のひざを直角に曲げ、その足の裏を、下側の脚の手前の床につけて支えにします（下の脚を越えなくてよいです）。下側の脚を持ち上げる高さは、かかとが床から握りこぶし1つ分浮けば十分とし、各8回に減らします。お尻が壁から離れそうになったら上げる高さを小さくし、つらくなったら待たずに脚を下ろして休みます。反対向きも同様に行います。', name:'インナーサイ・リフト', displayName:"内もも上げ", courses:['pilates'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'core', technique:'pilates', bodyPart:'leg', intensity:2,
     equipment:'マット', position:'side', duration:'各15回',
     illustration: SVG2.sideLeg,
@@ -816,7 +816,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_clam', name:'クラム（貝）', displayName:"クラム（貝）", courses:['pilates'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'core', technique:'pilates', bodyPart:'hip', intensity:1,
     equipment:'マット', position:'side', duration:'各15回',
     illustration: SVG2.clamShell,
@@ -827,7 +827,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_reverse_clam', beginnerSafe:false, name:'リバースクラム', displayName:"リバースクラム（足を浮かせる貝）", courses:['pilates'],
-    targetProblems:['kneeValgus'],
+    targetProblems:['kneeValgus','kneeVarus'],
     category:'core', technique:'pilates', bodyPart:'hip', intensity:1,
     equipment:'マット', position:'side', duration:'各15回',
     illustration: SVG2.clamShell,
@@ -882,7 +882,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_open_leg_balance', beginnerSafe:false, name:'オープンレッグバランス', displayName:"脚を開いてＶ字バランス", courses:['pilates'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'pilates', bodyPart:'core', intensity:2,
     equipment:'マット', position:'sitting', duration:'30秒',
     illustration: SVG2.vsit,
@@ -906,7 +906,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_standing_side_bend', easyOption:'立位や頭上への腕上げが不安な人は、椅子に浅く腰かけ、両足を床につけて背すじを伸ばして座る。腕は頭上に上げず、右手は体の横に垂らしたまま、左手の指先を左の太ももの外側にそえる。息を吐きながら、右の肩を天井から遠ざけるつもりで上体を左へ小さく倒し、左手の指先を太ももにそって少しすべらせる。倒すのは軽くつっぱりを感じたところまででよい。息を吸いながら3秒かけて戻す。左右各5回。', name:'スタンディングサイドベンド', displayName:"立ってわき腹のばし", courses:['pilates'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'mobility', technique:'pilates', bodyPart:'core', intensity:1,
     equipment:'なし', position:'standing', duration:'各5回',
     illustration: SVG2.sideStretch,
@@ -939,7 +939,7 @@ const DB_PILATES = [
   },
   {
     id:'pl_standing_balance_lift', name:'立位バランスリフト', displayName:"片脚立ちバランス", courses:['pilates'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','ankleStiffness'],
     category:'balance', technique:'pilates', bodyPart:'leg', intensity:2,
     equipment:'なし', position:'standing', duration:'各30秒',
     illustration: SVG2.warrior,

@@ -8,7 +8,7 @@ const DB_PERSONAL = [
   // ============== LOWER BODY (24種) ==============
   {
     id:'pt_squat_basic', name:'ベーシックスクワット', displayName:"ベーシックスクワット", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt','kneeValgus'],
+    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:2,
     equipment:'なし', position:'standing', duration:'15回 × 3セット',
     illustration: SVG2.squat,
@@ -19,7 +19,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_sumo_squat', name:'スモウスクワット', displayName:"スモウスクワット", courses:['personal'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:2,
     equipment:'なし', position:'standing', duration:'12回 × 3セット',
     illustration: SVG2.sumoSquat,
@@ -30,7 +30,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_box_squat', name:'ボックススクワット', displayName:"椅子タッチスクワット", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','kneeValgus'],
+    targetProblems:['anteriorPelvicTilt','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:2,
     equipment:'椅子', position:'standing', duration:'12回 × 3セット',
     illustration: SVG2.squat,
@@ -41,7 +41,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_pause_squat', name:'ポーズスクワット', displayName:"3秒止まるスクワット", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt'],
+    targetProblems:['anteriorPelvicTilt','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'10回 × 3セット',
     illustration: SVG2.squat,
@@ -63,7 +63,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_split_squat', name:'スプリットスクワット', displayName:"その場で前後開きスクワット", courses:['personal'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'各12回 × 3セット',
     illustration: SVG2.lungeStretch,
@@ -162,7 +162,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_fire_hydrant', name:'ファイアハイドラント', displayName:"四つん這いで脚を横に開く運動", courses:['personal'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'quadruped', duration:'各15回 × 3セット',
     illustration: SVG2.fireHydrant,
@@ -173,7 +173,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_clamshell', name:'クラムシェル', displayName:"横向き膝ひらき（貝の口）", courses:['personal','seitai','pilates'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'side-lying', duration:'各15回 × 3セット',
     illustration: SVG2.clamShell,
@@ -195,7 +195,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_single_squat', name:'シングルレッグスクワット', displayName:"片脚スクワット（椅子タッチ）", courses:['personal'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'椅子', position:'standing', duration:'各8回 × 3セット',
     illustration: SVG2.singleLegSquat,
@@ -250,7 +250,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_inner_squat', name:'インナースクワット', displayName:"内ももしめスクワット", courses:['personal'],
-    targetProblems:['kneeValgus'],
+    targetProblems:['kneeValgus','kneeVarus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:2,
     equipment:'クッション', position:'standing', duration:'15回 × 3セット',
     illustration: SVG2.squat,
@@ -261,7 +261,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_pulse_squat', name:'パルススクワット', displayName:"低い姿勢のままはずむスクワット", courses:['personal'],
-    targetProblems:['kneeValgus'],
+    targetProblems:['kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'30秒 × 3セット',
     illustration: SVG2.squat,
@@ -340,7 +340,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_inverted_row', name:'インバーテッドロウ', displayName:"机の下で体を引き上げる運動", courses:['personal'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:3,
     equipment:'机/バー', position:'supine', duration:'10回 × 3セット',
     illustration: SVG2.shoulderBlade,
@@ -351,7 +351,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_superman', name:'スーパーマン', displayName:"うつ伏せ手足上げ", courses:['personal','pilates'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'12回 × 3セット',
     illustration: SVG2.swimming,
@@ -362,7 +362,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_swimmer', name:'スイマー', displayName:"うつ伏せバタ足（手足交互）", courses:['personal','pilates'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'30秒 × 3セット',
     illustration: SVG2.swimming,
@@ -373,7 +373,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_back_extension', name:'バックエクステンション', displayName:"うつ伏せ上体起こし（背中）", courses:['personal','pilates'],
-    targetProblems:['thoracicKyphosis','swayBack'],
+    targetProblems:['thoracicKyphosis','swayBack','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'12回 × 3セット',
     illustration: SVG2.spineExt,
@@ -384,7 +384,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_y_t_w', name:'Y-T-W', displayName:"うつ伏せでY・T・Wの腕上げ", courses:['personal','pilates'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'マット', position:'prone', duration:'各10回 × 3セット',
     illustration: SVG2.shoulderBlade,
@@ -417,7 +417,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_dive_bomber', name:'ダイブボマー', displayName:"ダイブボマー", courses:['personal'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders'],
     category:'training', technique:'strength', bodyPart:'fullbody', intensity:3,
     equipment:'マット', position:'prone', duration:'8回 × 3セット',
     illustration: SVG2.cobra,
@@ -463,7 +463,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_side_plank', name:'サイドプランク', displayName:"サイドプランク", courses:['personal','pilates'],
-    targetProblems:['lateralAsymmetry','swayBack'],
+    targetProblems:['lateralAsymmetry','swayBack','scoliosis'],
     category:'training', technique:'isometric', bodyPart:'core', intensity:3,
     equipment:'マット', position:'side-lying', duration:'各30秒 × 3セット',
     illustration: SVG2.sidePlank,
@@ -485,7 +485,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_bird_dog', name:'バードドッグ', displayName:"バードドッグ", courses:['personal','pilates','seitai'],
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','scoliosis'],
     category:'training', technique:'strength', bodyPart:'core', intensity:2,
     equipment:'マット', position:'quadruped', duration:'各12回 × 3セット',
     illustration: SVG2.deadBugBase,
@@ -507,7 +507,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_bicycle_crunch', beginnerSafe:false, name:'バイシクルクランチ', displayName:"バイシクルクランチ", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'training', technique:'strength', bodyPart:'core', intensity:2,
     equipment:'マット', position:'supine', duration:'各15回 × 3セット',
     illustration: SVG2.bicycleAb,
@@ -518,7 +518,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_russian_twist', beginnerSafe:false, name:'ロシアンツイスト', displayName:"ロシアンツイスト", courses:['personal'],
-    targetProblems:['lateralAsymmetry'],
+    targetProblems:['lateralAsymmetry','scoliosis'],
     category:'training', technique:'strength', bodyPart:'core', intensity:3,
     equipment:'マット', position:'sitting', duration:'各15回 × 3セット',
     illustration: SVG2.bicycleAb,
@@ -584,7 +584,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_pallof_press', name:'パロフプレス(自重)', displayName:"ねじれをこらえる押し出し(自重)", courses:['personal'],
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','scoliosis'],
     category:'training', technique:'isometric', bodyPart:'core', intensity:2,
     equipment:'なし', position:'standing', duration:'各15秒 × 3セット',
     illustration: SVG2.plankBasic,
@@ -630,7 +630,7 @@ const DB_PERSONAL = [
   // ============== EXPANSION PACK 1 — 下半身強化 ==============
   {
     id:'pt_cossack_squat', name:'コサックスクワット', displayName:"コサックスクワット", courses:['personal'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'各8回 × 3セット',
     illustration: SVG2.cossackSquat,
@@ -641,7 +641,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_pistol_progression', name:'ピストルスクワット練習', displayName:"ピストルスクワット練習", courses:['personal'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'椅子', position:'standing', duration:'各5回 × 3セット',
     illustration: SVG2.singleLegSquat,
@@ -652,7 +652,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_shrimp_squat', name:'シュリンプスクワット', displayName:"シュリンプスクワット", courses:['personal'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'各5回 × 2セット',
     illustration: SVG2.singleLegSquat,
@@ -663,7 +663,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_skater_squat', name:'スケータースクワット', displayName:"スケータースクワット", courses:['personal'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
+    targetProblems:['lateralAsymmetry','kneeValgus','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'各8回 × 3セット',
     illustration: SVG2.singleLegSquat,
@@ -751,7 +751,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_fire_hydrant', name:'ファイアハイドラント', displayName:"四つん這いで脚を横に開く運動", courses:['personal'],
-    targetProblems:['kneeValgus','posteriorPelvicTilt'],
+    targetProblems:['kneeValgus','posteriorPelvicTilt','kneeVarus'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:1,
     equipment:'マット', position:'kneeling', duration:'各15回 × 3セット',
     illustration: SVG2.fireHydrant,
@@ -762,7 +762,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_lateral_step', name:'ラテラルステップ', displayName:"横歩きステップ", courses:['personal'],
-    targetProblems:['kneeValgus','lateralAsymmetry'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:2,
     equipment:'なし', position:'standing', duration:'各15回 × 3セット',
     illustration: SVG2.squat,
@@ -784,7 +784,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_wall_sit_marching', name:'ウォールシット・マーチ', displayName:"壁もたれ空気イス足踏み", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt'],
+    targetProblems:['anteriorPelvicTilt','posteriorPelvicTilt','ankleStiffness'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'壁', position:'standing', duration:'30秒 × 3セット',
     illustration: SVG2.wallSquat,
@@ -797,7 +797,7 @@ const DB_PERSONAL = [
   // ============== EXPANSION PACK 1 — 上半身 ==============
   {
     id:'pt_decline_pushup', name:'デクラインプッシュアップ', displayName:"足を椅子に乗せた腕立て伏せ", courses:['personal'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders'],
     category:'training', technique:'strength', bodyPart:'arm', intensity:3,
     equipment:'椅子', position:'prone', duration:'10回 × 3セット',
     illustration: SVG2.pushup,
@@ -808,7 +808,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_archer_pushup', name:'アーチャープッシュアップ', displayName:"片腕に体重を乗せる腕立て伏せ", courses:['personal'],
-    targetProblems:['roundedShoulders','lateralAsymmetry'],
+    targetProblems:['roundedShoulders'],
     category:'training', technique:'strength', bodyPart:'arm', intensity:3,
     equipment:'なし', position:'prone', duration:'各5回 × 2セット',
     illustration: SVG2.pushup,
@@ -863,7 +863,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_dive_bomber', name:'ダイブボンバー', displayName:"ダイブボマー", courses:['personal'],
-    targetProblems:['thoracicKyphosis','roundedShoulders'],
+    targetProblems:['roundedShoulders'],
     category:'training', technique:'strength', bodyPart:'arm', intensity:3,
     equipment:'なし', position:'prone', duration:'8回 × 3セット',
     illustration: SVG2.pushup,
@@ -885,7 +885,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_scapular_pullup', name:'スキャプラプルアップ', displayName:"ぶら下がり肩下げ", courses:['personal'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'strength', bodyPart:'back', intensity:2,
     equipment:'バー', position:'standing', duration:'10回 × 3セット',
     illustration: SVG2.pullup,
@@ -896,7 +896,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_dead_hang', name:'デッドハング', displayName:"ぶら下がりキープ", courses:['personal'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders','thoracicKyphosis','forwardHead'],
     category:'training', technique:'isometric', bodyPart:'back', intensity:2,
     equipment:'バー', position:'standing', duration:'30秒 × 3セット',
     illustration: SVG2.pullup,
@@ -929,7 +929,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_wall_walk', name:'ウォールウォーク', displayName:"壁を足で登る運動", courses:['personal'],
-    targetProblems:['roundedShoulders','thoracicKyphosis'],
+    targetProblems:['roundedShoulders'],
     category:'training', technique:'strength', bodyPart:'arm', intensity:3,
     equipment:'壁', position:'prone', duration:'5往復',
     illustration: SVG2.plank,
@@ -986,7 +986,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_russian_twist', beginnerSafe:false, name:'ロシアンツイスト', displayName:"ロシアンツイスト", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:2,
     equipment:'マット', position:'sitting', duration:'各15回 × 3セット',
     illustration: SVG2.twist,
@@ -997,7 +997,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_bicycle_crunch', beginnerSafe:false, name:'バイシクルクランチ', displayName:"バイシクルクランチ", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:2,
     equipment:'マット', position:'supine', duration:'各15回 × 3セット',
     illustration: SVG2.bicycle,
@@ -1030,7 +1030,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_side_plank_dip', name:'サイドプランクディップ', displayName:"横向き支えの腰上げ下げ", courses:['personal'],
-    targetProblems:['lateralAsymmetry','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','anteriorPelvicTilt','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:3,
     equipment:'マット', position:'side', duration:'各12回 × 3セット',
     illustration: SVG2.sidePlank,
@@ -1041,7 +1041,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_side_plank_reach', name:'サイドプランクリーチ', displayName:"横向き支えで腕くぐらせ", courses:['personal'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'core', technique:'core', bodyPart:'core', intensity:3,
     equipment:'マット', position:'side', duration:'各10回 × 3セット',
     illustration: SVG2.sidePlank,

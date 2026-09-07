@@ -206,7 +206,7 @@ function courseAffinity(ex, course){
 // 各段階の中では「問題直結(targeted)」を先に残し、オーダーメイド性を落とさない。
 // MIN_TARGETED: 問題直結の種目がこれを下回ると、毎日同じ1種目ばかりになるため、
 // コース外からでも問題直結種目を確保する（オーダーメイド性と変化の両立）
-function applyCourseCharacter(list, course, minN, targeted, minTargeted = 8){
+function applyCourseCharacter(list, course, minN, targeted, minTargeted = Math.max(8, Math.round(minN * 0.6))){
   if (!course || course === 'mixed') return list;
   const isT = (ex) => !!(targeted && targeted.has(ex.id));
   const tier = [[], [], []];

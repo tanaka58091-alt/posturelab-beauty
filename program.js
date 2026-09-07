@@ -44,15 +44,37 @@ function pickOne(exList, usage, anchors, excludeIds, rank, focusRank){
 // ----- オーダーメイド＋変化の両立ピック -----
 // count件のうち、可能な限り「問題直結(targeted)」を最低 wantTargeted 件含め、
 // 残りは「変化用(variety)」から最少使用で選ぶ。どちらも足りなければ他方で埋める。
-function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantTargeted, rank, focusRank){
+function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantTargeted, rank, focusRank, primary){
   const picked = [];
   const exclude = [...excludeIds];
   const tList = exList.filter(ex => targeted.has(ex.id));
   const vList = exList.filter(ex => !targeted.has(ex.id));
+  // 主訴（順位0の問題）に直結する種目。プールが小さい問題は使用回数の均しで負けて
+  // 「主訴なのに二番目の問題より少ない」状態になっていたため、直結1枠目は主訴から選ぶ
+  // 主訴の種目が少なすぎる（4未満）と同じ種目ばかりになるので、その場合は主訴優先を使わない
+  const pAll = primary ? tList.filter(ex => primary.has(ex.id)) : [];
+  const pList = pAll.length >= 4 ? pAll : [];
+  // 直結種目が十分にある（10件以上）なら全枠を直結で埋める。
+  // 従来は「半分は変化用」と決め打ちしており、直結が豊富でも30日の直結率が50%で止まっていた
+  const want = tList.length >= 10 ? count : wantTargeted;
 
-  // ① 問題直結を wantTargeted 件
-  for (let i = 0; i < wantTargeted && picked.length < count; i++){
-    const ex = pickOne(tList, usage, anchors, exclude, rank, focusRank);
+  // ① 問題直結を want 件（1件目は主訴を優先、無ければ他の直結から）
+  for (let i = 0; i < want && picked.length < count; i++){
+    let ex = null;
+    if (i === 0 && pList.length){
+      // 主訴優先も同じガード: 主訴の種目ばかり使い回していたら、他の直結種目に譲る
+      const pr = pickOne(pList, usage, anchors, exclude, rank, focusRank);
+      const t0 = pickOne(tList, usage, anchors, exclude, rank, focusRank);
+      ex = (pr && t0 && (usage[pr.id] || 0) >= (usage[t0.id] || 0) + 2) ? t0 : pr;
+    }
+    if (!ex){
+      const t = pickOne(tList, usage, anchors, exclude, rank, focusRank);
+      // 2枠目以降: 直結種目の使い回しが変化用より2回以上多くなっていたら、変化用を挟んで単調さを防ぐ
+      if (i > 0 && t && vList.length){
+        const v = pickOne(vList, usage, anchors, exclude, rank, focusRank);
+        ex = (v && (usage[t.id] || 0) >= (usage[v.id] || 0) + 2) ? v : t;
+      } else ex = t;
+    }
     if (!ex) break;
     picked.push(ex); exclude.push(ex.id);
   }
@@ -138,6 +160,7 @@ function build30DayProgram(problemKeys, course='mixed', opts){
   const targeted = pool.targeted || new Set();
   const rank = pool.rank || new Map();
   const focusRank = pool.focusRank || null;
+  const primary = new Set([...rank.entries()].filter(([, r]) => r === 0).map(([id]) => id));
   const sListAll = pool.selfcare;
   const tListAll = pool.training;
   const sList = sListAll;
@@ -177,12 +200,12 @@ function build30DayProgram(problemKeys, course='mixed', opts){
     const tCount = isRest ? 0 : menuSize - sCount;
 
     let selfcare, training;
-    selfcare = pickBalanced(sPool, targeted, sUsage, sCount, anchors, prevIds, sHasTargeted ? 1 : 0, rank, focusRank);
+    selfcare = pickBalanced(sPool, targeted, sUsage, sCount, anchors, prevIds, sHasTargeted ? 1 : 0, rank, focusRank, primary);
     if (isRest) {
       training = [];
     } else {
       const sameDayIds = selfcare.map(e => e.id);
-      training = pickBalanced(tPool, targeted, tUsage, tCount, anchors, [...prevIds, ...sameDayIds], tHasTargeted ? 1 : 0, rank, focusRank);
+      training = pickBalanced(tPool, targeted, tUsage, tCount, anchors, [...prevIds, ...sameDayIds], tHasTargeted ? 1 : 0, rank, focusRank, primary);
     }
 
     selfcare.forEach(ex => { sUsage[ex.id] = (sUsage[ex.id]||0) + 1; });

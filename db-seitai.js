@@ -231,7 +231,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_thread_needle', name:'糸通しのポーズ', displayName:"糸通しのポーズ", courses:['seitai','yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'back', intensity:2,
     equipment:'マット', position:'quadruped', duration:'各30秒 × 2セット',
     illustration: SVG2.threadNeedle,
@@ -321,7 +321,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_tspine_book_open', name:'胸椎ブックオープナー', displayName:"本を開くように胸を開く動き", courses:['seitai'],
-    targetProblems:['thoracicKyphosis','roundedShoulders','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','roundedShoulders','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'back', intensity:2,
     equipment:'マット', position:'side-lying', duration:'各10回',
     illustration: SVG2.spineTwist,
@@ -332,7 +332,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_thread_needle_supine', name:'仰向け糸通し', displayName:"仰向け糸通し", courses:['seitai'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'back', intensity:2,
     equipment:'マット', position:'supine', duration:'各30秒 × 2セット',
     illustration: SVG2.threadNeedle,
@@ -343,7 +343,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_qlblock', name:'QLストレッチ(腰方形筋)', displayName:"立って腰の横のばし", courses:['seitai'],
-    targetProblems:['lateralAsymmetry','swayBack','anteriorPelvicTilt'],
+    targetProblems:['lateralAsymmetry','swayBack','anteriorPelvicTilt','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'back', intensity:2,
     equipment:'なし', position:'standing', duration:'各30秒',
     illustration: SVG2.sideStretch,
@@ -354,7 +354,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_lower_back_release', name:'腰部ボールリリース', displayName:"腰の横のボールほぐし", courses:['seitai'],
-    targetProblems:['anteriorPelvicTilt','swayBack','lateralAsymmetry'],
+    targetProblems:['anteriorPelvicTilt','swayBack','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'release', bodyPart:'back', intensity:2,
     equipment:'テニスボール', position:'supine', duration:'各60秒',
     illustration: SVG2.ballRelease,
@@ -387,7 +387,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_seated_twist', name:'座位ツイスト', displayName:"座ってからだをねじる", courses:['seitai','yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'back', intensity:1,
     equipment:'マット/椅子', position:'sitting', duration:'各30秒',
     illustration: SVG2.seatedTwist,
@@ -420,7 +420,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_lat_pulldown_self', name:'広背筋セルフリリース', displayName:"脇の下コロコロ", courses:['seitai'],
-    targetProblems:['roundedShoulders','lateralAsymmetry'],
+    targetProblems:['roundedShoulders','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'release', bodyPart:'back', intensity:2,
     equipment:'フォームローラー', position:'side-lying', duration:'各60秒',
     illustration: SVG2.foamRoll,
@@ -431,7 +431,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_rib_glide', name:'肋骨グライド', displayName:"胸だけ左右にスライド", courses:['seitai','pilates'],
-    targetProblems:['lateralAsymmetry','swayBack'],
+    targetProblems:['lateralAsymmetry','swayBack','scoliosis'],
     category:'selfcare', technique:'mobility', bodyPart:'back', intensity:1,
     equipment:'なし', position:'standing', duration:'各10回',
     illustration: SVG2.sideStretch,
@@ -611,7 +611,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_plantar_ball', name:'足底ボールリリース', displayName:"足裏のボールほぐし", courses:['seitai'],
-    targetProblems:['ankleStiffness','swelling','kneeValgus'],
+    targetProblems:['ankleStiffness','swelling','kneeValgus','kneeVarus'],
     category:'selfcare', technique:'release', bodyPart:'foot', intensity:1,
     equipment:'テニス/ゴルフボール', position:'standing', duration:'各2分',
     illustration: SVG2.ballRelease,
@@ -622,7 +622,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_toe_yoga', name:'足指ヨガ', displayName:"足指ヨガ", courses:['seitai','yoga'],
-    targetProblems:['ankleStiffness','swelling'],
+    targetProblems:['ankleStiffness','swelling','kneeVarus'],
     category:'selfcare', technique:'mobility', bodyPart:'foot', intensity:1,
     equipment:'なし', position:'sitting', duration:'2分',
     illustration: SVG2.footToes,
@@ -633,7 +633,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_ankle_mobility', name:'足首モビリティ', displayName:"足首やわらか運動", courses:['seitai','personal','pilates'],
-    targetProblems:['ankleStiffness'],
+    targetProblems:['ankleStiffness','kneeVarus'],
     category:'selfcare', technique:'mobility', bodyPart:'foot', intensity:2,
     equipment:'壁', position:'kneeling', duration:'各15回',
     illustration: SVG2.calfStretch,
@@ -934,7 +934,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_plantar_release', name:'足裏ボールリリース', displayName:"足裏ボールリリース", courses:['seitai'],
-    targetProblems:['ankleStiffness'],
+    targetProblems:['ankleStiffness','kneeVarus'],
     category:'selfcare', technique:'release', bodyPart:'foot', intensity:1,
     equipment:'テニスボール', position:'standing', duration:'各2分',
     illustration: SVG2.ballRelease,
@@ -967,7 +967,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_thread_needle', name:'スレッドザニードル', displayName:"糸通しのポーズ", courses:['seitai','yoga'],
-    targetProblems:['thoracicKyphosis','lateralAsymmetry'],
+    targetProblems:['thoracicKyphosis','lateralAsymmetry','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'spine', intensity:1,
     equipment:'マット', position:'kneeling', duration:'各30秒',
     illustration: SVG2.threadNeedle,
@@ -1066,7 +1066,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_ankle_circles', easyOption:'足を組むのがつらい場合や、ひざが気になる場合は、両足を床につけたまま座って行います。片方のかかとは床につけたまま、そのつま先だけを床から少し浮かせ、つま先で空中に円を描くように外回り10回・内回り10回します。手は使いません。終わったら反対の足も同じように行います。', name:'足首サークル', displayName:"足首サークル", courses:['seitai'],
-    targetProblems:['ankleStiffness'],
+    targetProblems:['ankleStiffness','kneeVarus'],
     category:'selfcare', technique:'mobility', bodyPart:'foot', intensity:1,
     equipment:'なし', position:'sitting', duration:'各方向10回',
     illustration: SVG2.calfStretch,
@@ -1077,7 +1077,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_toe_spread', name:'足指グーチョキパー', displayName:"足指グーチョキパー", courses:['seitai'],
-    targetProblems:['ankleStiffness','kneeValgus'],
+    targetProblems:['ankleStiffness','kneeValgus','kneeVarus'],
     category:'selfcare', technique:'mobility', bodyPart:'foot', intensity:1,
     equipment:'なし', position:'sitting', duration:'2分',
     illustration: SVG2.calfStretch,
@@ -1088,7 +1088,7 @@ const DB_SEITAI = [
   },
   {
     id:'st_supine_twist', name:'仰向け脊柱ツイスト', displayName:"仰向けで背中をねじるストレッチ", courses:['seitai','yoga'],
-    targetProblems:['lateralAsymmetry','thoracicKyphosis'],
+    targetProblems:['lateralAsymmetry','thoracicKyphosis','scoliosis'],
     category:'selfcare', technique:'stretch', bodyPart:'spine', intensity:1,
     equipment:'マット', position:'supine', duration:'各60秒',
     illustration: SVG2.spineTwist,
