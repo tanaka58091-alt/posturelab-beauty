@@ -188,7 +188,7 @@ function filterByCourse(exList, course){
 const NATIVE_DB = { st:'seitai', pt:'personal', yg:'yoga', pl:'pilates' };
 // sn_ をどのコースの性格として扱うか（technique基準）
 const SN_CHARACTER = {
-  seitai:   new Set(['release','stretch','mobility']),            // ゆるめる・動かす
+  seitai:   new Set(['release','massage','mobility']),            // ほぐす・動かす（伸ばす系はヨガに寄せ、セルフケアは自前のストレッチだけ使う）
   personal: new Set(['strength','isometric','cardio','balance']), // 鍛える・支える
   yoga:     new Set(['stretch','pranayama','meditation','balance']), // のばす・呼吸・静止
   pilates:  new Set(['core','breath','mobility']),                // 体幹・呼吸・背骨
@@ -206,12 +206,27 @@ function courseAffinity(ex, course){
 // 各段階の中では「問題直結(targeted)」を先に残し、オーダーメイド性を落とさない。
 // MIN_TARGETED: 問題直結の種目がこれを下回ると、毎日同じ1種目ばかりになるため、
 // コース外からでも問題直結種目を確保する（オーダーメイド性と変化の両立）
+// コースごとに「求められている動き」を優先して残す（同点なら問題直結を先に）
+//   セルフケア: 筋膜・マッサージ・ほぐし → 動かす → 伸ばす
+//   ヨガ      : 伸ばす・呼吸・静止 → 立位・バランスのアサナ
+//   ピラティス: ピラティス技法・体幹・呼吸 → 動かす
+//   トレーニング: 鍛える・支える → 動かす
+const COURSE_TECH_ORDER = {
+  seitai:   ['release','massage','mobility','stretch','breath','breathing'],
+  yoga:     ['stretch','pranayama','restorative','meditation','forward_bend','seated','supine','twist','standing','balance','backbend'],
+  pilates:  ['pilates','core','breath','breathing','mobility','stretch'],
+  personal: ['strength','core','isometric','endurance','cardio','balance','mobility','stretch'],
+};
+function techRank(ex, course){
+  const order = COURSE_TECH_ORDER[course]; if (!order) return 50;
+  const i = order.indexOf(ex.technique); return i < 0 ? 50 : i;
+}
 function applyCourseCharacter(list, course, minN, targeted, minTargeted = Math.max(8, Math.round(minN * 0.6))){
   if (!course || course === 'mixed') return list;
   const isT = (ex) => !!(targeted && targeted.has(ex.id));
   const tier = [[], [], []];
   list.forEach(ex => tier[courseAffinity(ex, course)].push(ex));
-  tier.forEach(t => t.sort((a, b) => (isT(a) ? 0 : 1) - (isT(b) ? 0 : 1)));
+  tier.forEach(t => t.sort((a, b) => (techRank(a, course) - techRank(b, course)) || ((isT(a) ? 0 : 1) - (isT(b) ? 0 : 1))));
   const out = tier[0].slice();
   const seen = new Set(out.map(ex => ex.id));
   const add = (ex) => { if (!seen.has(ex.id)){ seen.add(ex.id); out.push(ex); } };
@@ -223,13 +238,13 @@ function applyCourseCharacter(list, course, minN, targeted, minTargeted = Math.m
       if (isT(ex)){ add(ex); tn++; }
     }
   }
-  // ② 変化の幅を必要数まで確保
-  for (const t of [tier[1], tier[2]]){
-    for (const ex of t){
-      if (out.length >= minN) break;
-      add(ex);
-    }
-  }
+  // ② 変化の幅を必要数まで確保 — ただし他コース由来（第3階層）は「最低限」までしか入れない。
+  //    ここを目標数まで埋めると、ヨガに整体の種目が16件流れ込む等、コース間の重複が増えて
+  //    「選ぶプランで中身が違う」が崩れる。
+  for (const ex of tier[1]){ if (out.length >= minN) break; add(ex); }
+  // ヨガは自前（yg_）＋伸ばす系 sn_ だけだとプールが小さく連日の被りが増えるため、補充の下限を少し高めに
+  const floorN = Math.max(20, Math.round(minN * (course === 'yoga' ? 0.6 : 0.45)));
+  for (const ex of tier[2]){ if (out.length >= floorN) break; add(ex); }
   return out.length ? out : list;
 }
 
@@ -248,7 +263,7 @@ function buildPoolForProblem(problemKey, course){
 }
 
 // 複数の問題キーをマージしたプールを返す(コース指定可)
-function buildPrescriptionPool(problemKeys, course='mixed'){
+function buildPrescriptionPool(problemKeys, course='mixed', sizing){
   const selfSet = new Map(); // id → exercise (重複排除)
   const trainSet = new Map();
 
@@ -295,9 +310,23 @@ function buildPrescriptionPool(problemKeys, course='mixed'){
     }
   }
 
+  // ②' コース専用DB由来（yg_/st_/pt_/pl_）の安全な種目を、目標数まで先に足す。
+  //    ヨガの伸ばす系は姿勢問題のタグが薄く、これが無いと yg_ が7件しか入らず sn_/st_ の借り物だらけになる。
+  //    「選ぶプランで中身が全く違う」と「30日飽きない」の両方に効く。
+  if (course && course !== 'mixed'){
+    const natives = ALL_EXERCISES_LIST.filter(ex => NATIVE_DB[String(ex.id).slice(0, 2)] === course && isSeniorSafe(ex) && passesPainRules(ex));
+    // 数の上限はここでは見ない（他コース由来で先に埋まっていると専用種目が入らないため）。
+    // 目標数への絞り込みは ③ applyCourseCharacter が「専用DB由来を最優先」で行う。
+    for (const ex of natives){
+      if (isSelfcare(ex) && !selfSet.has(ex.id)) selfSet.set(ex.id, ex);
+      else if (isTraining(ex) && !trainSet.has(ex.id)) trainSet.set(ex.id, ex);
+    }
+  }
+
   // ③ コースの性格づけ: 中核種目を残しつつ、変化の幅(TARGET数)は確保する
   //    ここを通すことで「整体を選んだ人」と「ヨガを選んだ人」の顔ぶれが実際に変わる
-  const TARGET_SELF = 32, TARGET_TRAIN = 28;
+  // 配分に応じてプールの厚みを変える（ヨガ・セルフケアは伸ばす側を厚く、トレーニングは鍛える側を厚く）
+  const TARGET_SELF = Math.max(20, sizing?.targetSelf || 32), TARGET_TRAIN = Math.max(20, sizing?.targetTrain || 28);
   const selfcare = applyCourseCharacter(Array.from(selfSet.values()), course, TARGET_SELF, targeted);
   const training = applyCourseCharacter(Array.from(trainSet.values()), course, TARGET_TRAIN, targeted);
 

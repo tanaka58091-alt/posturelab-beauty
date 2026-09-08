@@ -68,7 +68,8 @@ function pickOne(exList, usage, anchors, excludeIds, rank, focusRank, ctx){
   const famUsage = ctx?.famUsage || {};
   const score = (ex) => {
     const raw = usage[ex.id] || 0;
-    let v = anchors && anchors.has(ex.id) ? raw * 0.5 : raw;
+    // 代表種目（アンカー）の優遇は弱く（0.5倍だと同じ種目が30日に10回出ていた）
+    let v = anchors && anchors.has(ex.id) ? raw * 0.85 : raw;
     const f = familyOf(ex);
     if (f){
       if (famPrev.has(f)) v += 1.5;                 // 前日と同じ系統は避ける
@@ -125,12 +126,15 @@ function pickBalanced(exList, targeted, usage, count, anchors, excludeIds, wantT
       // 主訴優先も同じガード: 主訴の種目ばかり使い回していたら、他の直結種目に譲る
       const pr = pickOne(pList, usage, anchors, exclude, rank, focusRank, C);
       const t0 = pickOne(tList, usage, anchors, exclude, rank, focusRank, C);
-      ex = (pr && t0 && (usage[pr.id] || 0) >= (usage[t0.id] || 0) + 2) ? t0 : pr;
+      // 1日の枠が多い（3枠以上）カテゴリは使い回しが目立つので、譲る基準を厳しめ(+1)にする
+      const guard = count >= 3 ? 1 : 2;
+      ex = (pr && t0 && (usage[pr.id] || 0) >= (usage[t0.id] || 0) + guard) ? t0 : pr;
     }
     if (!ex){
       const t = pickOne(tList, usage, anchors, exclude, rank, focusRank, C);
-      // 2枠目以降: 直結種目の使い回しが変化用より2回以上多くなっていたら、変化用を挟んで単調さを防ぐ
-      if (i > 0 && t && vList.length){
+      // 直結種目の使い回しが変化用より2回以上多くなっていたら、変化用を挟んで単調さを防ぐ
+      // （1枠目にも適用。直結が2〜3件しかないコースで同じ種目が30日に10回出ていた）
+      if (t && vList.length){
         const v = pickOne(vList, usage, anchors, exclude, rank, focusRank, C);
         ex = (v && (usage[t.id] || 0) >= (usage[v.id] || 0) + 2) ? v : t;
       } else ex = t;
@@ -204,6 +208,21 @@ function withProgression(ex, phase, exp, tune){
   return Object.assign(Object.create(Object.getPrototypeOf(ex)), ex, { duration: scaled, _baseDuration: ex.duration });
 }
 
+// ===== コースの性格 =====
+// 「選ぶプランで中身が全く違う」ための配分。trainRatio = 1日のうち鍛える側の割合
+//   トレーニング: 引き締める・姿勢を変える自重トレ中心（毎日 引き締め枠あり）
+//   ピラティス  : ストレッチ×鍛える（半々。見た目目的なら鍛える側を厚く）
+//   ヨガ        : ストレッチ・呼吸中心（鍛える側はアサナ1つ程度）
+//   セルフケア  : 筋肉・筋膜をゆるめる／ストレッチ中心（鍛えるのは軽く1つ）
+const COURSE_PROFILE = {
+  personal: { trainRatio: { relief: 0.75, look: 0.75 }, toning: { relief: 'always', look: 'always' } },
+  pilates:  { trainRatio: { relief: 0.5,  look: 0.75 }, toning: { relief: 'phase2', look: 'always' } },
+  yoga:     { trainRatio: { relief: 0.25, look: 0.5  }, toning: { relief: 'never',  look: 'phase2' } },
+  seitai:   { trainRatio: { relief: 0.25, look: 0.5  }, toning: { relief: 'never',  look: 'phase2' } },
+  mixed:    { trainRatio: { relief: 0.5,  look: 0.75 }, toning: { relief: 'phase2', look: 'always' } },
+};
+function courseProfile(course){ return COURSE_PROFILE[course] || COURSE_PROFILE.mixed; }
+
 // ===== 30日プログラム生成 =====
 // opts: { menuSize: 2|4|5|6, exp: 'none'|'some'|'regular' }
 function build30DayProgram(problemKeys, course='mixed', opts){
@@ -216,7 +235,9 @@ function build30DayProgram(problemKeys, course='mixed', opts){
   // （呼び出し側が別インスタンスの prescription-matrix を触っていても必ず効くようにするため）
   if (o.pain) setPainAvoidance(o.pain);
   if (o.focus) setFocusParts(o.focus);
-  const pool = buildPrescriptionPool(problemKeys, course);
+  // コースの配分に合わせてプールの厚みを決める（例: ヨガ不調 3:1 → 伸ばす側46・鍛える側20）
+  const ratio0 = courseProfile(course).trainRatio[o.goal === 'look' ? 'look' : 'relief'] ?? 0.5;
+  const pool = buildPrescriptionPool(problemKeys, course, { targetSelf: Math.round(64 * (1 - ratio0)) + 4, targetTrain: Math.round(64 * ratio0) + 4 });
   const anchors = buildAnchors(problemKeys, course);
   const targeted = pool.targeted || new Set();
   const rank = pool.rank || new Map();
@@ -261,9 +282,13 @@ function build30DayProgram(problemKeys, course='mixed', opts){
     //   不調をやわらげたい: 半々（4種なら 2:2）
     //   見た目を整えたい  : 鍛える側を厚く（4種なら 1:3、6種なら 2:4）
     let sCount, tCount;
+    const prof = courseProfile(course);
     if (isRest){ sCount = Math.min(2, menuSize); tCount = 0; }
-    else if (goal === 'look'){ sCount = Math.max(1, Math.floor(menuSize / 3)); tCount = menuSize - sCount; }
-    else { sCount = Math.ceil(menuSize / 2); tCount = menuSize - sCount; }
+    else {
+      const ratio = prof.trainRatio[goal] ?? 0.5;
+      tCount = Math.max(0, Math.min(menuSize - 1, Math.floor(menuSize * ratio + 0.25)));
+      sCount = menuSize - tCount;
+    }
     const sPool = banded(sList, Math.max(6, sCount * 2 + 2)), tPool = banded(tList, Math.max(6, tCount * 2 + 2));
 
     // 系統の追跡（同じ日・前日の被りを避ける）
@@ -275,10 +300,14 @@ function build30DayProgram(problemKeys, course='mixed', opts){
     if (!isRest) {
       const sameDayIds = selfcare.map(e => e.id);
       // 引き締め枠: 見た目目的は全期間、不調目的でも Phase2以降は毎日1枠、お腹・お尻・脚・背中を鍛える種目を入れる
-      const wantToning = (goal === 'look' || phase >= 2) && tCount >= 1;
+      const toneRule = prof.toning[goal] || 'phase2';
+      const wantToning = tCount >= 1 && (toneRule === 'always' || (toneRule === 'phase2' && phase >= 2));
       let toning = null;
       if (wantToning){
-        const tonePool = tPool.filter(isToning);
+        // 強度帯で絞った後の候補が少ないと同じ種目ばかりになる（ピラティスで最大10回）。
+        // 6件未満なら帯の下限を外し、上限だけ守った候補から選ぶ
+        let tonePool = tPool.filter(isToning);
+        if (tonePool.length < 6) tonePool = tList.filter(ex => isToning(ex) && (ex.intensity || 1) <= cap);
         if (tonePool.length >= 4){
           toning = pickOne(tonePool, tUsage, anchors, [...prevIds, ...sameDayIds], rank, focusRank, ctx);
           if (toning){ ctx.famToday.add(familyOf(toning) || ''); toning = Object.assign(Object.create(Object.getPrototypeOf(toning)), toning, { _slot: 'toning' }); }

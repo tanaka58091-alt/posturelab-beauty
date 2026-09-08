@@ -75,7 +75,7 @@ const state = {
   currentPhase: 1,
   symptoms: [],
   symptomFree: '',
-  selectedCourse: 'mixed',
+  selectedCourse: 'seitai',
   recommendation: null,
 };
 
@@ -659,7 +659,7 @@ function renderCourses(){
     const stats = getPoolStats(probKeys, cid);
     const score = rankMap[cid] || 0;
     const maxScore = rec.ranking[0].score || 1;
-    const starCount = cid === 'mixed' ? 3 : Math.max(1, Math.round((score / maxScore) * 3));
+    const starCount = Math.max(1, Math.round((score / maxScore) * 3));
     const stars = '⭐'.repeat(starCount) + '☆'.repeat(3 - starCount);
 
     return `
@@ -698,7 +698,7 @@ function renderCourses(){
     const top = COURSES[rec.top];
     els.courseRecommend.innerHTML = `
       <strong>${top.icon} ${top.name}</strong>があなたの姿勢に最適と診断されました。
-      もちろん、いつでも他のコースに切り替え可能です。
+      4つのコースは中身がまったく違います。目的に合わせていつでも切り替えられます。
     `;
   }
 
@@ -1971,7 +1971,7 @@ function openSavedSession(id){
   setFocusParts(state.focusParts);     // 主訴の重点も維持
   const keys = state.problems.map(p => p.key);
   state.recommendation = recommendCourse(keys);
-  state.selectedCourse = s.course || state.recommendation.top;
+  state.selectedCourse = (s.course && s.course !== 'mixed') ? s.course : (state.recommendation?.top || 'seitai');   // 旧「AIおまかせ」の保存分はおすすめコースへ
   state.currentPhase   = 1;
   state.program = build30DayProgram(keys, state.selectedCourse, programOpts());
 

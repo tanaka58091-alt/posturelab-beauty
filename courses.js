@@ -12,10 +12,10 @@ const COURSES = {
     color: '#FFB6C1',
     colorSoft: '#FFE5EC',
     supervisor: '整体師・柔道整復師監修',
-    desc: '筋膜リリース・ストレッチ・モビリティで、こり・痛みをほどく',
-    style: '気持ちよく緩める',
+    desc: '筋肉・筋膜をゆるめるマッサージとストレッチで、こり・重さをほどく',
+    style: '気持ちよくゆるめる',
     intensity: '低〜中',
-    bestFor: ['肩こり','腰痛','頭痛','疲れ','むくみ','歪み調整'],
+    bestFor: ['肩こり','腰痛','筋膜ほぐし','むくみ','リラックス'],
   },
   personal: {
     id: 'personal',
@@ -25,10 +25,10 @@ const COURSES = {
     color: '#A8E6CF',
     colorSoft: '#E5F8EE',
     supervisor: 'NSCA-CPT等 資格者監修',
-    desc: '自重のみで弱った筋を再活性。引き締まったボディラインへ',
+    desc: '引き締める・姿勢を変える自重トレーニング。毎日の積み重ねで体を変える',
     style: 'しっかり鍛える',
     intensity: '中〜高',
-    bestFor: ['ボディメイク','引き締め','筋力UP','代謝UP','姿勢改善'],
+    bestFor: ['引き締め','ボディライン','姿勢改善','筋力UP','代謝UP'],
   },
   yoga: {
     id: 'yoga',
@@ -38,10 +38,10 @@ const COURSES = {
     color: '#C9A8E6',
     colorSoft: '#F0E5F8',
     supervisor: '全米ヨガアライアンスRYT200監修',
-    desc: 'アサナ・呼吸法・瞑想で、しなやかさと心の静けさを',
-    style: '呼吸と動きを繋ぐ',
+    desc: 'ストレッチと呼吸でしなやかに。かたい体をゆるめて整える',
+    style: '伸ばして呼吸する',
     intensity: '低〜中',
-    bestFor: ['柔軟性UP','自律神経','ストレス','睡眠改善','内観'],
+    bestFor: ['柔軟性UP','ストレッチ','呼吸','自律神経','リラックス'],
   },
   pilates: {
     id: 'pilates',
@@ -51,10 +51,10 @@ const COURSES = {
     color: '#FFD3A8',
     colorSoft: '#FFF1E0',
     supervisor: 'PMA-CPT 監修',
-    desc: 'マットワーク中心。コアを起点に姿勢の土台を作り直す',
-    style: '体幹で動かす',
+    desc: 'ストレッチ×鍛えるを1日の中で。体幹から姿勢の土台を作り直す',
+    style: '伸ばして鍛える',
     intensity: '中',
-    bestFor: ['体幹強化','姿勢改善','骨盤底','くびれ','美姿勢キープ'],
+    bestFor: ['体幹強化','くびれ','姿勢改善','ストレッチ×筋トレ','美姿勢キープ'],
   },
   mixed: {
     id: 'mixed',
@@ -71,7 +71,8 @@ const COURSES = {
   },
 };
 
-const COURSE_ORDER = ['mixed','seitai','personal','yoga','pilates'];
+// AIおまかせ（mixed）は選択肢から外した（内部のフォールバック用に定義だけ残す）
+const COURSE_ORDER = ['seitai','personal','yoga','pilates'];
 
 // 姿勢問題ごとのコース推奨度 (3=最適, 2=有効, 1=可)
 const COURSE_AFFINITY = {
