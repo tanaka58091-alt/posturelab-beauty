@@ -283,6 +283,7 @@ function programOpts(){
     menuSize: adjustMenuSize(menuSizeFromProfile(), a.sizeDelta),
     exp: adjustExp((state.profile || PROFILE_DEFAULT).exp, a.level),
     tune: a.level,                       // 回数・秒数にも即日で反映させる
+    goal: (state.profile || PROFILE_DEFAULT).goal,   // 見た目を整えたい → 鍛える側を厚く
     pain: state.painFlags || {},
     focus: state.focusParts || [],
   };
@@ -1477,7 +1478,7 @@ function exerciseCard(ex){
     <div class="exercise-card" data-ex="${ex.id}">
       <div class="ex-illust">${artHTML(ex)}</div>
       <div class="ex-info">
-        <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>
+        <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>${ex._slot === 'toning' ? '<span class="ex-cat toning">💪 引き締め</span>' : ''}
         <h4>${ex.displayName || ex.name}</h4>
         <div class="ex-meta">
           <span><strong>⏱</strong> ${ex.duration}</span>

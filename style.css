@@ -1681,3 +1681,6 @@ body{
 .how-more[open] > summary::before{ content:'－ '; }
 .how-more .how-steps{ margin-top:6px }
 .how-more .modal-section{ margin-top:14px }
+
+/* 引き締め枠のタグ */
+.ex-cat.toning{ background:#FFF0D6; color:#9A6B1F; margin-left:6px }
