@@ -755,6 +755,773 @@ const DB_PERSONAL = [
   },
 
   // ============== EXPANSION PACK 1 — 心肺 ==============
+  // ============== 2026-09-11 追加（45種・器具なし・強度1〜2） ==============
+  {
+    id:"pt_hip_hinge_wall", name:"壁タッチお辞儀", displayName:"壁タッチお辞儀（ヒップヒンジ）", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","posteriorPelvicTilt","swayBack"],
+    category:"training", technique:"strength", bodyPart:"hip", intensity:1,
+    equipment:"壁", position:"standing", duration:"10回 × 2セット",
+    purpose:"腰を反らさずに「お尻で曲げる」動きを覚える。スクワットや前屈の土台。",
+    how:[
+      "壁に背を向けて、壁から足1つ分（20〜30cm）前に立ちます。足は腰幅、つま先はまっすぐ前です。",
+      "両手を脚の付け根（そけい部）に当てます。ここが折りたたむ場所の目印です。",
+      "ひざを軽くゆるめ、お尻を後ろの壁に近づけるように上体を前に倒します。背中は丸めず反らさず、まっすぐのまま。目線は1〜2m先の床です。",
+      "お尻が壁に軽く触れたら、お尻を締めて立ち上がります。腰ではなくお尻で戻る感覚です。",
+      "これを10回、2セット行います。壁に届かないときは半歩だけ壁に近づきます。",
+      "腰に痛みが出たら倒す深さを半分にします。それでも痛ければ中止します。"
+    ],
+    cues:{ do:"背中をまっすぐのまま、お尻を後ろへ引く。", dont:"背中を丸めてお辞儀すると、お尻が壁に届く前に頭だけ下がる。" },
+    easyOption:"壁との距離を足半分にして、倒す量を小さくして始める。",
+    why:"反り腰・骨盤前出しの人はこの動きが苦手で、腰で曲げてしまう。"
+  },
+  {
+    id:"pt_standing_kickback", name:"立ちお尻キック", displayName:"立って脚を後ろに上げる（壁に手）", courses:["personal"],
+    targetProblems:["swayBack","anteriorPelvicTilt","posteriorPelvicTilt"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:1,
+    equipment:"壁", position:"standing", duration:"各10回 × 2セット",
+    purpose:"立ったままお尻の下側を締める。四つん這いが苦手な人向け。",
+    how:[
+      "壁に向かって立ち、両手を肩の高さで壁につけます。体は少し前に傾けます。",
+      "お腹に軽く力を入れ、腰が反らないようにします。おへそを軽く引き込む感覚です。",
+      "右脚をひざを伸ばしたまま、ゆっくり後ろへ上げます。高さは床から20〜30cmで十分です。お尻の下側が硬くなればOK。",
+      "2秒止めてからゆっくり戻します。これを10回、左脚も10回行い、2セットくり返します。",
+      "腰が反って上体がのけぞったら上げすぎです。高さを下げます。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"お尻の下が硬くなる高さまでで止める。", dont:"腰を反らせて高く上げるのは失敗。高さより「お尻が硬くなる」ことを優先。" },
+    easyOption:"上げる高さを10cmにして、回数は各5回から始める。",
+    why:"骨盤を前に出して立つ人は、お尻が休んでいる。立ったまま起こす。"
+  },
+  {
+    id:"pt_standing_abduction", name:"立ち脚横上げ", displayName:"立って脚を横に上げる（壁に手）", courses:["personal"],
+    targetProblems:["kneeValgus","kneeVarus","lateralAsymmetry"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:1,
+    equipment:"壁", position:"standing", duration:"各10回 × 2セット",
+    purpose:"お尻の横（中殿筋）を立ったまま鍛える。歩き方とひざの向きが安定する。",
+    how:[
+      "壁の横に立ち、壁側の手を壁に添えます。立っている脚のひざは軽くゆるめます。",
+      "外側の脚を、つま先を前に向けたまま真横へ上げます。高さは20〜30cm。体は倒さず、まっすぐのままです。",
+      "2秒止めてゆっくり下ろします。お尻の横が硬くなっていればOK。",
+      "10回行ったら向きを変えて反対の脚も10回。2セットくり返します。",
+      "上体が反対側に倒れると、お尻の横ではなく腰を使ってしまいます。倒れない高さで行います。"
+    ],
+    cues:{ do:"つま先を前に向けたまま、体を倒さずに横へ上げる。", dont:"つま先が上を向いたり、上体が反対に倒れるのは失敗。" },
+    easyOption:"高さを10cmにして各5回。壁に両手をついて行ってもよい。",
+    why:"ひざが内に入る・外に開く人は、お尻の横が働いていないことが多い。"
+  },
+  {
+    id:"pt_kneeling_pelvic_push", name:"ひざ立ち骨盤押し出し", displayName:"ひざ立ちで骨盤を前に押し出す", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","swayBack"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:1,
+    equipment:"クッション", position:"kneeling", duration:"10回 × 2セット",
+    purpose:"お尻を締めながら骨盤を立てる。反り腰の人が一番苦手な動き。",
+    how:[
+      "クッションの上に両ひざをつき、ひざ立ちになります。ひざは腰幅、上体はまっすぐ、両手は腰に当てます。",
+      "いったんお尻を後ろに突き出し、腰を反らせた形を作ります。これが「反り腰」の形です。",
+      "息を吐きながらお尻をぎゅっと締め、骨盤を前に押し出して腰の反りをなくします。上体は倒れず、頭の位置も変わりません。",
+      "3秒キープして力を抜きます。これを10回、2セット行います。",
+      "ひざが痛いときはクッションを2枚重ねます。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"お尻を締めた分だけ骨盤が前に出て、腰の反りが消える。", dont:"上体ごと前に倒すのは失敗。動くのは骨盤だけ。" },
+    easyOption:"壁の前でひざ立ちになり、両手を壁につけて行うと安定する。",
+    why:"反り腰は「お尻が使えず腰で支える」姿勢。お尻で骨盤を立てる感覚を作る。"
+  },
+  {
+    id:"pt_butt_walk", name:"お尻歩き", displayName:"お尻歩き（座って前後に進む）", courses:["personal"],
+    targetProblems:["lateralAsymmetry","posteriorPelvicTilt","general"],
+    category:"training", technique:"strength", bodyPart:"hip", intensity:1,
+    equipment:"なし", position:"sitting", duration:"10歩 × 3セット",
+    purpose:"骨盤を左右交互に動かしてお尻と体幹を使う。楽しく骨盤を動かせる。",
+    how:[
+      "床に脚を伸ばして座ります。背すじを伸ばし、両ひじを曲げて腕を軽く振れる形にします。",
+      "右のお尻を浮かせて前に出し、次に左のお尻を浮かせて前に出します。お尻で一歩ずつ歩く感じです。",
+      "前に5歩進んだら、同じように後ろへ5歩戻ります。これで1セット。3セット行います。",
+      "腕を歩くように振ると、上半身も自然にひねられて動きやすくなります。",
+      "背中が丸まって進めないときは、脚を少しだけ曲げます。お尻の骨が痛いときは中止します。"
+    ],
+    cues:{ do:"背すじを伸ばしたまま、お尻を交互に浮かせて進む。", dont:"背中を丸めて脚の力だけでずり動くのは失敗。" },
+    easyOption:"前に3歩・後ろに3歩から始める。ひざを軽く曲げてもよい。",
+    why:"左右のお尻を交互に使うので、左右差が体でわかる。"
+  },
+  {
+    id:"pt_heel_elevated_bridge", name:"かかと椅子のせお尻上げ", displayName:"かかとを椅子にのせたお尻上げ", courses:["personal"],
+    targetProblems:["posteriorPelvicTilt","swayBack","anteriorPelvicTilt"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:2,
+    equipment:"椅子", position:"supine", duration:"10回 × 2セット",
+    purpose:"もも裏とお尻の下側に効く。普通のお尻上げより「裏側」が締まる。",
+    how:[
+      "仰向けに寝て、両かかとを椅子の座面にのせます。ひざは直角くらい、椅子はお尻から少し離します。",
+      "両腕は体の横に置き、手のひらを床につけます。",
+      "かかとで椅子を押しながら、お尻を床から持ち上げます。ひざから肩まで一直線になるところまでです。",
+      "上で2秒止めて、ゆっくり下ろします。これを10回、2セット行います。",
+      "もも裏がつりそうになったら椅子をお尻に近づけます。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"かかとで椅子を押し、お尻ともも裏で持ち上げる。", dont:"腰を反らせて高く上げるのは失敗。肩からひざの一直線で止める。" },
+    easyOption:"上げる高さを半分にして8回から。動かない重い椅子で行う。",
+    why:"骨盤が後ろに倒れる人・前出しの人は、もも裏とお尻の下側が弱い。"
+  },
+  {
+    id:"pt_cushion_bridge", name:"クッションはさみお尻上げ", displayName:"クッションはさみお尻上げ", courses:["personal"],
+    targetProblems:["kneeValgus","kneeVarus","anteriorPelvicTilt"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:1,
+    equipment:"クッション", position:"supine", duration:"10回 × 2セット",
+    purpose:"内ももとお尻を同時に締める。ひざが内に入る人・外に開く人の両方に。",
+    how:[
+      "仰向けでひざを立て、両ひざの間にクッション（または丸めたタオル）をはさみます。足は腰幅です。",
+      "ひざでクッションを軽く押しつぶします。内ももが硬くなる強さで十分です。",
+      "押したまま、息を吐きながらお尻を持ち上げます。ひざから肩まで一直線で止めます。",
+      "2秒キープしてゆっくり下ろします。下ろしてもクッションは押したままです。これを10回、2セット。",
+      "ひざの内側に痛みが出たら押す力を弱めます。腰の痛みは中止のサインです。"
+    ],
+    cues:{ do:"クッションを押したままお尻を上げる。内ももとお尻が同時に硬くなる。", dont:"上げるときにクッションがゆるむのは失敗。押す力は一定。" },
+    easyOption:"お尻を上げず、クッションを5秒押すだけを10回から始める。",
+    why:"ひざの向きを決めるのは内ももとお尻の横。両方を1つの動きで使う。"
+  },
+  {
+    id:"pt_bridge_knee_open", name:"お尻上げひざ開き", displayName:"お尻上げでひざ開き", courses:["personal"],
+    targetProblems:["kneeValgus","lateralAsymmetry"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:2,
+    equipment:"マット", position:"supine", duration:"10回 × 2セット",
+    purpose:"お尻を上げたままひざを開閉する。お尻の横に強く効く。",
+    how:[
+      "仰向けでひざを立て、足は腰幅にします。両腕は体の横です。",
+      "お尻を持ち上げ、ひざから肩まで一直線にします。この高さを保ちます。",
+      "お尻を上げたまま、両ひざをゆっくり外に開きます。足の裏は床につけたままです。開くのはこぶし1つ分で十分です。",
+      "ゆっくり閉じます。これを10回。終わったらお尻を下ろして休み、2セット行います。",
+      "お尻が下がってきたら、いったん下ろして休みます。腰が痛いときは中止します。"
+    ],
+    cues:{ do:"お尻の高さを変えずに、ひざだけをゆっくり開閉する。", dont:"ひざを開くときにお尻が落ちる・腰が反るのは失敗。" },
+    easyOption:"お尻を上げずに、寝たままひざを開閉するだけを10回から始める。",
+    why:"お尻の横が働くと、立ったときにひざが内に入りにくくなる。"
+  },
+  {
+    id:"pt_prone_leg_lift", name:"うつ伏せ脚上げ", displayName:"うつ伏せ脚上げ（お尻）", courses:["personal"],
+    targetProblems:["swayBack","posteriorPelvicTilt","anteriorPelvicTilt"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:1,
+    equipment:"マット", position:"prone", duration:"各10回 × 2セット",
+    purpose:"腰を反らさずにお尻だけで脚を浮かせる。お尻の上側に効く。",
+    how:[
+      "うつ伏せに寝て、おでこを重ねた両手の上にのせます。脚は腰幅に伸ばします。",
+      "おへそを床から軽く引き上げ、腰を反らさない準備をします。骨盤の前が床に軽く押しつけられる感覚です。",
+      "右脚をひざを伸ばしたまま、床から5〜10cmだけ浮かせます。お尻に力が入っていればOK。高さは要りません。",
+      "2秒止めて下ろします。10回行ったら左脚も10回。2セットくり返します。",
+      "腰が反って骨盤が床から浮いたら上げすぎです。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"骨盤を床に軽く押しつけたまま、お尻の力で脚を少し浮かせる。", dont:"脚を高く上げようとして腰を反らすのは失敗。" },
+    easyOption:"脚を浮かせず、お尻をぎゅっと締めて5秒キープだけを10回から。",
+    why:"骨盤を前に出して立つ人は、お尻の上側がゆるんでいることが多い。"
+  },
+  {
+    id:"pt_seated_knee_pushout", name:"椅子ひざ押し開き", displayName:"椅子でひざを外に押し開く（手で抵抗）", courses:["personal"],
+    targetProblems:["kneeValgus","kneeVarus"],
+    category:"training", technique:"isometric", bodyPart:"glutes", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"10秒 × 5セット",
+    purpose:"座ったままお尻の横を鍛える。ひざが痛い人でも安全にできる。",
+    how:[
+      "椅子に浅く座り、足を腰幅に開いて足の裏を床につけます。背すじを伸ばします。",
+      "両手をそれぞれのひざの外側に当てます。",
+      "手でひざを内側に押しながら、ひざはそれに負けないように外へ押し返します。ひざは動かず、力だけが釣り合う状態です。",
+      "10秒キープして力を抜きます。お尻の横が硬くなっていればOK。これを5セット行います。",
+      "息は止めません。数を声に出して数えると息が止まりません。"
+    ],
+    cues:{ do:"ひざを動かさず、手と脚の力を釣り合わせる。", dont:"息を止めて顔が赤くなるのは失敗。声を出して数える。" },
+    easyOption:"5秒キープを5セットから始める。",
+    why:"お尻の横の筋肉は、ひざを痛めずに座ったまま鍛えられる。"
+  },
+  {
+    id:"pt_slow_sit_squat", name:"5秒スクワット", displayName:"5秒かけて座るスクワット", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","kneeValgus","ankleStiffness"],
+    category:"training", technique:"strength", bodyPart:"legs", intensity:2,
+    equipment:"椅子", position:"standing", duration:"8回 × 2セット",
+    purpose:"ゆっくり下ろすだけで太ももに強く効く。立つのは普通の速さでよい。",
+    how:[
+      "椅子の前に、椅子に背を向けて立ちます。足は腰幅、つま先は少し外向きです。",
+      "両手を胸の前で組み、5秒かけてゆっくり座面に向かって腰を下ろします。「1、2、3、4、5」と声に出して数えます。",
+      "座面にお尻が軽く触れたら、普通の速さで立ち上がります。座り込まないのがコツです。",
+      "これを8回、2セット行います。ひざはつま先と同じ向きに曲げます。",
+      "ひざに痛みが出たら中止します。太ももが震えるのは効いている証拠なので続けてOKです。"
+    ],
+    cues:{ do:"5秒数えながら、ひざとつま先を同じ向きにして下ろす。", dont:"ドスンと座り込むのは失敗。座面に触れるだけ。" },
+    easyOption:"3秒かけて下ろし、6回から始める。手を太ももに添えてもよい。",
+    why:"「ゆっくり下ろす」は筋肉が一番育つ動き。ひざにやさしく効く。"
+  },
+  {
+    id:"pt_knee_press_floor", name:"ひざ裏押しつけ", displayName:"座ってひざ裏を床に押しつける", courses:["personal"],
+    targetProblems:["kneeValgus","kneeVarus"],
+    category:"training", technique:"isometric", bodyPart:"leg", intensity:1,
+    equipment:"マット", position:"sitting", duration:"各10秒 × 5セット",
+    purpose:"ひざの内側の筋肉（内側広筋）を鍛える。ひざのぐらつき・向きを整える。",
+    how:[
+      "床に脚を伸ばして座ります。両手は体の後ろについて上体を支えます。",
+      "右ひざの裏を床に押しつけるように、太ももに力を入れます。ひざのお皿が少し上に引き上がればOK。",
+      "つま先は天井に向けたまま、10秒キープします。息は止めません。",
+      "力を抜いて、左脚も同じように10秒。左右5セットずつ行います。",
+      "ひざの裏の下にたたんだタオルを入れると、押す感覚がわかりやすくなります。"
+    ],
+    cues:{ do:"ひざ裏で床（タオル）をつぶすように太ももに力を入れる。", dont:"つま先が外を向く・かかとが浮くのは失敗。" },
+    easyOption:"5秒キープを各5セットから。壁に背中をつけて座るとらく。",
+    why:"ひざの内側の筋肉は衰えやすく、ここが弱いとひざが内外にぶれる。"
+  },
+  {
+    id:"pt_stair_heel_drop", name:"階段かかと下げ", displayName:"階段でかかと下げ（つま先立ちから）", courses:["personal"],
+    targetProblems:["ankleStiffness"],
+    category:"training", technique:"strength", bodyPart:"leg", intensity:2,
+    equipment:"階段", position:"standing", duration:"10回 × 2セット",
+    purpose:"ふくらはぎを伸ばしながら鍛える。かたい足首に一番効く動き。",
+    how:[
+      "階段の一番下の段に、つま先の付け根だけをのせて立ちます。かかとは段から出します。手すりか壁に必ず手を添えます。",
+      "かかとを上げてつま先立ちになります。",
+      "3秒かけて、かかとを段より下までゆっくり下ろします。ふくらはぎが伸びるところで止めます。",
+      "また上げて、3秒で下ろす。これを10回、2セット行います。",
+      "アキレス腱に鋭い痛みが出たら中止します。ふくらはぎがじんわり伸びる感じはOKです。"
+    ],
+    cues:{ do:"手すりを持ち、3秒かけてかかとを段の下まで下ろす。", dont:"反動で上下するのは失敗。下ろすときがいちばん大事。" },
+    easyOption:"両手で手すりを持ち、下ろす深さを段と同じ高さまでにする。",
+    why:"足首のかたさは、ふくらはぎが縮んだまま固まっていることが原因のことが多い。"
+  },
+  {
+    id:"pt_doorframe_deep_squat", name:"ドア枠深しゃがみ", displayName:"ドア枠を持って深くしゃがむ", courses:["personal"],
+    targetProblems:["ankleStiffness","posteriorPelvicTilt","anteriorPelvicTilt"],
+    category:"training", technique:"strength", bodyPart:"legs", intensity:2,
+    equipment:"ドア枠", position:"standing", duration:"8回 × 2セット",
+    purpose:"手で支えて深くしゃがみ、股関節と足首を同時に動かす。しゃがめる体に戻す。",
+    how:[
+      "ドア枠の両側を両手で持ち、足を腰幅より少し広く開いて立ちます。つま先は少し外向きです。",
+      "手で軽く体を支えながら、お尻を下ろして深くしゃがみます。かかとは床につけたままです。",
+      "いちばん下で3秒止まり、背すじを伸ばして胸を前に向けます。手で引いてよいので、倒れる心配はありません。",
+      "手で少し助けながら立ち上がります。これを8回、2セット行います。",
+      "かかとが浮くときは、かかとの下にたたんだタオルを入れます。ひざに痛みが出たら中止します。"
+    ],
+    cues:{ do:"かかとを床につけたまま、手で支えて深くしゃがむ。", dont:"かかとが浮く・背中が丸まるのは深すぎ。手で支えて浅くする。" },
+    easyOption:"お尻がひざの高さまでの浅いしゃがみで6回から。",
+    why:"深くしゃがめない人は足首と股関節が固まっている。安全に可動域を広げる。"
+  },
+  {
+    id:"pt_standing_leg_curl", name:"立ちレッグカール", displayName:"立ったままかかとをお尻へ引き上げ（もも裏）", courses:["personal","pilates"],
+    targetProblems:["posteriorPelvicTilt","swayBack"],
+    category:"training", technique:"strength", bodyPart:"hamstring", intensity:1,
+    equipment:"壁", position:"standing", duration:"各10回 × 2セット",
+    purpose:"もも裏を単独で使う。前ももばかり使う癖を直す。",
+    how:[
+      "壁に片手をついて立ちます。立っている脚のひざは軽くゆるめます。",
+      "反対の脚のひざを曲げて、かかとをお尻に近づけるように引き上げます。太ももは前に出さず、体の真下のままです。",
+      "上で2秒止めて、ゆっくり下ろします。もも裏が硬くなっていればOK。",
+      "10回行ったら反対の脚も10回。2セットくり返します。",
+      "もも裏がつりそうなときは動きを小さくします。腰が反るなら、お腹に軽く力を入れます。"
+    ],
+    cues:{ do:"太ももを動かさず、ひざから下だけを引き上げる。", dont:"腰を反らせて太ももごと後ろへ上げるのは失敗。" },
+    easyOption:"引き上げる高さを半分にして各5回から。",
+    why:"もも裏が使えると骨盤が正しい位置で支えられ、前ももの張りも減る。"
+  },
+  {
+    id:"pt_banzai_squat", name:"バンザイスクワット", displayName:"バンザイスクワット", courses:["personal"],
+    targetProblems:["thoracicKyphosis","roundedShoulders","anteriorPelvicTilt"],
+    category:"training", technique:"strength", bodyPart:"fullbody", intensity:2,
+    equipment:"なし", position:"standing", duration:"10回 × 2セット",
+    purpose:"腕を上げたまましゃがむ。胸が開き、背中の下側も一緒に鍛えられる。",
+    how:[
+      "足を腰幅に開いて立ち、両腕を頭の上にまっすぐ伸ばします。手のひらは向かい合わせです。",
+      "腕を上げたまま、お尻を後ろに引きながらしゃがみます。深さは太ももが床と45度くらいまでで十分です。",
+      "腕が前に倒れないように、耳の横に保ちます。胸を前に向けたままです。",
+      "立ち上がるときに腕をさらに上へ伸ばします。これを10回、2セット行います。",
+      "肩が痛いときは腕をVの字に開くと楽になります。ひざの痛みが出たら中止します。"
+    ],
+    cues:{ do:"腕を耳の横に保ったまましゃがむ。胸は前を向く。", dont:"腕が前に倒れて背中が丸まるのは失敗。深さを浅くする。" },
+    easyOption:"腕を斜め45度に下げて、浅くしゃがむ8回から。",
+    why:"猫背の人は腕を上げると背中が丸まる。しゃがみながら胸を開く癖をつける。"
+  },
+  {
+    id:"pt_squat_calf_raise", name:"スクワットかかと上げ", displayName:"しゃがんで立ってかかと上げ", courses:["personal"],
+    targetProblems:["ankleStiffness","general"],
+    category:"training", technique:"strength", bodyPart:"legs", intensity:2,
+    equipment:"なし", position:"standing", duration:"10回 × 2セット",
+    purpose:"スクワットとかかと上げをつなげる。脚全体を1つの動きで引き締める。",
+    how:[
+      "足を腰幅に開いて立ち、両手は腰か胸の前です。",
+      "お尻を後ろに引いて、ひざが90度くらいになるまでしゃがみます。",
+      "立ち上がった勢いで、そのままかかとを上げてつま先立ちになります。上で1秒止めます。",
+      "かかとを下ろして次のしゃがみへ。これを10回、2セット行います。",
+      "ふらつくときは壁に片手を添えます。ひざに痛みが出たら中止します。"
+    ],
+    cues:{ do:"しゃがむ→立つ→つま先立ちを1つの流れで。", dont:"かかと上げで体が前に倒れるのは失敗。上に伸びる。" },
+    easyOption:"浅いしゃがみと小さいかかと上げで8回から。壁に手を添える。",
+    why:"太もも・お尻・ふくらはぎを一度に使うので、短い時間で脚全体に効く。"
+  },
+  {
+    id:"pt_twist_lunge", name:"ねじりランジ", displayName:"前に踏み出してねじるランジ", courses:["personal"],
+    targetProblems:["lateralAsymmetry","scoliosis","thoracicKyphosis"],
+    category:"training", technique:"strength", bodyPart:"fullbody", intensity:2,
+    equipment:"なし", position:"standing", duration:"各8回 × 2セット",
+    purpose:"踏み出して上体をねじる。脚とわき腹を同時に使い、左右差を減らす。",
+    how:[
+      "足を腰幅に開いて立ち、両手を胸の前で合わせます。",
+      "右脚を前に一歩踏み出し、両ひざを軽く曲げます。前のひざはつま先より前に出しません。",
+      "その姿勢で、上体を右（前の脚の側）にゆっくりねじります。目線も右へ。腰は正面のままです。",
+      "正面に戻して、後ろ脚で床を押して立ち位置に戻ります。8回行ったら左脚も8回。2セット。",
+      "ふらつくときは踏み出す幅を小さくします。ひざの痛みが出たら中止します。"
+    ],
+    cues:{ do:"腰は正面のまま、胸から上だけをねじる。", dont:"腰ごと回ってひざが内に入るのは失敗。" },
+    easyOption:"踏み出さず、足を前後に開いたまま立ってねじるだけを各8回から。",
+    why:"片側ばかり使う癖は、ねじりを左右同じ回数行うと整いやすい。"
+  },
+  {
+    id:"pt_kneel_to_stand", name:"ひざ立ち起き上がり", displayName:"ひざ立ちから立ち上がる（手を使わず）", courses:["personal"],
+    targetProblems:["general","lateralAsymmetry"],
+    category:"training", technique:"strength", bodyPart:"legs", intensity:2,
+    equipment:"クッション", position:"kneeling", duration:"各5回 × 2セット",
+    purpose:"床から手を使わずに立てる脚力。40代以降でいちばん落ちやすい力を守る。",
+    how:[
+      "クッションの上に両ひざをつき、ひざ立ちになります。両手は胸の前で組みます。",
+      "右足を前に出して片ひざ立ちになります。右足の裏は床にしっかりつけます。",
+      "右足で床を押して、手を使わずに立ち上がります。上体は前に倒しすぎません。",
+      "立ったら、ゆっくり左ひざから下りてひざ立ちに戻ります。これで1回。右5回・左5回、2セット。",
+      "ふらつくときは椅子の背に手を添えてOKです。ひざが痛いときはクッションを2枚重ねます。"
+    ],
+    cues:{ do:"前の足で床を押して、まっすぐ上に立つ。", dont:"上体を大きく前に倒して反動で立つのは失敗。" },
+    easyOption:"椅子の背に手を添えて各3回から。",
+    why:"床から立てる力は日常の自立に直結する。前脚のお尻と太ももが強くなる。"
+  },
+  {
+    id:"pt_seated_march", name:"座位マーチ", displayName:"椅子で足踏み（座位マーチ）", courses:["personal"],
+    targetProblems:["general","anteriorPelvicTilt"],
+    category:"training", technique:"cardio", bodyPart:"core", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"1分 × 2セット",
+    purpose:"立って足踏みが不安な日の代替。ひざ上げでお腹も使い、体が温まる。",
+    how:[
+      "椅子に浅く座り、背すじを伸ばします。両手は椅子の横を軽く持ちます。",
+      "右ひざを胸に近づけるように持ち上げ、下ろします。次に左ひざ。歩くように交互にくり返します。",
+      "テンポは1秒に1回。お腹に軽く力を入れると、背中が丸まりません。",
+      "1分続けたら30秒休み、もう1分行います。",
+      "息が上がりすぎたらテンポを落とします。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"背すじを伸ばしたまま、ひざを胸に近づける。", dont:"背中を丸めて上体を後ろに倒すのは失敗。" },
+    easyOption:"30秒×2セットから。ひざを上げる高さは10cmでよい。",
+    why:"座ったままでも脚の付け根とお腹を使える。運動が続かない日のつなぎに。"
+  },
+  {
+    id:"pt_wall_plank", name:"壁プランク", displayName:"壁プランク（立ったまま体幹キープ）", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","swayBack","general"],
+    category:"training", technique:"isometric", bodyPart:"core", intensity:1,
+    equipment:"壁", position:"standing", duration:"30秒 × 3セット",
+    purpose:"いちばんやさしいプランク。手首とひざに負担をかけずに体幹を鍛える。",
+    how:[
+      "壁から足1つ半（40cmほど）離れて、壁に向かって立ちます。",
+      "両ひじを肩の高さで壁につけ、前腕を壁に当てます。体は少し前に傾きます。",
+      "頭からかかとまで一直線にして、お腹に軽く力を入れます。お尻は突き出さず、腰も反らせません。",
+      "30秒キープします。息は止めず、声に出して数えます。3セット行います。",
+      "肩に痛みが出たら壁に近づいて傾きを減らします。"
+    ],
+    cues:{ do:"頭からかかとまで一直線。お腹に軽く力を入れて呼吸を続ける。", dont:"お尻を後ろに突き出す・腰が反るのは失敗。" },
+    easyOption:"壁との距離を足1つ分にして15秒×3セットから。",
+    why:"床のプランクが難しい人でも、同じ体幹の使い方を安全に覚えられる。"
+  },
+  {
+    id:"pt_desk_elbow_plank", name:"机ひじプランク", displayName:"机でひじつきプランク", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","roundedShoulders","general"],
+    category:"training", technique:"isometric", bodyPart:"core", intensity:2,
+    equipment:"机", position:"standing", duration:"20秒 × 3セット",
+    purpose:"壁プランクの次の段階。床に下りずに体幹をしっかり鍛える。",
+    how:[
+      "動かない机の前に立ち、両ひじと前腕を机の上にのせます。ひじは肩の真下です。",
+      "足を後ろに下げて、頭からかかとまでを一直線にします。かかとは浮いてもOK。",
+      "お腹に力を入れ、お尻を軽く締めます。腰が反ったり、お尻が上がったりしないようにします。",
+      "20秒キープ。声に出して数えて呼吸を続けます。3セット行います。",
+      "腰が反ってきたら終了の合図です。手首や肩に痛みが出たら中止します。"
+    ],
+    cues:{ do:"ひじを肩の真下に置き、お腹とお尻で一直線を保つ。", dont:"腰が下がって反るのは失敗。時間を短くする。" },
+    easyOption:"足を机に近づけて傾きを減らし、10秒×3セットから。",
+    why:"体幹が支えられると、立ったときに腰で体重を受けなくなる。"
+  },
+  {
+    id:"pt_pelvic_floor_seated", name:"骨盤底筋引き上げ", displayName:"骨盤底筋の引き上げ（座って）", courses:["personal","pilates","seitai","yoga"],
+    targetProblems:["anteriorPelvicTilt","swayBack","general"],
+    category:"training", technique:"isometric", bodyPart:"core", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"5秒 × 10回",
+    purpose:"お腹のいちばん奥のスイッチを入れる。尿もれ予防にもなる、女性に大切な筋肉。",
+    how:[
+      "椅子に座り、背すじを伸ばして両足を床につけます。両手は太ももの上です。",
+      "おしっこを途中で止めるときのように、お尻の穴と膣を内側へ引き上げます。お尻や太ももには力を入れません。",
+      "引き上げたまま5秒キープ。呼吸は止めず、普通に続けます。",
+      "ゆっくり力を抜き、5秒休みます。これを10回行います。",
+      "感覚がわかりにくいときは、息を吐きながら引き上げるとつかみやすくなります。"
+    ],
+    cues:{ do:"お尻の穴と膣だけを内側へ引き上げ、呼吸は続ける。", dont:"お尻や太ももに力が入る・息を止めるのは失敗。" },
+    easyOption:"3秒キープ×5回から。仰向けでひざを立てて行うとわかりやすい。",
+    why:"骨盤底筋は体幹の土台。ここが働くと反り腰やぽっこりお腹が内側から整う。"
+  },
+  {
+    id:"pt_pelvic_floor_bridge", name:"骨盤底筋お尻上げ", displayName:"骨盤底筋＋お尻上げ", courses:["personal","pilates"],
+    targetProblems:["anteriorPelvicTilt","posteriorPelvicTilt","general"],
+    category:"training", technique:"strength", bodyPart:"glutes", intensity:1,
+    equipment:"マット", position:"supine", duration:"10回 × 2セット",
+    purpose:"骨盤底筋を引き上げながらお尻を上げる。骨盤まわりを内側から締める。",
+    how:[
+      "仰向けでひざを立て、足は腰幅にします。両腕は体の横です。",
+      "息を吐きながら、お尻の穴と膣を内側へ引き上げます。",
+      "引き上げたまま、お尻を床から持ち上げます。ひざから肩まで一直線で止めます。",
+      "2秒キープして、ゆっくり下ろします。下ろしてから引き上げをゆるめます。これを10回、2セット。",
+      "腰が反るときは高さを低くします。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"内側の引き上げを先に、お尻を上げるのはその後。", dont:"お尻を上げてから慌てて引き上げるのは順番が逆。" },
+    easyOption:"お尻を上げる高さを半分にして8回から。",
+    why:"骨盤底筋とお尻は一緒に働く仲間。セットで使うと骨盤が安定する。"
+  },
+  {
+    id:"pt_wall_90_breath", name:"壁90度呼吸", displayName:"壁に足をつけて腰を床に沈める呼吸（90度キープ）", courses:["personal","pilates"],
+    targetProblems:["anteriorPelvicTilt","swayBack"],
+    category:"core", technique:"core", bodyPart:"core", intensity:1,
+    equipment:"壁", position:"supine", duration:"1分 × 2セット",
+    purpose:"反り腰の人が「腰が床につく」感覚を覚える。呼吸でお腹の奥を使う。",
+    how:[
+      "壁に向かって仰向けに寝て、両足の裏を壁につけます。ひざと股関節がどちらも90度になる位置まで壁に近づきます。",
+      "両手を下腹に置きます。腰と床のすき間に注目します。",
+      "鼻から息を吸い、口から細く長く吐きます。吐きながら腰を床に沈め、すき間をなくします。",
+      "吐き切ったところで腰が床についた状態を保ち、また吸います。これを1分続け、休んでもう1分。",
+      "足で壁を軽く押すと腰が沈みやすくなります。首や肩に力が入ったら休みます。"
+    ],
+    cues:{ do:"吐く息で腰を床に沈め、その状態を保って呼吸を続ける。", dont:"お腹を力ませて息を止めるのは失敗。細く長く吐く。" },
+    easyOption:"足を壁につけず、椅子の座面にふくらはぎをのせて行う。",
+    why:"反り腰の人は腰が床につかない。吐く息で腰が床につく体験が第一歩。"
+  },
+  {
+    id:"pt_seated_knee_lift_hold", name:"椅子ひざ持ち上げキープ", displayName:"椅子で片ひざ持ち上げキープ", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","posteriorPelvicTilt"],
+    category:"training", technique:"isometric", bodyPart:"core", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各10秒 × 3セット",
+    purpose:"座ったまま下腹を使う。デスクワークの合間にできる。",
+    how:[
+      "椅子に浅く座り、背すじを伸ばします。両手は椅子の横を軽く持ちます。",
+      "右ひざを床から10cmほど持ち上げます。上体は後ろに倒さず、背すじを伸ばしたままです。",
+      "10秒キープします。下腹が硬くなっていればOK。息は止めません。",
+      "下ろして左ひざも10秒。左右3セットずつ行います。",
+      "背中が丸まってきたら終了の合図です。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"背すじを伸ばしたまま、下腹の力でひざを浮かせる。", dont:"上体を後ろに倒して反動で上げるのは失敗。" },
+    easyOption:"5秒キープを各3セットから。",
+    why:"下腹の筋肉が働くと、骨盤が前後どちらにも倒れにくくなる。"
+  },
+  {
+    id:"pt_seated_elbow_knee", name:"座位ひじひざタッチ", displayName:"座ってひじとひざのタッチ", courses:["personal"],
+    targetProblems:["lateralAsymmetry","scoliosis"],
+    category:"core", technique:"core", bodyPart:"core", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各10回 × 2セット",
+    purpose:"座ったままのななめ腹筋。わき腹を引き締め、左右差を減らす。",
+    how:[
+      "椅子に浅く座り、両手を頭の後ろに軽く添えます。背すじを伸ばします。",
+      "右ひざを持ち上げながら、上体をねじって左ひじを右ひざに近づけます。腹筋の斜めの部分が縮む感じです。",
+      "ゆっくり戻して、今度は左ひざと右ひじ。交互に各10回行います。",
+      "首を引っぱらず、手は添えるだけです。2セット行います。",
+      "腰に痛みが出たら中止します。ひじとひざは触れなくてもOKです。"
+    ],
+    cues:{ do:"上体をねじってひじをひざに近づける。手は頭に添えるだけ。", dont:"手で首を引っぱって頭だけ下げるのは失敗。" },
+    easyOption:"ひざを上げず、上体をねじってひじを反対のひざに向けるだけを各10回。",
+    why:"わき腹の斜めの筋肉は、左右差と側弯ぎみの人がいちばん使えていない筋肉。"
+  },
+  {
+    id:"pt_standing_elbow_knee", name:"立位ななめタッチ", displayName:"立ってひじとひざのななめタッチ", courses:["personal"],
+    targetProblems:["lateralAsymmetry","scoliosis","general"],
+    category:"training", technique:"cardio", bodyPart:"core", intensity:2,
+    equipment:"なし", position:"standing", duration:"各10回 × 2セット",
+    purpose:"立ったままのねじり腹筋。わき腹を引き締めながら体が温まる。",
+    how:[
+      "足を腰幅に開いて立ち、両手を頭の後ろに軽く添えます。",
+      "右ひざを持ち上げながら上体をねじり、左ひじを右ひざに近づけます。腹筋の斜めをねじって縮めます。",
+      "足を下ろして、左ひざと右ひじ。交互にリズムよく各10回。2セット行います。",
+      "ふらつくときは壁に片手を添えて、ひじの代わりに反対の手でひざをタッチします。",
+      "息を止めず、動きに合わせて「フッ」と吐きます。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"ひざを上げて、胸から上をねじって近づける。", dont:"背中を丸めて頭だけ下げるのは失敗。胸を張ったままねじる。" },
+    easyOption:"壁に手を添えて、反対の手でひざをタッチするだけを各10回。",
+    why:"わき腹を使う有酸素の動き。短い時間で体が温まり、左右を同じだけ使える。"
+  },
+  {
+    id:"pt_wall_dead_bug", name:"壁デッドバグ", displayName:"壁に背中をつけて片ひざ上げ（お腹）", courses:["personal"],
+    targetProblems:["anteriorPelvicTilt","swayBack"],
+    category:"core", technique:"core", bodyPart:"core", intensity:1,
+    equipment:"壁", position:"standing", duration:"各10回 × 2セット",
+    purpose:"壁で腰の反りを止めたまま脚を上げる。立ったままのデッドバグ。",
+    how:[
+      "壁に背中をつけて立ち、かかとを壁から10cmほど離します。後頭部・背中・お尻を壁につけます。",
+      "腰と壁のすき間を、息を吐きながらなくします。手のひらが入らないくらいまで腰を壁に近づけます。",
+      "腰を壁につけたまま、右ひざをゆっくり腰の高さまで持ち上げます。腰が壁から離れない高さまでです。",
+      "ゆっくり下ろして、左ひざも同じように。交互に各10回、2セット行います。",
+      "腰が壁から浮いたら、ひざの高さを下げます。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"腰を壁につけたまま、離れない高さでひざを上げる。", dont:"ひざを高く上げようとして腰が壁から浮くのは失敗。" },
+    easyOption:"ひざを10cmだけ上げて各10回。",
+    why:"反り腰の人は脚を上げると腰が反る。壁がそれを教えてくれる。"
+  },
+  {
+    id:"pt_bear_hover", name:"ひざ浮かせキープ", displayName:"四つん這いでひざを2cm浮かせるキープ", courses:["personal","pilates"],
+    targetProblems:["anteriorPelvicTilt","general"],
+    category:"training", technique:"isometric", bodyPart:"core", intensity:2,
+    equipment:"マット", position:"quadruped", duration:"10秒 × 5セット",
+    purpose:"体幹全体が一気に働く。プランクより腰にやさしい。",
+    how:[
+      "四つん這いになります。手は肩の真下、ひざは股関節の真下、つま先は立てます。",
+      "背中を平らにして、お腹に力を入れます。おへそを軽く引き込む感じです。",
+      "息を吐きながら、両ひざを床から2cmだけ浮かせます。高く上げません。背中の平らさは保ちます。",
+      "10秒キープしてひざを下ろします。5セット行います。",
+      "手首が痛いときはこぶしをついて行います。腰が反ったり丸まったら下ろします。"
+    ],
+    cues:{ do:"ひざは2cmだけ。背中を平らに保って呼吸を続ける。", dont:"ひざを高く上げてお尻が上がるのは失敗。" },
+    easyOption:"片ひざずつ2cm浮かせて5秒キープ、各5回から。",
+    why:"お腹・背中・お尻・肩がすべて働く。短時間で体幹全体のスイッチが入る。"
+  },
+  {
+    id:"pt_standing_side_crunch", name:"立ちわき腹しめ", displayName:"立ってわき腹しめ（横倒し）", courses:["personal"],
+    targetProblems:["lateralAsymmetry","scoliosis"],
+    category:"training", technique:"strength", bodyPart:"core", intensity:1,
+    equipment:"なし", position:"standing", duration:"各10回 × 2セット",
+    purpose:"伸ばすのではなく「縮める」。ウエストの横を引き締める。",
+    how:[
+      "足を腰幅に開いて立ち、右手を頭の後ろに添え、左手は体の横に下ろします。",
+      "息を吐きながら、上体を右へ倒します。右のわき腹をぎゅっと縮める感じです。前や後ろには倒れません。",
+      "2秒止めて、ゆっくり戻します。10回行ったら手を替えて左も10回。2セット行います。",
+      "倒す大きさより、わき腹が縮んで硬くなることを優先します。",
+      "腰に痛みが出たら中止します。首を横に倒すのではなく、胸から倒します。"
+    ],
+    cues:{ do:"倒した側のわき腹を縮めて硬くする。", dont:"前に倒れる・腰だけ横にずらすのは失敗。真横に倒す。" },
+    easyOption:"倒す角度を小さくして各10回。壁に背中をつけて行うと真横に倒れやすい。",
+    why:"左右差がある人は、片側のわき腹だけ縮みっぱなし。両側を同じだけ使う。"
+  },
+  {
+    id:"pt_towel_row", name:"タオルローイング", displayName:"タオル引きローイング", courses:["personal"],
+    targetProblems:["roundedShoulders","thoracicKyphosis","forwardHead"],
+    category:"training", technique:"strength", bodyPart:"back", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"10回 × 2セット",
+    purpose:"タオルを引き合いながらひじを後ろへ。背中の真ん中を締めて巻き肩を戻す。",
+    how:[
+      "椅子に座り、背すじを伸ばします。フェイスタオルの両端を持ち、腕を前に伸ばします。手の幅は肩幅です。",
+      "タオルを左右に引っぱり合って、ピンと張ります。この張りは最後まで保ちます。",
+      "張ったまま、両ひじを体の横をこするように後ろへ引きます。タオルが胸の前に来るまでです。肩甲骨が寄ります。",
+      "2秒止めて、ゆっくり腕を伸ばします。これを10回、2セット行います。",
+      "肩がすくんで上がったら、いったん肩を下ろして構え直します。"
+    ],
+    cues:{ do:"タオルを張ったまま、ひじを体の横をこすって後ろへ引く。", dont:"肩がすくむ・タオルがゆるむのは失敗。" },
+    easyOption:"タオルを張る力を弱めて8回から。",
+    why:"背中の真ん中を「引く」筋肉は、家では鍛えにくい。タオルの張りで抵抗を作る。"
+  },
+  {
+    id:"pt_towel_ext_rotation", name:"タオル外ひねり", displayName:"タオルで肩の外ひねり", courses:["personal"],
+    targetProblems:["roundedShoulders"],
+    category:"training", technique:"strength", bodyPart:"shoulder", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"10回 × 2セット",
+    purpose:"ひじを脇につけて手を外へ。巻き肩を戻す小さな筋肉に効く。",
+    how:[
+      "椅子に座り、フェイスタオルの両端を持ちます。両ひじを直角に曲げて脇腹につけ、手は体の前です。",
+      "タオルを左右に引っぱり合って張ります。",
+      "ひじを脇から離さないように、両手をゆっくり外へ開きます。手のひらは上向きです。肩の後ろに力が入ります。",
+      "2秒止めて、ゆっくり戻します。これを10回、2セット行います。",
+      "ひじが脇から離れたら、脇にタオルをはさんで行うと離れません。"
+    ],
+    cues:{ do:"ひじを脇につけたまま、手だけを外へ開く。", dont:"ひじが脇から離れて腕ごと開くのは失敗。" },
+    easyOption:"タオルなしで、手を外に開くだけを10回から。",
+    why:"巻き肩は肩を外にひねる筋肉が弱い。ここを鍛えると肩が自然に後ろへ戻る。"
+  },
+  {
+    id:"pt_wall_y_raise", name:"壁向きYレイズ", displayName:"壁向きYレイズ", courses:["personal"],
+    targetProblems:["thoracicKyphosis","roundedShoulders"],
+    category:"training", technique:"strength", bodyPart:"back", intensity:1,
+    equipment:"壁", position:"standing", duration:"10回 × 2セット",
+    purpose:"壁に向かって腕をYの字に。背中の下側（下部僧帽筋）を起こす。",
+    how:[
+      "壁に向かって立ち、おでこを壁につけるくらい近づきます。足は腰幅です。",
+      "両腕を頭の上にYの字に伸ばし、手の甲を壁につけます。手のひらは向かい合わせです。",
+      "息を吐きながら、両手を壁から5cmだけ離します。肩はすくめず、背中の下側（肩甲骨の下）に力が入ればOK。",
+      "2秒止めて手を壁に戻します。これを10回、2セット行います。",
+      "肩に痛みが出たら、腕をVの字に少し下げて行います。"
+    ],
+    cues:{ do:"肩をすくめず、肩甲骨の下の力で手を壁から離す。", dont:"肩が耳に近づく・腰が反るのは失敗。" },
+    easyOption:"腕をVの字に下げて、壁から2cm離すだけを10回から。",
+    why:"猫背の人は背中の下側が眠っている。腕を上げたまま起こすと背中が伸びる。"
+  },
+  {
+    id:"pt_desk_press_up", name:"机押し上げキープ", displayName:"机を下から押し上げるキープ", courses:["personal"],
+    targetProblems:["roundedShoulders","thoracicKyphosis"],
+    category:"training", technique:"isometric", bodyPart:"back", intensity:1,
+    equipment:"机", position:"sitting", duration:"10秒 × 5セット",
+    purpose:"机を持ち上げるつもりで力を入れる。背中と二の腕を安全に鍛える。",
+    how:[
+      "机の前に座り、両手のひらを机の裏側（天板の下）に当てます。ひじは直角です。",
+      "背すじを伸ばし、肩を下げます。",
+      "机を持ち上げるつもりで、手のひらを上に押し上げます。机は動きませんが、背中と腕に力が入ります。",
+      "10秒キープして力を抜きます。5セット行います。息は止めず声に出して数えます。",
+      "肩がすくんできたら力を弱めます。手首が痛いときはこぶしで押します。"
+    ],
+    cues:{ do:"肩を下げたまま、机を持ち上げるつもりで押す。", dont:"肩が耳に近づく・息を止めるのは失敗。" },
+    easyOption:"5秒キープ×5セットから。",
+    why:"「動かない物を押す」だけで背中の筋肉は働く。ひじや肩にやさしい。"
+  },
+  {
+    id:"pt_narrow_wall_pushup", name:"ナロー壁腕立て", displayName:"ひじをしぼった壁腕立て（二の腕）", courses:["personal"],
+    targetProblems:["roundedShoulders"],
+    category:"training", technique:"strength", bodyPart:"arm", intensity:1,
+    equipment:"壁", position:"standing", duration:"10回 × 2セット",
+    purpose:"壁腕立てのひじを体につける版。二の腕の裏に効く。",
+    how:[
+      "壁から足1つ分離れて立ち、両手を胸の高さで壁につけます。手の幅は肩幅より狭く、指先は上です。",
+      "ひじを体の横につけたまま曲げて、胸を壁に近づけます。ひじが外に開かないようにします。",
+      "壁を押して戻ります。二の腕の裏が硬くなっていればOK。",
+      "これを10回、2セット行います。体は頭からかかとまで一直線です。",
+      "手首が痛いときは、こぶしを壁につけて行います。肩の痛みが出たら中止します。"
+    ],
+    cues:{ do:"ひじを体の横につけたまま曲げ伸ばしする。", dont:"ひじが外に開くのは普通の腕立て。二の腕に効かない。" },
+    easyOption:"壁との距離を半分にして8回から。",
+    why:"二の腕の裏（上腕三頭筋）は、ひじを体につけて曲げ伸ばしすると一番使われる。"
+  },
+  {
+    id:"pt_triceps_kickback_bw", name:"腕後ろ上下", displayName:"腕を後ろに伸ばして小さく上下（二の腕）", courses:["personal"],
+    targetProblems:["roundedShoulders","thoracicKyphosis"],
+    category:"training", technique:"strength", bodyPart:"arm", intensity:1,
+    equipment:"なし", position:"standing", duration:"15回 × 2セット",
+    purpose:"前かがみで腕を後ろへ伸ばす。二の腕の裏と背中を同時に引き締める。",
+    how:[
+      "足を腰幅に開き、ひざを軽く曲げて、上体を45度ほど前に倒します。背中はまっすぐです。",
+      "両腕を体の後ろにまっすぐ伸ばし、手のひらを内側に向けます。ひじは伸ばしたままです。",
+      "伸ばした腕を、天井に向かって小さく上下させます。動きは10cmで十分です。二の腕の裏が硬くなります。",
+      "15回行って腕を下ろします。2セット行います。",
+      "腰がつらいときは、片手を机やひざについて、片腕ずつ行います。"
+    ],
+    cues:{ do:"ひじを伸ばしたまま、腕を小さく上下させる。", dont:"ひじが曲がる・肩がすくむのは失敗。" },
+    easyOption:"机に片手をついて片腕ずつ10回から。",
+    why:"重りがなくても、腕を後ろで上下させると二の腕の裏に効く。"
+  },
+  {
+    id:"pt_towel_behind_back_pull", name:"後ろ手タオル引き", displayName:"後ろ手タオル引き（二の腕）", courses:["personal"],
+    targetProblems:["roundedShoulders","thoracicKyphosis"],
+    category:"training", technique:"isometric", bodyPart:"arm", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"各10秒 × 3セット",
+    purpose:"背中でタオルを上下に引き合う。二の腕・肩の後ろに効き、胸も開く。",
+    how:[
+      "椅子に座り、フェイスタオルの端を右手で持ち、右腕を頭の上から背中側へ垂らします。",
+      "左手を背中の下から回して、タオルのもう一方の端を持ちます。",
+      "上の手は上へ、下の手は下へ、タオルを引っぱり合います。10秒キープ。二の腕の裏と肩の後ろに力が入ります。",
+      "手を入れ替えて、左右3セットずつ行います。",
+      "肩が痛いときは、タオルを長く持って腕の位置を楽にします。"
+    ],
+    cues:{ do:"上下に引き合って、タオルをピンと張る。胸は開いたまま。", dont:"背中を丸めて引くのは失敗。背すじを伸ばす。" },
+    easyOption:"引き合わず、タオルを背中で持つだけを各10秒から。",
+    why:"腕を上げ下げ両方向で使うので、二の腕と肩まわりを一度に引き締められる。"
+  },
+  {
+    id:"pt_wall_rear_push", name:"壁後ろ手押し", displayName:"壁を後ろ手で押す（二の腕・肩の後ろ）", courses:["personal"],
+    targetProblems:["roundedShoulders"],
+    category:"training", technique:"isometric", bodyPart:"shoulder", intensity:1,
+    equipment:"壁", position:"standing", duration:"10秒 × 5セット",
+    purpose:"壁に背を向けて手のひらで壁を押す。肩を後ろに引く筋肉を鍛える。",
+    how:[
+      "壁に背を向けて、壁から手のひら1つ分離れて立ちます。",
+      "両腕を体の横に下ろし、手のひらを後ろの壁につけます。ひじは伸ばしたままです。",
+      "手のひらで壁を後ろへ押します。肩の後ろと二の腕の裏に力が入ります。胸が自然に開きます。",
+      "10秒キープして力を抜きます。5セット行います。息は止めません。",
+      "腰が反ってきたら、お腹に軽く力を入れて押す力を弱めます。"
+    ],
+    cues:{ do:"ひじを伸ばしたまま、手のひらで壁を後ろへ押す。", dont:"腰を反らせて胸を突き出すのは失敗。動くのは腕だけ。" },
+    easyOption:"5秒×5セットから。壁に近づいて行うと押しやすい。",
+    why:"肩を後ろへ引く筋肉が働くと、巻き肩が戻り、腕の後ろ側が引き締まる。"
+  },
+  {
+    id:"pt_towel_chin_tuck", name:"タオルあご引き", displayName:"タオルあご引き", courses:["personal"],
+    targetProblems:["forwardHead"],
+    category:"training", technique:"strength", bodyPart:"neck", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"10回 × 2セット",
+    purpose:"タオルを首の後ろにかけて引きながらあごを引く。首の後ろが伸びる感覚がわかりやすい。",
+    how:[
+      "椅子に座り、フェイスタオルを首の後ろにかけて、両端を胸の前で持ちます。",
+      "タオルを前に軽く引きます。首の後ろがタオルに支えられる感じです。",
+      "タオルを引いたまま、あごを引いて首の後ろを長く伸ばします。頭を後ろに倒すのではなく、後ろへスライドさせます。",
+      "3秒止めて力を抜きます。これを10回、2セット行います。",
+      "首に痛みが出たら中止します。二重あごになる動きで正解です。"
+    ],
+    cues:{ do:"タオルを前に引き、あごを後ろへスライドさせて首の後ろを伸ばす。", dont:"頭を上に向けて後ろに倒すのは失敗。あごは水平のまま。" },
+    easyOption:"タオルを引かずに、あご引きだけを10回から。",
+    why:"前に出た頭を戻す動きは感覚がつかみにくい。タオルの支えがあると正しい方向がわかる。"
+  },
+  {
+    id:"pt_chin_tuck_head_lift", name:"あご引き頭浮かせ", displayName:"あご引きのまま頭を1cm浮かせる", courses:["personal"],
+    targetProblems:["forwardHead"],
+    category:"training", technique:"strength", bodyPart:"neck", intensity:2,
+    equipment:"マット", position:"supine", duration:"5秒 × 5回",
+    purpose:"首の前の深い筋肉を鍛える。頭が前に出る人の根本の弱さに効く。",
+    how:[
+      "仰向けに寝て、ひざを立てます。両腕は体の横です。",
+      "あごを引いて、後頭部を床にすべらせるように首の後ろを長くします。二重あごの形です。",
+      "あごを引いたまま、頭を持ち上げるのは1cmだけ。床から紙1枚分浮かせる感じです。首の前に力が入ります。",
+      "5秒キープしてゆっくり下ろします。5回行います。",
+      "首の前が震えるのは効いている証拠です。首に痛みが出たら中止します。"
+    ],
+    cues:{ do:"あごを引いたまま、頭を1cmだけ浮かせて5秒。", dont:"あごが上がって頭を高く持ち上げるのは失敗。首の後ろを縮めない。" },
+    easyOption:"頭を浮かせず、あご引きで床を押すだけを5秒×5回から。",
+    why:"頭を支える首の前の筋肉が弱いと、頭はどんどん前へ出る。ここが土台。"
+  },
+  {
+    id:"pt_towel_head_walk", name:"タオル頭のせ歩き", displayName:"頭にタオルをのせて歩く", courses:["personal"],
+    targetProblems:["forwardHead","thoracicKyphosis","general"],
+    category:"training", technique:"balance", bodyPart:"fullbody", intensity:1,
+    equipment:"タオル", position:"standing", duration:"20歩 × 2セット",
+    purpose:"落とさないように歩くだけで背すじが伸びる。楽しく姿勢を覚える。",
+    how:[
+      "フェイスタオルを4つ折りにして、頭のてっぺんにのせます。",
+      "頭のてっぺんを天井から糸で引かれるように伸ばし、あごを軽く引きます。目線は前です。",
+      "タオルを落とさないように、ゆっくり20歩歩きます。歩幅は小さくてOK。",
+      "落ちたらのせ直して続けます。20歩を2セット行います。",
+      "慣れたら、歩きながら腕を振ってみます。廊下など長い場所で行うと歩きやすいです。"
+    ],
+    cues:{ do:"頭のてっぺんを上に伸ばしたまま、小さな歩幅で歩く。", dont:"下を向いてタオルを気にするのは失敗。目線は前。" },
+    easyOption:"歩かず、タオルをのせて1分立つだけから。",
+    why:"「頭を上に伸ばす」感覚を体で覚える。首・背中が自然にまっすぐになる。"
+  },
+  {
+    id:"pt_toe_raise", name:"つま先上げ", displayName:"つま先上げ（すねの筋肉）", courses:["personal"],
+    targetProblems:["ankleStiffness","kneeVarus"],
+    category:"training", technique:"strength", bodyPart:"foot", intensity:1,
+    equipment:"壁", position:"standing", duration:"15回 × 2セット",
+    purpose:"かかと立ちでつま先を上げ下げ。すねの筋肉を鍛えて、つまずきを防ぐ。",
+    how:[
+      "壁に背中をつけて立ち、かかとを壁から10cmほど離します。",
+      "かかとを床につけたまま、両足のつま先を持ち上げます。すねの前に力が入ります。",
+      "2秒止めて下ろします。これを15回、2セット行います。",
+      "ふらつくときは壁にお尻をつけたまま行います。",
+      "すねがつりそうになったら休みます。足首に痛みが出たら中止します。"
+    ],
+    cues:{ do:"かかとを床につけたまま、つま先だけを持ち上げる。", dont:"体を後ろに倒して反動で上げるのは失敗。" },
+    easyOption:"椅子に座って、つま先を上げ下げする15回から。",
+    why:"すねの筋肉は、かかと上げの反対側。両方鍛えて足首が動くようになる。"
+  },
+  {
+    id:"pt_heel_toe_walk", name:"かかと・つま先歩き", displayName:"かかと歩き／つま先歩き", courses:["personal"],
+    targetProblems:["ankleStiffness","general"],
+    category:"training", technique:"balance", bodyPart:"foot", intensity:1,
+    equipment:"なし", position:"standing", duration:"各10歩 × 2セット",
+    purpose:"10歩ずつ交互に。足首とふくらはぎを両方使い、バランスも整える。",
+    how:[
+      "つま先を上げて、かかとだけで10歩歩きます。すねの前に力が入ります。",
+      "次に、かかとを上げてつま先立ちで10歩歩きます。ふくらはぎに力が入ります。",
+      "これを1セットとして、2セット行います。歩幅は小さくてOKです。",
+      "ふらつくときは、壁に手を添えながら壁づたいに歩きます。",
+      "ふくらはぎがつりそうになったら休みます。足首に痛みが出たら中止します。"
+    ],
+    cues:{ do:"背すじを伸ばして、小さな歩幅で歩く。", dont:"下を向いて前かがみになるのは失敗。目線は前。" },
+    easyOption:"壁に手を添えて各5歩から。",
+    why:"歩くだけで足首の前と後ろを交互に使える。転びにくい足になる。"
+  },
+  {
+    id:"pt_backward_walk", name:"後ろ歩き", displayName:"後ろ歩き（10歩）", courses:["personal"],
+    targetProblems:["swayBack","posteriorPelvicTilt","general"],
+    category:"training", technique:"balance", bodyPart:"glutes", intensity:1,
+    equipment:"なし", position:"standing", duration:"10歩 × 3セット",
+    purpose:"後ろに歩くとお尻ともも裏が自然に働く。バランスも鍛えられる。",
+    how:[
+      "後ろに物がない、まっすぐな場所で立ちます。壁づたいなら壁に手を添えます。",
+      "つま先から着地するように、ゆっくり後ろへ10歩歩きます。お尻ともも裏に力が入ります。",
+      "前を向いて元の場所へ普通に歩いて戻ります。これを3セット行います。",
+      "背すじを伸ばし、目線は前のままです。振り返らなくてよいように、安全な場所を選びます。",
+      "ふらつくときは壁に手を添えて行います。"
+    ],
+    cues:{ do:"つま先から着地して、お尻で押し出すように後ろへ歩く。", dont:"上体を後ろに倒すのは失敗。まっすぐ立ったまま。" },
+    easyOption:"壁に手を添えて5歩から。",
+    why:"前に歩くのと逆の筋肉を使う。骨盤前出しの人が眠らせているお尻が目覚める。"
+  },
 ];
 
 export { DB_PERSONAL };

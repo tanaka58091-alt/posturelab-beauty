@@ -990,6 +990,281 @@ const DB_YOGA = [
     cues:{"do":"否定的な一文と、その反対の一文を、必ずセットで心の中で言い切る。","dont":"嫌な感情を無理に消そうとしない。気持ちがすぐ変わらなくても普通なので、できていないと思わなくてよい。"}, easyOption:"反対の言葉が浮かばなければ、どんな考えにも「それでも私は大丈夫」の一文を返すだけにする。",
     why:'感情の自由を取り戻す。'
   },
+  // ============== 2026-09-11 追加（16種・器具なし・強度1〜2） ==============
+  {
+    id:"yg_puppy_pose", name:"子犬の伸びのポーズ", displayName:"子犬の伸びのポーズ（胸を床に近づける）", courses:["yoga"],
+    targetProblems:["thoracicKyphosis","roundedShoulders"],
+    category:"asana", technique:"stretch", bodyPart:"chest", intensity:1,
+    equipment:"マット", position:"quadruped", duration:"30秒 × 2セット",
+    purpose:"お尻を高くしたまま胸を床に沈める。背中の上がいちばん開くポーズ。",
+    how:[
+      "四つん這いになり、ひざは股関節の真下に置きます。",
+      "お尻の位置を変えずに、両手を前へ歩かせて腕を伸ばします。お尻はひざの真上のままです。",
+      "胸を床に近づけて、おでこを床につけます。腕は伸ばしたまま、わきの下と胸が伸びます。",
+      "ゆったり呼吸しながら30秒。息を吐くたびに胸が床に近づきます。休んで2セット行います。",
+      "肩に痛みが出たら、ひじを床につけて腕の伸ばしをゆるめます。"
+    ],
+    cues:{ do:"お尻をひざの真上に残したまま、胸だけを床へ沈める。", dont:"お尻が後ろに下がってチャイルドポーズになるのは別物。" },
+    easyOption:"おでこの下にクッションを入れて30秒。",
+    why:"猫背で固まった背中の上は、この向きでないと伸びない。"
+  },
+  {
+    id:"yg_gate_pose", name:"門のポーズ", displayName:"門のポーズ（ひざ立ちで体側をのばす）", courses:["yoga"],
+    targetProblems:["scoliosis","lateralAsymmetry"],
+    category:"asana", technique:"stretch", bodyPart:"core", intensity:1,
+    equipment:"クッション", position:"kneeling", duration:"各30秒",
+    purpose:"片脚を横に伸ばして体側を長く。わき腹から腰の横までが伸びる。",
+    how:[
+      "クッションの上にひざ立ちになり、右脚を真横に伸ばします。右足の裏は床につけ、つま先は横向きです。",
+      "左腕を頭の上に伸ばし、右手は右の太ももに添えます。",
+      "息を吐きながら、上体を右へ倒します。左のわき腹が長く伸びます。目線は左手の先です。",
+      "30秒キープして戻り、脚を替えて左も30秒行います。",
+      "腰に痛みが出たら倒す角度を小さくします。ひざが痛いときはクッションを2枚重ねます。"
+    ],
+    cues:{ do:"上げた腕の側のわき腹を長く伸ばす。倒すのは真横。", dont:"前に倒れて腕が前に来るのは失敗。" },
+    easyOption:"椅子に座って、片腕を上げて真横に倒すだけ各30秒。",
+    why:"側弯ぎみや左右差の人は、縮んでいる側の体側を伸ばすと楽になる。"
+  },
+  {
+    id:"yg_banana_supine", name:"仰向けバナナのポーズ", displayName:"仰向けバナナのポーズ（体の横をのばす）", courses:["yoga"],
+    targetProblems:["scoliosis","lateralAsymmetry"],
+    category:"asana", technique:"restorative", bodyPart:"core", intensity:1,
+    equipment:"マット", position:"supine", duration:"各1分",
+    purpose:"寝たまま体を三日月の形に。力を抜いたまま体の横を伸ばせる。",
+    how:[
+      "仰向けに寝て、両腕を頭の上に伸ばします。",
+      "両足を右へ、上半身も右へずらして、体をバナナの形（三日月）にします。お尻は動かしません。",
+      "左手で右の手首を持ち、右へ軽く引きます。左のわき腹から腰の横までが伸びます。",
+      "力を抜いて1分間ゆったり呼吸します。反対側も1分行います。",
+      "腰に違和感があるときは、ひざを軽く曲げます。"
+    ],
+    cues:{ do:"お尻を動かさず、手足を同じ側にずらして三日月にする。", dont:"腰をねじって片方のお尻が浮くのは失敗。" },
+    easyOption:"腕を頭の上に上げず、体の横で三日月にして各1分。",
+    why:"寝た姿勢は力が抜けるので、体側の深いところまで伸びる。"
+  },
+  {
+    id:"yg_wall_downdog", name:"壁ダウンドッグ", displayName:"壁を使ったダウンドッグ", courses:["yoga"],
+    targetProblems:["thoracicKyphosis","roundedShoulders","posteriorPelvicTilt"],
+    category:"asana", technique:"stretch", bodyPart:"back", intensity:1,
+    equipment:"壁", position:"standing", duration:"30秒 × 3セット",
+    purpose:"壁に手をついてL字になる。手首や肩に負担をかけずに背中ともも裏を伸ばす。",
+    how:[
+      "壁に向かって立ち、両手を腰の高さで壁につけます。手の幅は肩幅です。",
+      "足を後ろへ歩かせて、上体を前に倒し、体をL字にします。腕と背中は一直線です。",
+      "お尻を後ろへ引き、背中を長く伸ばします。ひざは軽く曲げてOK。背中が丸まらないことを優先します。",
+      "ゆったり呼吸しながら30秒。3セット行います。",
+      "頭を下げすぎてくらくらするときは、手の位置を胸の高さに上げます。"
+    ],
+    cues:{ do:"お尻を後ろへ引いて、腕から背中までを一直線に伸ばす。", dont:"背中が丸まってひじが曲がるのは失敗。ひざを曲げてよい。" },
+    easyOption:"手を胸の高さにつけて、浅いL字で30秒。",
+    why:"床のダウンドッグは手首と肩に負担が大きい。壁ならその心配なく背中が伸びる。"
+  },
+  {
+    id:"yg_half_forward_fold_wall", name:"半分の前屈", displayName:"半分の前屈（壁に手をついて背中を平らに）", courses:["yoga"],
+    targetProblems:["posteriorPelvicTilt","thoracicKyphosis"],
+    category:"asana", technique:"stretch", bodyPart:"back", intensity:1,
+    equipment:"壁", position:"standing", duration:"30秒 × 3セット",
+    purpose:"背中を丸めずに前屈する。もも裏の伸びと背中の伸びを分けて感じる。",
+    how:[
+      "壁に向かって立ち、腕を伸ばして両手を壁につけます。手の高さは腰です。",
+      "お尻を後ろに引きながら上体を倒し、背中を床と平行にします。腕は伸ばしたままです。",
+      "背中を平らにしたまま、ひざを伸ばします。もも裏が伸びます。伸ばしきれなくてOK。",
+      "30秒キープして、ひざを曲げてから起き上がります。3セット行います。",
+      "腰が丸まるときは、ひざをもっと曲げて背中を平らに保ちます。"
+    ],
+    cues:{ do:"背中を平らにしたまま、お尻を後ろに引いてもも裏を伸ばす。", dont:"背中が丸まって頭が下がるのは失敗。ひざを曲げてよい。" },
+    easyOption:"椅子の背に手をついて行うと、倒す角度が浅くなる。",
+    why:"骨盤が後ろに倒れる人は前屈で背中が丸まる。背中を平らに保つ練習になる。"
+  },
+  {
+    id:"yg_goddess_pose", name:"女神のポーズ", displayName:"女神のポーズ（足を開いてしゃがむ）", courses:["yoga"],
+    targetProblems:["kneeValgus","kneeVarus","anteriorPelvicTilt"],
+    category:"asana", technique:"standing", bodyPart:"legs", intensity:2,
+    equipment:"なし", position:"standing", duration:"20秒 × 3セット",
+    purpose:"足を大きく開いて腰を落とす。内ももとお尻を使いながら股関節を開く。",
+    how:[
+      "足を肩幅の1.5倍に開き、つま先を45度外に向けます。",
+      "両手を胸の前で合わせるか、ひじを曲げて手のひらを前に向けます。",
+      "息を吐きながら、ひざをつま先と同じ向きに曲げて腰を落とします。太ももが床と45度くらいまでです。",
+      "背すじを伸ばしたまま20秒キープ。内ももとお尻に力が入ります。3セット行います。",
+      "ひざが内に入ったら、腰を落とす深さを浅くします。ひざに痛みが出たら中止します。"
+    ],
+    cues:{ do:"ひざをつま先と同じ向きに開いたまま、腰を真下に落とす。", dont:"ひざが内側に入る・お尻が後ろに突き出るのは失敗。" },
+    easyOption:"壁に背中をつけて、浅く腰を落として10秒から。",
+    why:"内ももとお尻の横を同時に使うので、ひざの向きを整える土台になる。"
+  },
+  {
+    id:"yg_pyramid_chair", name:"ピラミッドのポーズ", displayName:"ピラミッドのポーズ（前後開脚で前屈・椅子に手）", courses:["yoga"],
+    targetProblems:["posteriorPelvicTilt","lateralAsymmetry"],
+    category:"asana", technique:"standing", bodyPart:"leg", intensity:2,
+    equipment:"椅子", position:"standing", duration:"各30秒",
+    purpose:"片脚ずつもも裏を深く伸ばす。左右の違いがはっきりわかる。",
+    how:[
+      "椅子の前に立ち、右脚を前・左脚を後ろに、歩幅1つ分開きます。両足のつま先は前向きです。",
+      "両手を椅子の座面につけ、背中をまっすぐにしたまま上体を前に倒します。",
+      "前の脚のひざは伸ばし、もも裏が伸びるところで止めます。腰を丸めません。",
+      "30秒キープして起き上がり、脚を入れ替えて左も30秒行います。",
+      "後ろのかかとが浮くときは歩幅を狭くします。頭を下げてくらくらしたら起き上がります。"
+    ],
+    cues:{ do:"背中をまっすぐにしたまま、前の脚のもも裏を伸ばす。", dont:"背中を丸めて頭を下げるのは失敗。手を椅子に置いたまま浅く。" },
+    easyOption:"前のひざを軽く曲げて、椅子の背に手をついて行う。",
+    why:"もも裏の左右差は骨盤の傾きに直結する。片脚ずつ伸ばすと差が縮まる。"
+  },
+  {
+    id:"yg_high_lunge_wall", name:"立って三日月", displayName:"立って三日月（ハイランジ・壁に手）", courses:["yoga"],
+    targetProblems:["anteriorPelvicTilt","swayBack"],
+    category:"asana", technique:"standing", bodyPart:"hip", intensity:2,
+    equipment:"壁", position:"standing", duration:"各30秒",
+    purpose:"脚の付け根の前を立ったまま伸ばす。ひざをつかなくてよい。",
+    how:[
+      "壁の横に立ち、壁側の手を壁に添えます。",
+      "右脚を大きく後ろに引き、左ひざを曲げます。左ひざはかかとの真上です。後ろの脚はひざを伸ばし、かかとは浮かせます。",
+      "お尻を軽く締めて、骨盤を立てます。右脚の付け根の前が伸びます。上体はまっすぐ、目線は前です。",
+      "30秒キープして、脚を入れ替えて左も30秒行います。",
+      "腰が反るときは、前のひざを深く曲げず、後ろ脚を少し前に戻します。"
+    ],
+    cues:{ do:"お尻を締めて骨盤を立てたまま、後ろ脚の付け根を伸ばす。", dont:"腰を反らせて胸を突き出すのは失敗。" },
+    easyOption:"後ろ脚のひざを床（クッション）につけて、ひざつきの三日月で行う。",
+    why:"反り腰・骨盤前出しの人は脚の付け根の前が縮んでいる。立ったまま伸ばせる。"
+  },
+  {
+    id:"yg_tiger_pose", name:"トラのポーズ", displayName:"トラのポーズ（四つん這いで脚を上げて胸を開く）", courses:["yoga"],
+    targetProblems:["thoracicKyphosis","anteriorPelvicTilt","swayBack"],
+    category:"asana", technique:"backbend", bodyPart:"back", intensity:2,
+    equipment:"マット", position:"quadruped", duration:"各5回",
+    purpose:"脚を後ろに伸ばしながら目線を上げる。お尻と背中を一緒に使う。",
+    how:[
+      "四つん這いになり、手は肩の真下、ひざは股関節の真下です。",
+      "息を吸いながら、右脚を後ろにまっすぐ伸ばし、腰の高さまで上げます。同時に胸を前に向け、目線を少し上げます。",
+      "息を吐きながら、右ひざを胸に引き寄せ、背中を丸めて目線をおへそへ向けます。",
+      "これを5回くり返し、左脚も5回行います。",
+      "腰に痛みが出たら、脚を上げる高さを下げます。手首が痛いときはこぶしをつきます。"
+    ],
+    cues:{ do:"吸って脚を伸ばし胸を開く、吐いてひざを寄せ背中を丸める。", dont:"脚を高く上げすぎて腰が反るのは失敗。腰の高さまで。" },
+    easyOption:"脚を上げず、ひざを床から10cm浮かせて後ろへ伸ばすだけ各5回。",
+    why:"背中を反らせる・丸めるを交互に行うので、猫背で固まった背骨が動き出す。"
+  },
+  {
+    id:"yg_heron_towel", name:"サギのポーズ", displayName:"サギのポーズ（座って片脚を持ち上げる・タオル）", courses:["yoga"],
+    targetProblems:["posteriorPelvicTilt","lateralAsymmetry"],
+    category:"asana", technique:"seated", bodyPart:"leg", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"各30秒",
+    purpose:"座ってタオルで片脚を持ち上げる。もも裏を安全に伸ばせる。",
+    how:[
+      "床に座り、左ひざを曲げて足の裏を床につけます。右脚は前に伸ばします。",
+      "タオルを右足の土踏まずにかけ、両端を両手で持ちます。",
+      "背すじを伸ばしたまま、右脚を持ち上げます。ひざは伸ばしきらなくてOK。もも裏が伸びるところで止めます。",
+      "30秒キープして下ろし、脚を替えて左も30秒行います。",
+      "背中が丸まるときは、脚を上げる高さを下げます。腰の痛みは中止のサインです。"
+    ],
+    cues:{ do:"背すじを伸ばしたまま、タオルで脚を持ち上げる。", dont:"背中を丸めて脚を高く上げるのは失敗。高さより背すじ。" },
+    easyOption:"壁に背中をつけて座り、脚を低く上げて30秒。",
+    why:"もも裏がかたいと骨盤が後ろに倒れる。座ったまま安全に伸ばせる。"
+  },
+  {
+    id:"yg_easy_eagle_arms", name:"やさしいワシの腕", displayName:"やさしいワシの腕（腕を交差して肩甲骨を広げる）", courses:["yoga"],
+    targetProblems:["roundedShoulders","thoracicKyphosis"],
+    category:"asana", technique:"stretch", bodyPart:"shoulder", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"腕を抱えるだけの簡単版。肩甲骨の間が広がって伸びる。",
+    how:[
+      "椅子に座り、背すじを伸ばします。",
+      "両腕を前に伸ばし、右腕を左腕の上に重ねてクロスします。そのまま自分を抱きしめるように、両手で反対の肩をつかみます。",
+      "ひじを前に押し出しながら、背中を少し丸めます。肩甲骨の間が広がって伸びます。",
+      "30秒キープして腕をほどき、腕の上下を替えて30秒行います。",
+      "肩に痛みが出たら、肩をつかまず、ひじを抱えるだけにします。"
+    ],
+    cues:{ do:"ひじを前に押し出して、肩甲骨の間を広げる。", dont:"肩がすくんで耳に近づくのは失敗。肩を下げる。" },
+    easyOption:"腕をクロスせず、両手で反対のひじを持って前に押し出す。",
+    why:"巻き肩・猫背の人は肩甲骨の間が固まっている。腕を交差するだけでゆるむ。"
+  },
+  {
+    id:"yg_cross_body_shoulder", name:"腕引き寄せ", displayName:"腕を胸の前に引き寄せる（肩の後ろ）", courses:["yoga"],
+    targetProblems:["roundedShoulders","lateralAsymmetry"],
+    category:"asana", technique:"stretch", bodyPart:"shoulder", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"肩の後ろ側を伸ばす基本。左右の違いがわかりやすい。",
+    how:[
+      "椅子に座り、背すじを伸ばします。",
+      "右腕を胸の前を横切るように、左へまっすぐ伸ばします。",
+      "左手で右のひじの少し上を持ち、胸に引き寄せます。右肩の後ろが伸びます。右肩は下げたままです。",
+      "30秒キープして、腕を替えて左も30秒行います。",
+      "肩に痛みが出たら、引き寄せる力を弱めます。"
+    ],
+    cues:{ do:"肩を下げたまま、ひじを胸に引き寄せて肩の後ろを伸ばす。", dont:"肩がすくむ・上体がねじれるのは失敗。" },
+    easyOption:"腕を胸の前に横切らせるだけで、引き寄せずに30秒。",
+    why:"肩の後ろがかたいと腕が前に引かれる。左右差もここに出やすい。"
+  },
+  {
+    id:"yg_overhead_triceps", name:"頭の後ろでひじ押し", displayName:"頭の後ろでひじを押す（二の腕・わき）", courses:["yoga"],
+    targetProblems:["roundedShoulders","thoracicKyphosis"],
+    category:"asana", technique:"stretch", bodyPart:"arm", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"二の腕の裏とわきの下を伸ばす。腕が上がりにくい人に。",
+    how:[
+      "椅子に座り、背すじを伸ばします。",
+      "右腕を頭の上に上げ、ひじを曲げて右手を背中の上のほうに置きます。",
+      "左手で右ひじを持ち、頭の後ろで左へやさしく押します。右の二の腕の裏とわきの下が伸びます。",
+      "30秒キープして、腕を替えて左も30秒行います。",
+      "肩に痛みが出たら、ひじを押さず、腕を頭の上に上げるだけにします。"
+    ],
+    cues:{ do:"背すじを伸ばしたまま、ひじを頭の後ろでやさしく押す。", dont:"腰を反らせて胸を突き出すのは失敗。" },
+    easyOption:"腕を上げるだけで押さず30秒。",
+    why:"二の腕の裏とわきの下がかたいと肩が前に巻く。ここを伸ばすと腕が上がりやすくなる。"
+  },
+  {
+    id:"yg_chair_sun_salutation", name:"椅子で太陽礼拝", displayName:"椅子で太陽礼拝（やさしい流れ）", courses:["yoga"],
+    targetProblems:["general","thoracicKyphosis","roundedShoulders"],
+    category:"asana", technique:"seated", bodyPart:"fullbody", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"3周",
+    purpose:"座ったまま「腕上げ→前屈→胸開き」を呼吸で流す。朝の1分に。",
+    how:[
+      "椅子に浅く座り、両足を床につけて、両手を胸の前で合わせます。",
+      "息を吸いながら、両腕を頭の上に伸ばします。目線は少し上です。",
+      "息を吐きながら、上体を前に倒して両手を足の横の床（または、すね）に下ろします。",
+      "息を吸いながら、上体を起こして胸を開き、両手をひざに置いて背中を反らせます。",
+      "息を吐きながら胸の前で手を合わせて元に戻ります。これで1周。3周行います。",
+      "頭を下げてくらくらするときは、前に倒す角度を浅くします。"
+    ],
+    cues:{ do:"呼吸に合わせて、吸うで伸びる・吐くで倒す。", dont:"呼吸を無視して急いで動くのは失敗。" },
+    easyOption:"前に倒すところを省いて、腕上げと胸開きだけを3周。",
+    why:"ヨガの基本の流れを椅子で。全身が呼吸と一緒に動き、朝の体が目覚める。"
+  },
+  {
+    id:"yg_kneeling_sun_salutation", name:"ひざつき太陽礼拝", displayName:"ひざつき太陽礼拝（やさしい流れ）", courses:["yoga"],
+    targetProblems:["general","thoracicKyphosis","anteriorPelvicTilt"],
+    category:"asana", technique:"standing", bodyPart:"fullbody", intensity:2,
+    equipment:"マット", position:"standing", duration:"3周",
+    purpose:"立位から床までを1つの流れで。全身を使って飽きずに動ける。",
+    how:[
+      "マットの上に立ち、胸の前で手を合わせます。息を吸いながら両腕を頭の上に伸ばします。",
+      "息を吐きながら、ひざを曲げて前屈し、両手を床につけます。",
+      "そのまま両ひざを床につき、四つん這いになります。息を吸って背中を反らせ（カウ）、吐いて丸めます（キャット）。",
+      "お尻をかかとに下ろしてチャイルドポーズで2呼吸休みます。",
+      "四つん這いに戻り、片脚ずつ足を手の横に置いて、ひざを曲げたまま立ち上がります。腕を頭の上に伸ばして手を合わせます。これで1周。3周行います。",
+      "手首が痛いときはこぶしをつきます。頭を下げてくらくらしたら休みます。"
+    ],
+    cues:{ do:"呼吸に合わせて、ひざを使って床との行き来をゆっくり。", dont:"勢いで立ち上がる・ひざを伸ばしたまま床に手をつくのは失敗。" },
+    easyOption:"立ち上がる部分を省き、四つん這い→チャイルドポーズの往復を3周。",
+    why:"床との行き来を含む全身の流れは、それだけで30日飽きない変化になる。"
+  },
+  {
+    id:"yg_morning_flow", name:"寝起きの流れ", displayName:"寝起きの流れ（猫牛→子犬→チャイルド）", courses:["yoga"],
+    targetProblems:["thoracicKyphosis","general","anteriorPelvicTilt"],
+    category:"asana", technique:"stretch", bodyPart:"back", intensity:1,
+    equipment:"マット", position:"quadruped", duration:"2分",
+    purpose:"3つのポーズを2分で。布団の上でできる朝の背中ほぐし。",
+    how:[
+      "四つん這いになります。息を吸いながら背中を反らせて目線を上げ、吐きながら背中を丸めておへそを見ます。これを5回。",
+      "お尻の位置を変えずに両手を前に歩かせ、胸を床に近づけます（子犬の伸び）。5呼吸キープします。",
+      "お尻をかかとに下ろし、おでこを床につけて休みます（チャイルドポーズ）。5呼吸キープします。",
+      "ゆっくり四つん這いに戻ります。合計2分が目安です。",
+      "ひざが痛いときは、ひざの下にクッションを入れます。"
+    ],
+    cues:{ do:"呼吸に合わせて背中を動かし、最後はゆるめて終わる。", dont:"急いで流すのは失敗。1つ5呼吸ずつ。" },
+    easyOption:"猫牛だけを10回行って終わる。",
+    why:"朝いちばんに背中を動かすと、その日1日の姿勢が変わる。"
+  },
 ];
 
 export { DB_YOGA };

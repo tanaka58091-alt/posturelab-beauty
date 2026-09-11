@@ -1684,3 +1684,10 @@ body{
 
 /* 引き締め枠のタグ */
 .ex-cat.toning{ background:#FFF0D6; color:#9A6B1F; margin-left:6px }
+
+/* きょうの「ながら」習慣（2026-09-11） */
+.nagara-card{ width:100%; margin-top:12px; padding:12px 14px; background:#FFFFFF; border:1px dashed var(--gold); border-radius:14px; text-align:left }
+.nagara-head{ font-size:12px; font-weight:700; color:#9A6B1F; margin-bottom:4px }
+.nagara-title{ font-size:15px; font-weight:700; color:var(--ink); margin-bottom:4px }
+.nagara-how{ font-size:13px; line-height:1.6; color:var(--ink) }
+.nagara-meta{ font-size:12px; color:#7A5C52; margin-top:6px }

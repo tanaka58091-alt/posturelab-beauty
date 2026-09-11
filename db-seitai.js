@@ -888,6 +888,568 @@ const DB_SEITAI = [
     cues:{"do":"頭と肩がマットに触れたままか、ときどき確かめる。","dont":"体が後ろへ転がる感じが出るほど強く引かない。痛みが出たら弱める。"}, easyOption:"ふらつくときは、イスの背を両手で持って前向きに立ち(手は腰に当てなくてよい)、上げるひざの高さをこぶし1個分だけにして小さな円を描く。同じ数え方で各方向5回ずつ、左右とも行う。",
     why:'お尻の奥の梨状筋を仰向けで安全にのばし、股関節まわりをゆるめます。'
   },
+  // ============== 2026-09-11 追加（33種・器具なし・強度1〜2） ==============
+  {
+    id:"st_occiput_press", name:"後頭部押し", displayName:"後頭部のきわを指で押す", courses:["seitai"],
+    targetProblems:["forwardHead"],
+    category:"selfcare", technique:"release", bodyPart:"neck", intensity:1,
+    equipment:"なし", position:"sitting", duration:"1分",
+    purpose:"髪の生え際の骨のきわを親指で押す。首こり・頭痛の元をゆるめる。",
+    how:[
+      "椅子に座り、両手を後頭部に回します。親指を、髪の生え際のすぐ上にある骨のきわ（くぼみ）に当てます。",
+      "親指で骨のきわを、頭の中心に向かってやさしく押します。10段階で3〜4の強さです。",
+      "押したまま、あごを軽く引いて、ゆっくり「うん」とうなずきます。5回。",
+      "親指を耳の方へ指1本分ずらして、同じように押してうなずきます。合計1分。",
+      "しびれや強い痛みが出たら中止します。"
+    ],
+    cues:{ do:"骨のきわのくぼみを、やさしく押しながらうなずく。", dont:"強く押して息を止めるのは失敗。気持ちいい強さで。" },
+    easyOption:"押すだけで、うなずかずに30秒。",
+    why:"頭が前に出る人は後頭部の小さな筋肉が縮んでいる。ここがゆるむと首が楽になる。"
+  },
+  {
+    id:"st_towel_neck_traction", name:"タオル首のばし", displayName:"タオルで首の付け根のばし（後頭部を引き上げる）", courses:["seitai"],
+    targetProblems:["forwardHead","thoracicKyphosis"],
+    category:"selfcare", technique:"stretch", bodyPart:"neck", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"30秒 × 3セット",
+    purpose:"タオルを後頭部にかけて斜め上へ引く。首の後ろが長くなる。",
+    how:[
+      "椅子に座り、フェイスタオルの真ん中を後頭部（頭の後ろの出っぱりの下）にかけます。両端を前で持ちます。",
+      "両手を斜め上、おでこの前あたりに向けてタオルを引きます。頭が上に引き上げられる感じです。",
+      "あごを軽く引いて、首の後ろが伸びるのを感じながら30秒キープします。",
+      "ゆっくりゆるめて、3セット行います。",
+      "首に痛みが出たら引く力を弱めます。めまいがしたら中止します。"
+    ],
+    cues:{ do:"斜め上に引いて、頭を上に持ち上げるように首を伸ばす。", dont:"真後ろに引いて頭を反らせるのは失敗。" },
+    easyOption:"引く力を弱め、15秒×3セット。",
+    why:"首の付け根が縮むと頭は前に出る。タオルの引き上げで安全に伸ばせる。"
+  },
+  {
+    id:"st_scm_pinch", name:"首の前つまみ", displayName:"首の前の太い筋肉つまみ（胸鎖乳突筋）", courses:["seitai"],
+    targetProblems:["forwardHead"],
+    category:"selfcare", technique:"release", bodyPart:"neck", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"首の前を軽くつまんでゆらす。頭が前に出る人の前側のこわばりをほどく。",
+    how:[
+      "椅子に座り、顔を左に向けます。右の首の前に、耳の後ろから鎖骨へ斜めに走る太い筋肉が浮き出ます。",
+      "顔を正面に戻して、その筋肉の真ん中あたりを、親指と人差し指で軽くつまみます。押し込まず、つまむだけです。",
+      "つまんだまま、指を前後に小さくゆらします。30秒。強い力は要りません。",
+      "反対側も同じように30秒行います。",
+      "脈を強く感じる場所や、痛み・気分の悪さが出たらすぐやめます。"
+    ],
+    cues:{ do:"筋肉を軽くつまんで、小さくゆらすだけ。", dont:"首の奥を強く押すのは禁物。脈を感じたら場所をずらす。" },
+    easyOption:"つままず、手のひらで首の前を上下にさするだけ30秒。",
+    why:"頭が前に出ると首の前の筋肉が縮んで硬くなる。後ろだけほぐしても戻らない。"
+  },
+  {
+    id:"st_ear_pull", name:"耳引っぱり", displayName:"耳をやさしく引っぱる", courses:["seitai"],
+    targetProblems:["forwardHead","general"],
+    category:"selfcare", technique:"release", bodyPart:"face", intensity:1,
+    equipment:"なし", position:"sitting", duration:"1分",
+    purpose:"耳を上・横・下へ引く。頭まわりの緊張がゆるみ、気持ちいい。",
+    how:[
+      "椅子に座り、両手で両耳の上のほうをつまみます。",
+      "耳を斜め上へ、5秒やさしく引っぱります。",
+      "次に耳の真ん中をつまんで真横へ5秒、耳たぶをつまんで斜め下へ5秒引っぱります。",
+      "最後に耳全体を手のひらで包んで、後ろへゆっくり5回まわします。合計1分。",
+      "痛みが出る強さでは引きません。"
+    ],
+    cues:{ do:"気持ちいい強さで、上・横・下へゆっくり引く。", dont:"勢いよく引くのは失敗。" },
+    easyOption:"耳たぶを下に引くだけ30秒。",
+    why:"耳のまわりには頭・あご・首につながる筋膜が集まっている。ここをゆるめると頭が軽くなる。"
+  },
+  {
+    id:"st_crown_press", name:"頭のてっぺん押し", displayName:"頭のてっぺん押し", courses:["seitai"],
+    targetProblems:["general","forwardHead"],
+    category:"selfcare", technique:"release", bodyPart:"face", intensity:1,
+    equipment:"なし", position:"sitting", duration:"1分",
+    purpose:"頭頂を指で押して呼吸する。目と首の疲れをリセットする。",
+    how:[
+      "椅子に座り、両耳の一番高いところを結んだ線と、顔の真ん中の線が交わる頭のてっぺんに、中指を重ねて当てます。",
+      "息を吐きながら、真下に向かってやさしく5秒押します。",
+      "息を吸いながらゆるめます。これを6回、1分行います。",
+      "押しながら、目を閉じて肩の力を抜きます。",
+      "痛みが出る強さでは押しません。"
+    ],
+    cues:{ do:"吐く息に合わせて、真下にやさしく押す。", dont:"爪を立てたり、強く押し込むのは失敗。" },
+    easyOption:"手のひら全体で頭のてっぺんを包んで、軽く押すだけ30秒。",
+    why:"頭のてっぺんを意識すると、首が自然に伸びて姿勢が整いやすい。"
+  },
+  {
+    id:"st_tongue_circle", name:"舌回し", displayName:"舌回し（あごまわり）", courses:["seitai"],
+    targetProblems:["forwardHead"],
+    category:"selfcare", technique:"mobility", bodyPart:"face", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各方向10周",
+    purpose:"口の中で舌を回す。あご下・首の前がすっきりして、頭の位置が整う。",
+    how:[
+      "口を閉じて、舌の先を上の歯ぐきの外側（歯と唇の間）に当てます。",
+      "そのまま舌で、歯ぐきの外側をなぞるように大きくゆっくり回します。右回り10周。",
+      "左回りも10周行います。あごの下が疲れてくれば効いています。",
+      "回すのは1周3秒くらいのゆっくりした速さです。",
+      "あごに痛みが出たら回数を減らします。"
+    ],
+    cues:{ do:"歯ぐきの外側を、大きくゆっくりなぞって回す。", dont:"速く小さく回すのは効かない。1周3秒。" },
+    easyOption:"各方向5周から。",
+    why:"舌の位置が低いと頭が前に出やすい。舌の筋肉を動かすと首の前がゆるむ。"
+  },
+  {
+    id:"st_subclavian_rub", name:"鎖骨下ほぐし", displayName:"鎖骨の下を指でほぐす", courses:["seitai"],
+    targetProblems:["roundedShoulders","forwardHead"],
+    category:"selfcare", technique:"release", bodyPart:"chest", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"鎖骨のすぐ下を指でくるくる。巻き肩の元になる小さな筋肉をゆるめる。",
+    how:[
+      "椅子に座り、右手の指3本を、左の鎖骨のすぐ下に当てます。肩に近い外側寄りです。",
+      "指で小さな円を描くように、30秒ほぐします。押しすぎず、皮ふを動かす感じです。",
+      "ほぐしながら、左肩をゆっくり後ろへ3回まわします。",
+      "反対側も同じように30秒行います。",
+      "痛みが強い場所は避けて、まわりをほぐします。"
+    ],
+    cues:{ do:"鎖骨の下を指で小さな円を描いてゆるめる。", dont:"骨を強く押すのは失敗。押すのは筋肉。" },
+    easyOption:"手のひらで鎖骨の下を横にさするだけ30秒。",
+    why:"鎖骨の下の筋肉（小胸筋）が縮むと肩が前に引かれる。巻き肩の元。"
+  },
+  {
+    id:"st_pec_pinch_arm_circle", name:"わきの前つまみ腕回し", displayName:"わきの前つまみ＋腕回し", courses:["seitai"],
+    targetProblems:["roundedShoulders"],
+    category:"selfcare", technique:"release", bodyPart:"chest", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"わきの前の筋肉をつまんだまま腕を回す。胸の外側がゆるむ。",
+    how:[
+      "椅子に座り、右手で左のわきの前（胸とわきの間の厚い筋肉）を親指と4本の指でつまみます。",
+      "つまんだまま、左腕をゆっくり後ろへ大きく回します。5回。",
+      "つまむ場所を少し上（鎖骨寄り）にずらして、また5回回します。合計30秒。",
+      "反対側も同じように30秒行います。",
+      "つまむ強さは、痛気持ちいい程度です。"
+    ],
+    cues:{ do:"筋肉をつまんだまま、腕を大きく後ろへ回す。", dont:"つまむ手が離れる・腕を小さく回すのは失敗。" },
+    easyOption:"つままず、手のひらで押さえたまま腕を回す。",
+    why:"胸の筋肉をつまんで動かすと、伸ばすだけより早くゆるむ。"
+  },
+  {
+    id:"st_axilla_rub", name:"わきの下ほぐし", displayName:"わきの下を手でほぐす（肋骨の横）", courses:["seitai"],
+    targetProblems:["thoracicKyphosis","roundedShoulders"],
+    category:"selfcare", technique:"release", bodyPart:"chest", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"わきの下の肋骨の上をさすってゆるめる。呼吸が深くなる。",
+    how:[
+      "椅子に座り、左腕を軽く上げます。右手の指を左のわきの下、肋骨の横に当てます。",
+      "指で肋骨の上を、前から後ろへゆっくりさすります。10回。",
+      "次に、同じ場所を指で小さな円を描くようにほぐします。20秒。合計30秒。",
+      "反対側も同じように30秒行います。",
+      "くすぐったいときは、手のひら全体で押さえてさすります。"
+    ],
+    cues:{ do:"肋骨の横を、指でさすって小さくほぐす。", dont:"わきの奥を強く押すのは失敗。表面をさする。" },
+    easyOption:"手のひらでわきの下を前後にさするだけ30秒。",
+    why:"わきの下の筋肉が固まると肩甲骨が動かず、胸が開かない。"
+  },
+  {
+    id:"st_clavicle_lymph", name:"鎖骨さすり", displayName:"鎖骨さすり（リンパ）", courses:["seitai"],
+    targetProblems:["general","roundedShoulders"],
+    category:"selfcare", technique:"massage", bodyPart:"neck", intensity:1,
+    equipment:"なし", position:"sitting", duration:"1分",
+    purpose:"鎖骨の上下を内から外へさする。首・肩の重さが軽くなる。",
+    how:[
+      "椅子に座り、右手の人差し指と中指で、左の鎖骨を上下からはさみます。",
+      "鎖骨に沿って、首の付け根から肩に向かって、外へゆっくりさすります。10回。",
+      "次に、鎖骨の上のくぼみを指で軽く押しながら、深く息を3回吸って吐きます。",
+      "反対側も同じように行います。合計1分。",
+      "力は要りません。皮ふをなでる程度です。"
+    ],
+    cues:{ do:"内から外へ、皮ふをなでる程度の力でさする。", dont:"強く押して赤くなるのは失敗。" },
+    easyOption:"鎖骨の上を手のひらで外へなでるだけ30秒。",
+    why:"鎖骨まわりは首・肩の流れの出口。ここが流れると首が軽くなる。"
+  },
+  {
+    id:"st_sternum_rub", name:"胸の真ん中さすり", displayName:"胸の真ん中さすり", courses:["seitai"],
+    targetProblems:["thoracicKyphosis","general"],
+    category:"selfcare", technique:"massage", bodyPart:"chest", intensity:1,
+    equipment:"なし", position:"sitting", duration:"1分",
+    purpose:"胸骨を上下にさする。胸が開いて呼吸が入りやすくなる。",
+    how:[
+      "椅子に座り、右手の指3本を胸の真ん中の骨（胸骨）の上に当てます。",
+      "のどの下から、みぞおちに向かって、ゆっくり下にさすります。10回。",
+      "次に、胸骨の上を指で小さな円を描いてほぐします。硬く感じる場所を中心に30秒。",
+      "最後に、胸に手を当てたまま深く3回呼吸します。合計1分。",
+      "痛みが出る強さでは押しません。"
+    ],
+    cues:{ do:"胸骨の上を、上から下へやさしくさする。", dont:"強く押し込むのは失敗。" },
+    easyOption:"手のひら全体で胸を上下にさするだけ30秒。",
+    why:"猫背の人は胸の真ん中が縮んでいる。さするだけで胸が広がり、息が入る。"
+  },
+  {
+    id:"st_intercostal_stroke", name:"あばら間なで", displayName:"あばらの間をなでる（呼吸）", courses:["seitai"],
+    targetProblems:["thoracicKyphosis","scoliosis"],
+    category:"selfcare", technique:"breathing", bodyPart:"breath", intensity:1,
+    equipment:"なし", position:"sitting", duration:"1分",
+    purpose:"肋骨の間を指でなでて呼吸する。かたい胸郭がやわらかくなる。",
+    how:[
+      "椅子に座り、両手の指先を、胸の横の肋骨に当てます。指が肋骨と肋骨の間の溝に入る場所です。",
+      "息を吸いながら、指で溝を前から後ろへなでます。",
+      "息を吐きながら、指を元に戻します。これを6回。",
+      "指を1本分下の溝にずらして、同じように6回。合計1分。",
+      "くすぐったいときは、手のひら全体で肋骨を押さえて呼吸します。"
+    ],
+    cues:{ do:"肋骨の間の溝を、呼吸に合わせてなでる。", dont:"呼吸を止めてさするのは失敗。" },
+    easyOption:"手のひらで肋骨の横を押さえて、深く呼吸するだけ1分。",
+    why:"肋骨の間の筋肉がかたいと胸が広がらない。なでながら呼吸すると動きが戻る。"
+  },
+  {
+    id:"st_upper_arm_twist", name:"二の腕ねじり", displayName:"二の腕をつかんでねじる", courses:["seitai"],
+    targetProblems:["roundedShoulders"],
+    category:"selfcare", technique:"release", bodyPart:"arm", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"二の腕を反対の手でつかんで内外にねじる。腕のこわばりをほどく。",
+    how:[
+      "椅子に座り、左腕を軽く前に出します。右手で左の二の腕（ひじと肩の間）を、下からつかみます。",
+      "つかんだまま、二の腕の肉を外側へねじって5秒、内側へねじって5秒。",
+      "つかむ場所を肩に近い方へずらして、同じようにねじります。合計30秒。",
+      "反対側も同じように30秒行います。",
+      "痛気持ちいい強さで行います。"
+    ],
+    cues:{ do:"二の腕の肉をつかんで、内外にゆっくりねじる。", dont:"皮ふだけをつねるのは失敗。筋肉ごとつかむ。" },
+    easyOption:"つかんで、ねじらずに前後にゆらすだけ30秒。",
+    why:"腕が内側にねじれたままだと肩が前に巻く。腕をゆるめると肩が戻りやすい。"
+  },
+  {
+    id:"st_forearm_hand_release", name:"ひじ下ほぐし", displayName:"ひじ下を手でほぐす（スマホ腕）", courses:["seitai"],
+    targetProblems:["roundedShoulders"],
+    category:"selfcare", technique:"release", bodyPart:"arm", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"前腕をつかんでゆらす。スマホや家事で張った腕をゆるめる。",
+    how:[
+      "椅子に座り、左腕を太ももの上に置きます。手のひらは上向きです。",
+      "右手で、左のひじのすぐ下の太い部分をつかみます。",
+      "つかんだまま、左右に小さくゆらします。10秒。手首の方へ指2本分ずらして、また10秒。合計30秒。",
+      "反対側も同じように30秒行います。",
+      "しびれが出たら場所をずらします。"
+    ],
+    cues:{ do:"ひじの下の太い筋肉をつかんで、小さくゆらす。", dont:"強くもみ込むのは失敗。ゆらすだけ。" },
+    easyOption:"手のひらでひじ下をさするだけ30秒。",
+    why:"腕の張りは肩をすくめる原因。腕をゆるめると肩が下がる。"
+  },
+  {
+    id:"st_palm_press", name:"手のひらほぐし", displayName:"手のひらほぐし", courses:["seitai"],
+    targetProblems:["general"],
+    category:"selfcare", technique:"release", bodyPart:"hand", intensity:1,
+    equipment:"なし", position:"sitting", duration:"各30秒",
+    purpose:"親指で手のひらを押す。手の疲れが取れてリラックスできる。",
+    how:[
+      "左手のひらを上に向け、右手の親指を左の手のひらの真ん中に当てます。",
+      "親指で、手のひらの真ん中を5秒押します。",
+      "親指の付け根のふくらみ、小指側のふくらみ、指の付け根の順に、5秒ずつ押します。合計30秒。",
+      "反対の手も同じように30秒行います。",
+      "痛気持ちいい強さで行います。"
+    ],
+    cues:{ do:"手のひらのふくらみを、親指でゆっくり5秒押す。", dont:"爪を立てる・強く押しすぎるのは失敗。" },
+    easyOption:"両手のひらを合わせてこすり合わせるだけ30秒。",
+    why:"手がこわばると腕・肩まで力が入る。手をゆるめると肩の力が抜ける。"
+  },
+  {
+    id:"st_hot_towel_neck", name:"首肩ホットタオル", displayName:"首・肩に蒸しタオル", courses:["seitai"],
+    targetProblems:["forwardHead","roundedShoulders"],
+    category:"selfcare", technique:"release", bodyPart:"neck", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"3分",
+    purpose:"温めてからほぐすと効きが違う。寝る前の首・肩に。",
+    how:[
+      "フェイスタオルを水でぬらして軽くしぼり、電子レンジで30〜40秒温めます。熱すぎないか手で確かめます。",
+      "椅子に座り、タオルを首の後ろから両肩にかけます。",
+      "目を閉じて、ゆっくり呼吸しながら3分。タオルが冷めたら終わりです。",
+      "終わったら、肩をゆっくり後ろへ5回まわします。",
+      "やけどに注意します。熱いと感じたら少し冷ましてからかけます。"
+    ],
+    cues:{ do:"温かさを感じながら、肩の力を抜いて呼吸する。", dont:"熱すぎるタオルをかけるのは危険。手で確かめてから。" },
+    easyOption:"タオルを温めず、お風呂上がりに首を手のひらで包んで1分。",
+    why:"温めると筋肉がゆるみ、そのあとのストレッチやほぐしがよく効く。"
+  },
+  {
+    id:"st_ql_thumb_side_bend", name:"腰の横押し横倒し", displayName:"腰の横を親指で押しながら体を倒す", courses:["seitai"],
+    targetProblems:["anteriorPelvicTilt","scoliosis","lateralAsymmetry"],
+    category:"selfcare", technique:"release", bodyPart:"back", intensity:1,
+    equipment:"なし", position:"standing", duration:"各30秒",
+    purpose:"腰の横（腰方形筋）を押したまま横に倒す。腰の重だるさがほどける。",
+    how:[
+      "足を腰幅に開いて立ちます。両手を腰に当て、親指を背中側に回します。",
+      "右の親指で、腰の横（いちばん下の肋骨と骨盤の間、背骨から指4本分外）を押します。",
+      "押したまま、息を吐きながら上体を左へ倒します。押している場所が伸びます。5秒キープ。",
+      "戻して、また倒す。これを30秒くり返します。反対側も同じように30秒。",
+      "腰に鋭い痛みが出たら中止します。"
+    ],
+    cues:{ do:"腰の横を親指で押したまま、反対側へ倒す。", dont:"前に倒れる・押す手が離れるのは失敗。" },
+    easyOption:"椅子に座って同じ動きを各30秒。",
+    why:"腰の横の筋肉は左右差と反り腰の両方に関わる。押しながら伸ばすとよくゆるむ。"
+  },
+  {
+    id:"st_glute_med_hand_leg_swing", name:"お尻の横押し脚ゆらし", displayName:"お尻の横を手で押しながら脚をゆらす", courses:["seitai"],
+    targetProblems:["kneeValgus","lateralAsymmetry"],
+    category:"selfcare", technique:"release", bodyPart:"hip", intensity:1,
+    equipment:"マット", position:"side", duration:"各30秒",
+    purpose:"お尻の横を押しながら脚を前後にゆらす。股関節の詰まりがほどける。",
+    how:[
+      "横向きに寝て、下の腕を枕にします。上の脚のひざを軽く曲げます。",
+      "上の手の指で、お尻の横（骨盤の出っぱりの少し下・後ろ）を押します。硬いところが正解です。",
+      "押したまま、上の脚を前後に小さくゆらします。30秒。",
+      "反対側を向いて、同じように30秒行います。",
+      "しびれが出たら場所をずらします。"
+    ],
+    cues:{ do:"お尻の横の硬い場所を押したまま、脚を小さくゆらす。", dont:"脚を大きく動かして押す手が離れるのは失敗。" },
+    easyOption:"押すだけで、脚をゆらさずに30秒。",
+    why:"お尻の横が固まると脚の付け根が詰まり、ひざが内に入りやすい。"
+  },
+  {
+    id:"st_quad_grab_shake", name:"前ももつかみゆらし", displayName:"前ももをつかんでゆらす", courses:["seitai"],
+    targetProblems:["anteriorPelvicTilt","kneeValgus"],
+    category:"selfcare", technique:"release", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"太ももの前を両手でつかんで左右にゆらす。前ももの張りが取れる。",
+    how:[
+      "椅子に座り、右脚を少し前に出して、ひざを軽く伸ばします。",
+      "両手で右の太ももの前（ひざの上）を、左右からつかみます。",
+      "つかんだまま、筋肉を左右に小さくゆらします。10秒。手を脚の付け根の方へずらして10秒、さらに10秒。合計30秒。",
+      "反対の脚も同じように30秒行います。",
+      "痛気持ちいい強さで行います。"
+    ],
+    cues:{ do:"太ももの筋肉ごとつかんで、左右にゆらす。", dont:"皮ふだけをつまむ・強くもみ込むのは失敗。" },
+    easyOption:"手のひらで太ももを上下にさするだけ30秒。",
+    why:"反り腰の人は前ももが縮んで硬い。ゆらすと骨盤が前に引かれにくくなる。"
+  },
+  {
+    id:"st_lateral_thigh_fist", name:"外ももこぶしさすり", displayName:"外ももをこぶしでさする", courses:["seitai"],
+    targetProblems:["kneeVarus","kneeValgus"],
+    category:"selfcare", technique:"release", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"太ももの外側をこぶしで上下にさする。外に張った脚をゆるめる。",
+    how:[
+      "椅子に座り、右脚を軽く前に出します。",
+      "右手をこぶしにして、太ももの外側の、ひざのすぐ上に当てます。",
+      "こぶしで、ひざから脚の付け根に向かって、ゆっくり押し上げるようにさすります。10回。",
+      "硬いところがあれば、そこにこぶしを当てて小さく円を描きます。合計30秒。反対の脚も30秒。",
+      "痛みが強い場所は避けて、まわりをさすります。"
+    ],
+    cues:{ do:"ひざから付け根へ、こぶしで押し上げるようにさする。", dont:"強くこすって赤くなるのは失敗。" },
+    easyOption:"手のひらで外ももを上下にさするだけ30秒。",
+    why:"O脚・X脚どちらも、太ももの外側が張って硬い。ゆるめると脚が内側に戻りやすい。"
+  },
+  {
+    id:"st_inner_thigh_pinch", name:"内ももつまみ流し", displayName:"内ももつまみ流し", courses:["seitai"],
+    targetProblems:["kneeValgus","kneeVarus"],
+    category:"selfcare", technique:"massage", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"内ももをつまんで脚の付け根へ流す。むくみとたるみに。",
+    how:[
+      "椅子に座り、右脚を少し外に開きます。",
+      "両手で、右の内もものひざに近いところを、軽くつまみます。",
+      "つまんだまま、脚の付け根に向かってつまむ場所を少しずつ移動させます。1往復10秒。3往復で30秒。",
+      "反対の脚も同じように30秒行います。",
+      "痛みが出る強さではつまみません。"
+    ],
+    cues:{ do:"ひざから付け根へ、つまむ場所をずらしながら流す。", dont:"同じ場所を強くつまみ続けるのは失敗。" },
+    easyOption:"手のひらで内ももをひざから付け根へさするだけ30秒。",
+    why:"内ももは使われにくく、たるみとむくみがたまりやすい。流してから鍛えると効く。"
+  },
+  {
+    id:"st_calf_hand_squeeze", name:"ふくらはぎはさみほぐし", displayName:"ふくらはぎを両手ではさんでほぐす", courses:["seitai"],
+    targetProblems:["ankleStiffness","swelling"],
+    category:"selfcare", technique:"release", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"ふくらはぎを両手ではさんで左右にゆらす。むくみと足首のかたさに。",
+    how:[
+      "椅子に座り、右の足首を左のひざの上にのせます。",
+      "両手で右のふくらはぎを、両側からはさみます。",
+      "はさんだまま、筋肉を左右に小さくゆらします。10秒。手を足首の方へずらして10秒、さらに10秒。合計30秒。",
+      "反対の脚も同じように30秒行います。",
+      "脚を組むのがつらいときは、足を床に置いたまま前かがみで行います。"
+    ],
+    cues:{ do:"ふくらはぎを両手ではさんで、筋肉ごと左右にゆらす。", dont:"強くもみ込むのは失敗。ゆらすだけ。" },
+    easyOption:"手のひらでふくらはぎを下から上へさするだけ30秒。",
+    why:"ふくらはぎが硬いと足首が動かず、むくみもたまる。ゆらすと両方に効く。"
+  },
+  {
+    id:"st_popliteal_press", name:"ひざ裏押しさすり", displayName:"ひざ裏を押してさする", courses:["seitai"],
+    targetProblems:["ankleStiffness","posteriorPelvicTilt","swelling"],
+    category:"selfcare", technique:"massage", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"ひざ裏のくぼみを押してから下へさする。脚の重さが軽くなる。",
+    how:[
+      "椅子に座り、右脚を少し前に出して、ひざを軽く曲げます。",
+      "両手の指を右のひざの裏のくぼみに当て、やさしく5秒押します。3回。",
+      "次に、ひざ裏からふくらはぎに向かって、手のひらで下へさすります。10回。合計30秒。",
+      "反対の脚も同じように30秒行います。",
+      "強く押すと痛い場所です。やさしい力で行います。"
+    ],
+    cues:{ do:"ひざ裏をやさしく押してから、下へさする。", dont:"ひざ裏を強く押し込むのは失敗。" },
+    easyOption:"ひざ裏を手のひらで包んで温めるだけ30秒。",
+    why:"ひざ裏は脚の流れの通り道。ここがゆるむとふくらはぎの重さが取れる。"
+  },
+  {
+    id:"st_groin_stroke", name:"脚の付け根さすり", displayName:"脚の付け根さすり（むくみ）", courses:["seitai"],
+    targetProblems:["general","swelling"],
+    category:"selfcare", technique:"massage", bodyPart:"hip", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"1分",
+    purpose:"脚の付け根を内から外へさする。むくみ・冷えの流れを整える。",
+    how:[
+      "椅子に浅く座り、脚を軽く開きます。",
+      "両手のひらを、両脚の付け根（そけい部）に当てます。",
+      "内側から外側へ、ゆっくりさすります。10回。",
+      "次に、付け根を手のひらで軽く押しながら、深く5回呼吸します。合計1分。",
+      "力は要りません。皮ふをなでる程度です。"
+    ],
+    cues:{ do:"脚の付け根を、内から外へやさしくさする。", dont:"強く押すのは失敗。なでる程度。" },
+    easyOption:"手のひらを当てて呼吸するだけ1分。",
+    why:"脚の付け根は流れの関所。ここがゆるむと脚全体のむくみが軽くなる。"
+  },
+  {
+    id:"st_plantar_thumb", name:"足裏親指押し", displayName:"足裏を親指で押す（土踏まず）", courses:["seitai"],
+    targetProblems:["ankleStiffness","kneeValgus","kneeVarus"],
+    category:"selfcare", technique:"release", bodyPart:"foot", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"足の裏を手の親指で押す。立ち姿の土台がやわらかくなる。",
+    how:[
+      "椅子に座り、右の足首を左のひざの上にのせます。",
+      "両手で足を持ち、両手の親指を土踏まずに当てます。",
+      "親指で、かかとから指の付け根に向かって、5秒ずつ押しながら移動します。3か所。",
+      "次に、親指の付け根のふくらみと小指側のふくらみを5秒ずつ押します。合計30秒。反対の足も30秒。",
+      "痛気持ちいい強さで行います。鋭い痛みが出たら場所をずらします。"
+    ],
+    cues:{ do:"土踏まずをかかとから指の付け根へ、親指で順に押す。", dont:"爪を立てる・強く押し込むのは失敗。" },
+    easyOption:"足の裏を手のひらでさするだけ30秒。",
+    why:"足の裏が硬いと足首が動かず、ひざの向きにも影響する。手で押せば道具は要らない。"
+  },
+  {
+    id:"st_toe_interlace_ankle", name:"足指はさみ足首回し", displayName:"足指に手の指をはさんで足首回し", courses:["seitai"],
+    targetProblems:["ankleStiffness","kneeValgus","kneeVarus"],
+    category:"selfcare", technique:"mobility", bodyPart:"foot", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各方向10周",
+    purpose:"足指の間に手の指を入れて回す。足指が開いて足首がよく動く。",
+    how:[
+      "椅子に座り、右の足首を左のひざの上にのせます。",
+      "左手の指を、右足の指の間に1本ずつ差し込みます。付け根まで入れると足指が開きます。",
+      "右手で足首を支え、左手で足先を持って、足首を大きくゆっくり回します。右回り10周。",
+      "左回りも10周。反対の足も同じように行います。",
+      "指が入りにくいときは、入るところまでで大丈夫です。"
+    ],
+    cues:{ do:"手の指を足指の間に入れて、足首を大きく回す。", dont:"速く小さく回すのは失敗。1周3秒。" },
+    easyOption:"手の指を入れずに、足先を持って回すだけ各10周。",
+    why:"足指が開くと足の裏のアーチが働き、足首の動きが戻る。"
+  },
+  {
+    id:"st_toe_extension_stretch", name:"足指反らし", displayName:"足指を手で反らす（足裏のばし）", courses:["seitai"],
+    targetProblems:["ankleStiffness"],
+    category:"selfcare", technique:"stretch", bodyPart:"foot", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"各30秒",
+    purpose:"足指を手で反らして足の裏を伸ばす。かたい足裏に。",
+    how:[
+      "椅子に座り、右の足首を左のひざの上にのせます。",
+      "右手でかかとを持ち、左手で足の指全体を包みます。",
+      "足の指をすねの方へ、ゆっくり反らします。足の裏が伸びます。30秒キープ。",
+      "反対の足も同じように30秒行います。",
+      "痛みが出る手前で止めます。"
+    ],
+    cues:{ do:"足指を手で反らして、足の裏の伸びを感じる。", dont:"指を1本だけ強く反らすのは失敗。指全体を包む。" },
+    easyOption:"足指を反らさず、足裏を手のひらでさするだけ30秒。",
+    why:"足の裏の膜が縮むと、足首もひざも動きにくくなる。"
+  },
+  {
+    id:"st_chair_hamstring", name:"椅子もも裏のばし", displayName:"椅子にかかとをのせてもも裏のばし", courses:["seitai"],
+    targetProblems:["posteriorPelvicTilt","swayBack"],
+    category:"selfcare", technique:"stretch", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"standing", duration:"各30秒",
+    purpose:"立ったまま椅子にかかとをのせて前へ。床に寝なくてよい。",
+    how:[
+      "椅子の前に立ち、右のかかとを座面にのせます。右ひざは軽く曲げてOKです。",
+      "両手を右の太ももに添え、背すじを伸ばします。",
+      "背中をまっすぐのまま、お尻を後ろに引くように上体を前に倒します。右のもも裏が伸びます。",
+      "30秒キープして、脚を替えて左も30秒行います。",
+      "ふらつくときは壁の横で行い、片手を壁に添えます。"
+    ],
+    cues:{ do:"背中をまっすぐのまま、お尻を後ろに引いてもも裏を伸ばす。", dont:"背中を丸めて頭を下げるのは失敗。" },
+    easyOption:"低い台や階段の1段目にかかとをのせて30秒。",
+    why:"もも裏がかたいと骨盤が後ろに倒れ、腰が丸くなる。立ったまま毎日伸ばせる。"
+  },
+  {
+    id:"st_chair_straddle", name:"椅子開脚のばし", displayName:"椅子で開脚のばし（内もも）", courses:["seitai"],
+    targetProblems:["kneeValgus","kneeVarus","anteriorPelvicTilt"],
+    category:"selfcare", technique:"stretch", bodyPart:"leg", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"30秒 × 2セット",
+    purpose:"椅子に浅く座り脚を開いて前へ。内ももを安全に伸ばす。",
+    how:[
+      "椅子に浅く座り、両脚を大きく開きます。つま先はひざと同じ向きです。",
+      "両手をひざの内側に置き、背すじを伸ばします。",
+      "背中をまっすぐのまま、上体を前に倒します。手でひざを軽く外へ押すと、内ももがさらに伸びます。",
+      "30秒キープして起き上がります。2セット行います。",
+      "股関節に痛みが出たら、脚を開く幅を狭くします。"
+    ],
+    cues:{ do:"背すじを伸ばしたまま、ひざを外へ押しながら前に倒す。", dont:"背中を丸めて頭を下げるのは失敗。" },
+    easyOption:"前に倒れず、ひざを手で外へ押すだけ30秒。",
+    why:"内ももがかたいとひざの向きが乱れる。椅子なら床に座れない人も毎日できる。"
+  },
+  {
+    id:"st_back_breath_hands", name:"背中ふくらませ呼吸", displayName:"手を当てて背中で呼吸（背中ふくらませ）", courses:["seitai"],
+    targetProblems:["thoracicKyphosis","anteriorPelvicTilt"],
+    category:"selfcare", technique:"breathing", bodyPart:"breath", intensity:1,
+    equipment:"椅子", position:"sitting", duration:"1分",
+    purpose:"背中の下に手を当て、そこをふくらませる呼吸。背中がゆるむ。",
+    how:[
+      "椅子に座り、少し前かがみになります。両手の甲を、背中の下（腰の上・肋骨のいちばん下あたり）に当てます。",
+      "鼻から息を吸いながら、手を当てた背中をふくらませます。手が押し返されればOK。",
+      "口から細く長く吐きます。背中がしぼみます。",
+      "これを1分続けます。6〜8回の呼吸が目安です。",
+      "肩に力が入ったら、いったん腕を下ろして休みます。"
+    ],
+    cues:{ do:"背中の手を押し返すように吸う。吐くときは細く長く。", dont:"肩を上げて胸だけで吸うのは失敗。" },
+    easyOption:"手を当てず、椅子の背もたれに背中を押しつけながら呼吸する。",
+    why:"猫背・反り腰どちらも背中の下が固まっている。呼吸で内側から動かす。"
+  },
+  {
+    id:"st_pelvic_floor_release_breath", name:"骨盤ゆるめ呼吸", displayName:"骨盤ゆるめ呼吸（お尻の穴をゆるめる）", courses:["seitai"],
+    targetProblems:["anteriorPelvicTilt","general"],
+    category:"selfcare", technique:"breathing", bodyPart:"core", intensity:1,
+    equipment:"マット", position:"supine", duration:"1分",
+    purpose:"締めるのではなくゆるめる。緊張が強い人の骨盤まわりの入口。",
+    how:[
+      "仰向けに寝て、ひざを立てます。両手を下腹に置きます。",
+      "鼻から息を吸いながら、お腹をふくらませ、同時にお尻の穴のまわりをふわっとゆるめます。骨盤の底が下がる感じです。",
+      "口から細く長く吐きます。何もしなくてOK。自然に戻るのを待ちます。",
+      "これを1分続けます。6〜8回の呼吸が目安です。",
+      "力を入れる感覚のほうが強いときは、吐くときに「はぁ」とため息をつきます。"
+    ],
+    cues:{ do:"吸うときにお腹と骨盤の底をゆるめて広げる。", dont:"お腹に力を入れて吸うのは失敗。ゆるめる。" },
+    easyOption:"横向きに寝て、ひざを軽く曲げて同じ呼吸を1分。",
+    why:"骨盤まわりが緊張していると、締める運動をしても効かない。まずゆるめる。"
+  },
+  {
+    id:"st_wall_posture_check", name:"壁立ちチェック", displayName:"壁に背中をつけて立つチェック", courses:["seitai"],
+    targetProblems:["general","forwardHead","thoracicKyphosis"],
+    category:"selfcare", technique:"mobility", bodyPart:"fullbody", intensity:1,
+    equipment:"壁", position:"standing", duration:"1分",
+    purpose:"後頭部・背中・お尻を壁に。毎日の「今日の姿勢」を確認する。",
+    how:[
+      "壁に背を向けて立ち、かかとを壁から5cm離します。",
+      "お尻・背中の上・後頭部の3か所を壁につけます。あごは軽く引きます。",
+      "腰と壁のすき間に手を入れて確かめます。手のひら1枚分なら合格。それより広ければ、お腹に軽く力を入れてすき間を減らします。",
+      "その姿勢で1分。頭のてっぺんを天井に伸ばして、ゆっくり呼吸します。",
+      "後頭部が壁につかない日は、無理につけず、あごを引くだけにします。"
+    ],
+    cues:{ do:"3か所を壁につけて、腰のすき間を手のひら1枚分に。", dont:"後頭部をつけようとしてあごが上がるのは失敗。" },
+    easyOption:"お尻と背中だけ壁につけて30秒。",
+    why:"毎日同じ場所で確かめると、自分の姿勢の変化がわかる。"
+  },
+  {
+    id:"st_bedtime_body_stroke", name:"寝る前全身さすり", displayName:"寝る前の全身さすり", courses:["seitai"],
+    targetProblems:["general"],
+    category:"selfcare", technique:"massage", bodyPart:"fullbody", intensity:1,
+    equipment:"マット", position:"supine", duration:"2分",
+    purpose:"頭から足まで手のひらでさする。1日の終わりに体をゆるめる。",
+    how:[
+      "仰向けに寝て、両手のひらで顔を包み、おでこから頬へ5回さすります。",
+      "首の横を上から下へ、次に胸をまん中から外へ、それぞれ5回さすります。",
+      "お腹を時計回りに5回。腰の横を手のひらで包んで5回さすります。",
+      "太ももから足首へ、両手で脚を上から下へ5回さすります。合計2分。",
+      "終わったら、手を体の横に置いて3回深く呼吸します。"
+    ],
+    cues:{ do:"上から下へ、なでる程度の力でさする。", dont:"力を入れてもむのは失敗。眠くなる強さで。" },
+    easyOption:"顔と首だけを1分さする。",
+    why:"体の表面をさすると神経が休まり、筋肉の緊張がほどけて眠りやすくなる。"
+  },
 ];
 
 export { DB_SEITAI };

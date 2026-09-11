@@ -1149,7 +1149,8 @@ function renderToday(){
       <button class="btn-ghost sm" id="btn-day-partial" type="button">△ 一部できた</button>
       <button class="btn-ghost sm" id="btn-day-none" type="button">× できなかった</button>
       <span class="today-progress">これまで ${doneArr.length}/30日 完了${streak >= 2 ? ` ・ 🔥 ${streak}日連続` : ''}</span>
-      ${badgeStrip(doneArr.length, streak)}`;
+      ${badgeStrip(doneArr.length, streak)}
+      ${nagaraCard(cur)}`;
     document.getElementById('btn-day-start').onclick = () => {
       if (state.todayList && state.todayList.length){
         openExerciseModal(state.todayList[0], { index: 0, list: state.todayList });
@@ -1232,6 +1233,27 @@ function startNextRound(){
 }
 
 // 忙しい日の「最低これだけ」= その日のいちばん問題直結な1種（ゼロの日を作らないための逃げ道）
+// 「ながら」習慣: 生活の中で毎日1つ。DAYごとに順番に出す（種目の枠は使わない）
+const NAGARA_HABITS = [
+  { title:'歯みがき片脚立ち', when:'朝晩の歯みがき中', aim:'左右差・足首', how:'歯をみがく間、片脚で立ちます。1分たったら脚を替えます。ふらつくときは洗面台に指先を添えて。' },
+  { title:'洗い物かかと上げ', when:'台所に立っているとき', aim:'足首・ふくらはぎ', how:'流しに手を添えて、かかとをゆっくり上げ下げします。10回を2〜3回。' },
+  { title:'信号待ちお尻締め', when:'外出中に立ち止まったとき', aim:'骨盤前出し・お尻', how:'立ち止まるたびに、お尻をぎゅっと5秒締めて、ゆるめます。3回。' },
+  { title:'電車・車のあご引き', when:'移動中', aim:'頭の前出し', how:'窓に映る自分を見て、あごを後ろへスライドさせて首の後ろを長くします。5秒×5回。' },
+  { title:'テレビ中のクッションはさみ', when:'夜のくつろぎ時間', aim:'X脚・O脚・内もも', how:'ひざの間にクッションをはさみ、CMのあいだ押し合います。10秒×5回。' },
+  { title:'掃除機ランジ', when:'家事のとき', aim:'左右差・脚', how:'掃除機をかけるとき、一歩ずつ大きく踏み込んでひざを曲げます。左右同じ回数に。' },
+  { title:'布団の中でひざ倒し', when:'寝る前・起きたとき', aim:'左右差・反り腰', how:'仰向けでひざを立てて、左右にゆっくり倒します。10往復。' },
+  { title:'階段はかかとから', when:'外出中', aim:'足首・骨盤後傾', how:'上りはかかとまで段にのせてお尻で押し上げ、下りはゆっくり。手すりを使ってOK。' },
+];
+function nagaraCard(cur){
+  const h = NAGARA_HABITS[((Number(cur) || 1) - 1) % NAGARA_HABITS.length];
+  return `<div class=nagara-card>
+      <div class=nagara-head>🌿 きょうの「ながら」習慣</div>
+      <div class=nagara-title>${h.title}</div>
+      <div class=nagara-how>${h.how}</div>
+      <div class=nagara-meta>${h.when}｜${h.aim}</div>
+    </div>`;
+}
+
 function minimumOne(d){
   const all = [...(d.selfcare||[]), ...(d.training||[])];
   if (all.length <= 1) return null;
@@ -1447,11 +1469,13 @@ state.artIds = new Set();
     if (state.program && state.program.length){ renderToday(); renderProgram(state.currentPhase); }
   } catch (e) { /* 画像なし＝SVGのまま */ }
 })();
+// 生成イラストも従来SVGもない種目（2026-09-11 追加分）は、空欄ではなく準備中の図を出す
+const ART_PLACEHOLDER = '<svg viewBox="0 0 410 205" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="イラスト準備中"><rect width="410" height="205" rx="14" fill="#FDF9F7"/><circle cx="205" cy="66" r="20" fill="#F3D9C8"/><path d="M167 150c0-28 17-46 38-46s38 18 38 46v18h-76z" fill="#D99F9A"/><text x="205" y="192" text-anchor="middle" font-size="13" fill="#7A5C52">イラストは順次追加中です</text></svg>';
 function artHTML(ex){
   if (state.artIds && state.artIds.has(ex.id)){
     return `<img class="ex-art-img" src="ex-img/${ex.id}.webp" alt="" width="1200" height="600" decoding="async">`;
   }
-  return ex.illustration || '';
+  return ex.illustration || ART_PLACEHOLDER;
 }
 
 // ===== やり方の「かんたん版」 =====

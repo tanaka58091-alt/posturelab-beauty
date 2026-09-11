@@ -882,6 +882,194 @@ const DB_PILATES = [
     cues:{"do":"吸う息で、おへその上に置いた手を1〜2cm持ち上げるつもりで吸う。手が動いているのを感じられれば十分。","dont":"息を吸いすぎない。3秒で吸って5秒で吐く。それ以上大きく吸おうとしない。"}, easyOption:"仰向けがつらければ、背もたれのあるイスに腰かけて寄りかかり、同じように片手を胸の真ん中、もう片手をおへその上に置いて、3秒吸って5秒吐く呼吸を5分続ける。",
     why:'神経系のリセット。'
   },
+  // ============== 2026-09-11 追加（11種・器具なし・強度1〜2） ==============
+  {
+    id:"pl_half_roll_back", name:"ハーフロールバック", displayName:"ハーフロールバック（座って半分だけ後ろへ）", courses:["pilates"],
+    targetProblems:["anteriorPelvicTilt","thoracicKyphosis"],
+    category:"core", technique:"pilates", bodyPart:"core", intensity:1,
+    equipment:"マット", position:"sitting", duration:"8回 × 2セット",
+    purpose:"ロールアップの入門。お腹の力で背中を丸めて途中で止める。",
+    how:[
+      "ひざを立てて座り、足の裏を床につけます。両手は太ももの裏に軽く添えます。",
+      "息を吐きながら、骨盤を後ろに倒して背中をCの字に丸めます。おへそを背中に近づける感じです。",
+      "そのまま上体を後ろへ、半分（45度くらい）まで倒します。手は太ももに添えたままです。",
+      "息を吸って止まり、吐きながら背中を丸めたまま起き上がります。これを8回、2セット行います。",
+      "腰に痛みが出たら倒す角度を小さくします。首に力が入るときは目線をおへそに向けます。"
+    ],
+    cues:{ do:"骨盤を後ろに倒して背中を丸めたまま、半分だけ倒れて戻る。", dont:"背すじを伸ばしたまま後ろに倒れるのは失敗。腰に負担がかかる。" },
+    easyOption:"倒す角度を20度にして6回から。",
+    why:"「背中を丸める」動きは反り腰の人がいちばん苦手。お腹の力でそれを覚える。"
+  },
+  {
+    id:"pl_c_curve_hold", name:"Cカーブキープ", displayName:"Cカーブキープ（骨盤を後ろに丸めて止める）", courses:["pilates"],
+    targetProblems:["anteriorPelvicTilt"],
+    category:"core", technique:"pilates", bodyPart:"core", intensity:1,
+    equipment:"マット", position:"sitting", duration:"10秒 × 5セット",
+    purpose:"反り腰の人が「骨盤を後ろに倒す」を覚える最短の練習。",
+    how:[
+      "ひざを立てて座り、両手をひざの裏に添えます。背すじを伸ばして座ります。",
+      "息を吐きながら、骨盤だけを後ろに倒します。おへそを引き込み、腰が丸くなります。肩の位置はあまり変えません。",
+      "腰の丸みを保ったまま10秒キープ。下腹が硬くなっていればOK。呼吸は続けます。",
+      "力を抜いて背すじを伸ばします。これを5セット行います。",
+      "腰に痛みが出たら中止します。首に力が入るときは肩を下げます。"
+    ],
+    cues:{ do:"骨盤を後ろに倒して腰を丸め、その形で呼吸を続ける。", dont:"背中全体を丸めて頭が下がるのは失敗。丸めるのは腰だけ。" },
+    easyOption:"壁に背中を近づけて座り、腰で壁を押す形で5秒キープ。",
+    why:"反り腰の反対の動きを体が知らないと、いくら伸ばしても戻る。"
+  },
+  {
+    id:"pl_side_double_leg_lift", name:"横向き両脚上げ", displayName:"横向き両脚上げ（わき腹・内もも）", courses:["pilates"],
+    targetProblems:["lateralAsymmetry","scoliosis","kneeValgus"],
+    category:"core", technique:"pilates", bodyPart:"core", intensity:2,
+    equipment:"マット", position:"side", duration:"各8回 × 2セット",
+    purpose:"両脚をそろえて浮かせる。わき腹と内ももが同時に締まる。",
+    how:[
+      "横向きに寝て、下の腕を伸ばして頭をのせます。上の手は胸の前の床につきます。両脚は重ねてまっすぐ伸ばします。",
+      "息を吐きながら、両脚をそろえたまま床から10〜15cm浮かせます。下側のわき腹と内ももに力が入ります。",
+      "2秒止めてゆっくり下ろします。これを8回。",
+      "反対側を向いて左右8回ずつ、2セット行います。",
+      "腰が反るときは、脚を少し前に出した位置で行います。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"両脚をそろえたまま、わき腹の力で少し浮かせる。", dont:"上の脚だけ上がって脚が離れるのは失敗。" },
+    easyOption:"下の脚は床につけたまま、上の脚だけを上げる各8回から。",
+    why:"わき腹と内ももは一緒に使うと締まりやすい。左右差も整う。"
+  },
+  {
+    id:"pl_side_lying_bicycle", name:"横向き自転車", displayName:"横向き自転車こぎ", courses:["pilates"],
+    targetProblems:["lateralAsymmetry","anteriorPelvicTilt"],
+    category:"core", technique:"pilates", bodyPart:"hip", intensity:2,
+    equipment:"マット", position:"side", duration:"各8回",
+    purpose:"横向きで脚を大きく回す。お尻の横と体幹の安定を同時に鍛える。",
+    how:[
+      "横向きに寝て、下の腕を伸ばして頭をのせます。上の手は胸の前の床につきます。",
+      "上の脚を床から少し浮かせ、ひざを曲げて胸の方へ引き寄せます。",
+      "そこからひざを伸ばして前へ、次に後ろへ大きく回し、また引き寄せます。自転車をこぐように8回。",
+      "逆回しも8回。反対側を向いて同じように行います。",
+      "腰が動いてしまうときは回す大きさを小さくします。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"腰を動かさず、脚だけで大きな円をえがく。", dont:"骨盤が前後にぐらつくのは失敗。動きを小さく。" },
+    easyOption:"ひざを曲げたまま、小さく前後に動かすだけ各8回。",
+    why:"脚を回す間、体幹が骨盤を止め続ける。横向きだと腰にやさしい。"
+  },
+  {
+    id:"pl_supine_frog", name:"仰向けカエル脚", displayName:"仰向けカエル脚（内もも・お腹）", courses:["pilates"],
+    targetProblems:["kneeValgus","kneeVarus","anteriorPelvicTilt"],
+    category:"core", technique:"pilates", bodyPart:"core", intensity:1,
+    equipment:"マット", position:"supine", duration:"10回 × 2セット",
+    purpose:"かかとを合わせて脚を伸ばし戻す。内ももと下腹に効く。",
+    how:[
+      "仰向けに寝て、両脚を持ち上げてひざを曲げます。かかと同士を合わせ、ひざは外に開きます。カエルの脚の形です。",
+      "腰を床に軽く押しつけて、腰と床のすき間をなくします。",
+      "息を吐きながら、かかとを合わせたまま両脚を斜め上に伸ばします。内ももに力が入ります。",
+      "息を吸いながらひざを曲げて戻します。腰は床につけたままです。これを10回、2セット。",
+      "腰が床から浮いたら、伸ばす角度をもっと上（天井向き）にします。腰の痛みは中止のサインです。"
+    ],
+    cues:{ do:"腰を床につけたまま、かかとを合わせて斜め上に伸ばす。", dont:"脚を低く伸ばして腰が浮くのは失敗。高く伸ばしてよい。" },
+    easyOption:"脚を伸ばしきらず、半分だけ伸ばして戻す10回。",
+    why:"内ももと下腹を同時に使う動きは少ない。ひざの向きとお腹の両方に効く。"
+  },
+  {
+    id:"pl_prone_heel_squeeze", name:"うつ伏せかかと押し合わせ", displayName:"うつ伏せかかと押し合わせ（お尻）", courses:["pilates"],
+    targetProblems:["swayBack","posteriorPelvicTilt"],
+    category:"strength", technique:"pilates", bodyPart:"glutes", intensity:1,
+    equipment:"マット", position:"prone", duration:"10秒 × 5セット",
+    purpose:"ひざを曲げてかかと同士を押し合い、お尻の奥に効かせる。",
+    how:[
+      "うつ伏せに寝て、おでこを重ねた両手にのせます。",
+      "両ひざを曲げて、足の裏を天井に向けます。ひざはこぶし1つ分開き、かかと同士をつけます。",
+      "かかと同士を押し合いながら、お尻を締めて両ひざを床から2cmだけ浮かせます。お尻の奥に力が入ります。",
+      "10秒キープしてゆるめます。5セット行います。呼吸は続けます。",
+      "腰が反るときは、おへそを床から軽く引き上げます。腰に痛みが出たら中止します。"
+    ],
+    cues:{ do:"かかとを押し合い、お尻を締めてひざを少し浮かせる。", dont:"ひざを高く上げて腰が反るのは失敗。2cmでよい。" },
+    easyOption:"ひざを浮かせず、かかとを押し合うだけを10秒×5セット。",
+    why:"お尻の奥（深い筋肉）は、かかとを押し合うと働きやすい。"
+  },
+  {
+    id:"pl_standing_footwork", name:"フットワーク", displayName:"ピラティス・フットワーク（かかとを上げたままミニスクワット）", courses:["pilates"],
+    targetProblems:["ankleStiffness","kneeValgus"],
+    category:"strength", technique:"pilates", bodyPart:"legs", intensity:2,
+    equipment:"壁", position:"standing", duration:"10回 × 2セット",
+    purpose:"つま先立ちのまま小さく曲げ伸ばし。ふくらはぎと内ももを同時に使う。",
+    how:[
+      "壁に片手を添えて立ち、かかとをつけてつま先を少し外に開きます。",
+      "かかとを上げてつま先立ちになります。内ももを軽く寄せます。",
+      "つま先立ちのまま、ひざを外に向けて小さく曲げます。深さは10cmで十分です。",
+      "ひざを伸ばして戻ります。かかとは上げたままです。これを10回、2セット。",
+      "ふらつくときは両手を壁につけます。ひざに痛みが出たら中止します。"
+    ],
+    cues:{ do:"かかとを上げたまま、ひざをつま先の向きに小さく曲げる。", dont:"かかとが下がる・ひざが内に入るのは失敗。" },
+    easyOption:"かかとを上げずに、ひざの小さな曲げ伸ばしだけを10回。",
+    why:"足首・ふくらはぎ・内ももを一度に使う。立ち姿の土台が整う。"
+  },
+  {
+    id:"pl_wall_roll_down", name:"壁ロールダウン", displayName:"壁ロールダウン", courses:["pilates"],
+    targetProblems:["thoracicKyphosis","anteriorPelvicTilt"],
+    category:"mobility", technique:"pilates", bodyPart:"spine", intensity:1,
+    equipment:"壁", position:"standing", duration:"5回",
+    purpose:"壁に背中をつけて上から一つずつ丸める。背骨を分けて動かす。",
+    how:[
+      "壁に背中をつけて立ち、かかとを壁から15cm離します。ひざは軽く曲げます。",
+      "あごを引いて、頭から順に背骨を壁からはがすように、ゆっくり前に丸めていきます。頭を下げていくと腕は自然に垂れます。",
+      "腰のあたりまで丸めたら止まります。お尻は壁につけたままです。",
+      "下から順に背骨を壁に戻し、最後に頭を上げます。これを5回行います。",
+      "頭を下げてくらくらしたら、丸める深さを浅くします。腰の痛みは中止のサインです。"
+    ],
+    cues:{ do:"頭から一つずつ、背骨を壁からはがして丸める。", dont:"腰から一気に折れるのは失敗。上から順番に。" },
+    easyOption:"胸のあたりまで丸めて戻す5回。",
+    why:"猫背の背骨は「一枚板」のように固まっている。一つずつ動かすと柔らかさが戻る。"
+  },
+  {
+    id:"pl_hug_a_tree", name:"木を抱える腕", displayName:"木を抱える腕（胸と肩甲骨）", courses:["pilates"],
+    targetProblems:["roundedShoulders"],
+    category:"mobility", technique:"pilates", bodyPart:"shoulder", intensity:1,
+    equipment:"なし", position:"sitting", duration:"10回",
+    purpose:"大きな木を抱えるように腕を閉じ開き。肩甲骨を正しい位置で安定させる。",
+    how:[
+      "椅子に座り、背すじを伸ばします。両腕を肩の高さで前に出し、大きな木を抱えるように丸くします。",
+      "息を吸いながら、腕の丸みを保ったまま、両腕をゆっくり横に開きます。胸が開き、肩甲骨が寄ります。",
+      "息を吐きながら、木を抱えるように腕を前に戻します。肩甲骨が広がります。",
+      "これを10回行います。肩はすくめず、下げたままです。",
+      "肩が疲れたら、腕の高さを胸の下まで下げます。"
+    ],
+    cues:{ do:"肩を下げたまま、腕の丸みを保って開閉する。", dont:"肩がすくむ・腕がまっすぐになるのは失敗。" },
+    easyOption:"腕の高さをみぞおちにして10回。",
+    why:"肩甲骨を「寄せる・広げる」を呼吸と一緒に行うと、巻き肩の癖が整う。"
+  },
+  {
+    id:"pl_towel_arms", name:"タオルアームズ", displayName:"タオル引き合いアームズ", courses:["pilates"],
+    targetProblems:["roundedShoulders","thoracicKyphosis"],
+    category:"strength", technique:"pilates", bodyPart:"back", intensity:1,
+    equipment:"タオル", position:"sitting", duration:"10回",
+    purpose:"両手でタオルを引っぱり合ったまま上下。胸と背中を同時に使う。",
+    how:[
+      "椅子に座り、フェイスタオルの両端を肩幅で持ちます。腕は太ももの上です。",
+      "タオルを左右に引っぱり合って張ります。この張りは最後まで保ちます。",
+      "息を吸いながら、張ったまま腕を頭の上まで上げます。肩はすくめません。",
+      "息を吐きながら、ゆっくり下ろします。これを10回行います。",
+      "肩が痛いときは、腕を目の高さまでにします。"
+    ],
+    cues:{ do:"タオルを張ったまま、肩を下げて腕を上げ下げする。", dont:"タオルがゆるむ・肩がすくむのは失敗。" },
+    easyOption:"腕を目の高さまで上げる10回。",
+    why:"引っぱり合う力があると、背中の筋肉が腕の動きを支える感覚がわかる。"
+  },
+  {
+    id:"pl_kneeling_side_bend", name:"ひざ立ちサイドベンド", displayName:"ひざ立ちサイドベンド", courses:["pilates"],
+    targetProblems:["scoliosis","lateralAsymmetry"],
+    category:"mobility", technique:"pilates", bodyPart:"core", intensity:1,
+    equipment:"クッション", position:"kneeling", duration:"各8回",
+    purpose:"ひざ立ちで片手を上げて横へ。わき腹を伸ばしながら反対側を締める。",
+    how:[
+      "クッションの上にひざ立ちになり、ひざは腰幅です。両腕を体の横に下ろします。",
+      "右腕を頭の上に伸ばし、息を吐きながら上体を左へ倒します。右のわき腹が伸び、左のわき腹が縮みます。",
+      "息を吸いながら戻します。これを8回。",
+      "腕を替えて、左腕を上げて右へ倒す8回を行います。",
+      "腰に痛みが出たら倒す角度を小さくします。ひざが痛いときはクッションを2枚重ねます。"
+    ],
+    cues:{ do:"真横に倒して、片側を伸ばしながら反対側を縮める。", dont:"前に倒れる・お尻が横にずれるのは失敗。" },
+    easyOption:"椅子に座って同じ動きを各8回。",
+    why:"伸ばす側と縮める側を同時に使うので、左右差の調整に向いている。"
+  },
 ];
 
 export { DB_PILATES };
