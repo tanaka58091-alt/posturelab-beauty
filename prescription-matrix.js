@@ -84,22 +84,7 @@ function equipmentOk(eq){
 // 高難度・高衝撃・逆位など、40〜70代女性に不適切な種目を除外
 const UNSAFE_TECHNIQUES = new Set(['plyometric']); // ジャンプ系は全除外
 const UNSAFE_IDS = new Set([
-  // ヨガ: 逆転・高難度
-  'yg_shoulder_stand','yg_plow_pose','yg_wheel_pose','yg_crow_pose',
-  'yg_dancer_pose','yg_reclining_hero','yg_half_moon','yg_revolved_triangle',
-  // ピラティス: 高難度コア
-  'pl_jackknife_basic','pl_corkscrew_advanced','pl_teaser_variation_3',
-  'pl_rocking','pl_swan_advanced','pl_double_leg_kick',
-  // パーソナル: 高難度自重
-  'pt_pseudo_planche','pt_dive_bomber','pt_dragon_flag_prep','pt_l_sit_progression',
-  'pt_archer_pushup','pt_diamond_pushup','pt_decline_pushup','pt_pike_pushup',
-  'pt_pike_holds','pt_shrimp_squat','pt_skater_squat','pt_pistol_progression',
-  'pt_reverse_nordic','pt_jump_squat','pt_skater_jump','pt_squat_thrust',
-  'pt_high_knees','pt_butt_kicks','pt_burpee','pt_mountain_climber',
-  'pt_jumping_jack','pt_v_up','pt_hollow_rock','pt_hanging_knee_raise',
-  'pt_dead_hang','pt_inverted_row','pt_scapular_pullup',
-  'pt_plank_to_pushup','pt_bear_crawl','pt_crab_walk',
-  'pt_side_plank_dip','pt_side_plank_reach',
+  // 2026-09-11: 高難度・逆転・高衝撃の種目(45件)はDBから削除済み。新規追加時の除外用に枠だけ残す
 ]);
 
 function isSeniorSafe(ex){
