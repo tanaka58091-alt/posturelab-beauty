@@ -45,7 +45,10 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>" >/dev/null 2>&1; then ech
       fi
       now=$(date +%s)
       if [ -n "$t" ]; then
-        [ "$t" -le "$now" ] && t=$((t+86400))
+        if [ "$t" -le "$now" ]; then
+          # 復活時刻を過ぎているのに上限が続く＝反映待ち。1日先送りせず30分だけ待つ
+          if [ $((now - t)) -lt 7200 ]; then t=$((now+1800)); else t=$((t+86400)); fi
+        fi
         wait_sec=$((t-now+120)); [ "$wait_sec" -lt 300 ] && wait_sec=300
       fi
     fi
