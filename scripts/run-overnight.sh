@@ -21,6 +21,7 @@ while true; do
   node scripts/gen-ex-img.mjs --limit 400 --concurrency 2 --timeout 420 >> "$LOG" 2>&1
   after=$(ls ex-img/raw | grep -v '^_' | wc -l | tr -d ' ')
   gained=$((after-before))
+  sleep 65  # compress の -mmin +1 に最新PNGが弾かれないよう待つ
   ./scripts/compress-ex-img.sh >> "$LOG" 2>&1
   if git add -A ex-img >/dev/null 2>&1 && git commit -q -m "art: 生成イラスト ${after}種（夜間バッチ round ${round}）
 
