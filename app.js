@@ -84,6 +84,11 @@ const state = {
 // keys: 姿勢問題キー / focus: その悩み特有の重点(同じキーでも狙いを変える)
 //   bodyPart = 優先して当てたい部位(exercise.bodyPartと照合) / note = 診断文に足す一文
 const SYMPTOM_MAP = {
+  // 配慮が必要な状態（処方の禁忌フィルタに使う。姿勢問題キーは持たない）
+  neckPain:     { label:'首の痛み',   keys:[] },
+  shoulderPain: { label:'肩の痛み',   keys:[] },
+  pregnant:     { label:'妊娠中',     keys:[] },
+  highBP:       { label:'高血圧',     keys:[] },
   shoulderStiff:  { label:'肩こり',           keys:['forwardHead','roundedShoulders'],
     focus:{ bodyPart:['neck','shoulder'], note:'肩まわりのこりをほぐす動きを多めに組みました。' } },
   neckStiff:      { label:'首こり・頭痛',     keys:['forwardHead','thoracicKyphosis'],
@@ -342,10 +347,10 @@ function computePainFlags(){
     knee:    state.symptoms.includes('kneePain')    || /(ひざ|膝|ヒザ).{0,8}(痛|いた)/.test(t),
     lowBack: state.symptoms.includes('lowBackPain') || /(腰|こし).{0,8}(痛|いた)/.test(t) || /ぎっくり/.test(t),
     // 自由記述から追加の配慮を検出（該当がなければ従来どおり何も変わらない）
-    neck:     /(首|くび|頸).{0,8}(痛|いた|ヘルニア)/.test(t) || /むち打ち|ムチ打ち/.test(t),
-    shoulder: /(肩|かた).{0,8}(痛|いた)/.test(t) || /四十肩|五十肩|腱板/.test(t),
-    pregnant: /妊娠|妊婦|マタニティ|産後すぐ/.test(t),
-    bloodPressure: /高血圧|血圧が高/.test(t),
+    neck:     state.symptoms.includes('neckPain')     || /(首|くび|頸).{0,8}(痛|いた|ヘルニア)/.test(t) || /むち打ち|ムチ打ち/.test(t),
+    shoulder: state.symptoms.includes('shoulderPain') || /(肩|かた).{0,8}(痛|いた)/.test(t) || /四十肩|五十肩|腱板/.test(t),
+    pregnant: state.symptoms.includes('pregnant')     || /妊娠|妊婦|マタニティ|産後すぐ/.test(t),
+    bloodPressure: state.symptoms.includes('highBP')  || /高血圧|血圧が高/.test(t),
   };
   state.painFlags = flags;
   setPainAvoidance(flags);
@@ -597,12 +602,14 @@ els.btnAnalyze.addEventListener('click', async () => {
     state.recommendation = recommendCourse(probKeys);
     // 初回はトップ推奨コースを選択
     state.selectedCourse = state.recommendation.top;
+    state.currentSessionId = null;   // 新規診断: 前回セッションの進捗・調整（できた記録／やさしく等）を引き継がない
     state.program = build30DayProgram(probKeys, state.selectedCourse, programOpts());
 
     state.savedMetrics = null; state.savedThumbs = null; // 新規診断なので保存モード解除
     hideSavedBanner();
     renderAll();
     saveCurrentSession();   // ① 履歴に保存（端末内）
+    renderToday(); renderProgram(state.currentPhase);   // 保存で確定した新セッションIDの進捗で描き直す
     hideLoader();
     els.results.hidden = false;
     els.results.classList.add('fade-in');
@@ -1473,7 +1480,7 @@ state.artIds = new Set();
 const ART_PLACEHOLDER = '<svg viewBox="0 0 410 205" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="イラスト準備中"><rect width="410" height="205" rx="14" fill="#FDF9F7"/><circle cx="205" cy="66" r="20" fill="#F3D9C8"/><path d="M167 150c0-28 17-46 38-46s38 18 38 46v18h-76z" fill="#D99F9A"/><text x="205" y="192" text-anchor="middle" font-size="13" fill="#7A5C52">イラストは順次追加中です</text></svg>';
 function artHTML(ex){
   if (state.artIds && state.artIds.has(ex.id)){
-    return `<img class="ex-art-img" src="ex-img/${ex.id}.webp" alt="" width="1200" height="600" decoding="async">`;
+    return `<img class="ex-art-img" src="ex-img/${ex.id}.webp" alt="${escapeHtml(ex.displayName || ex.name || '')}のやり方イラスト" width="1200" height="600" loading="lazy" decoding="async">`;
   }
   return ex.illustration || ART_PLACEHOLDER;
 }
@@ -1496,10 +1503,13 @@ function keyCaution(ex){
   return firstSentence(ex.cues?.dont || '');
 }
 
+// カードに表示した実オブジェクト（漸増後の回数・引き締め枠など）をモーダルでもそのまま使うための台帳
+const CARD_REG = [];
+function regCard(ex){ CARD_REG.push(ex); return CARD_REG.length - 1; }
 function exerciseCard(ex){
   const firstStep = compactSteps(ex)[0] || '';
   return `
-    <div class="exercise-card" data-ex="${ex.id}">
+    <div class="exercise-card" data-ex="${ex.id}" data-k="${regCard(ex)}" role="button" tabindex="0">
       <div class="ex-illust">${artHTML(ex)}</div>
       <div class="ex-info">
         <span class="ex-cat ${categoryClass(ex)}">${categoryLabel(ex)}</span>${ex._slot === 'toning' ? '<span class="ex-cat toning">💪 引き締め</span>' : ''}
@@ -1533,10 +1543,12 @@ function repeatNote(ex){
 
 function bindExerciseCards(parent){
   parent.querySelectorAll('.exercise-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.dataset.ex;
-      openExerciseModal(ALL_EXERCISES[id]);
-    });
+    const open = () => {
+      const id = card.dataset.ex, k = card.dataset.k;
+      openExerciseModal((k !== undefined && CARD_REG[k]) || ALL_EXERCISES[id]);
+    };
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
   });
 }
 
@@ -2019,7 +2031,8 @@ function openSavedSession(id){
 // 長距離スクロールの共通処理。
 // smooth は環境によって効かず「押しても動かない」ように見えるので即時ジャンプにし、
 // フォント/画像の読込でレイアウトがずれても届くよう、着地を確認しながら補正する。
-function jumpTo(selector, offset = 12){
+function jumpTo(selector, offset){
+  if (offset == null) offset = 12 + (document.querySelector('.site-header')?.offsetHeight || 0);
   const get = () => document.querySelector(selector);
   const go = () => {
     const t = get();
@@ -2085,11 +2098,13 @@ function runSimpleDiagnosis(){
   state.recommendation = recommendCourse(probKeys);
   state.selectedCourse = state.recommendation.top;
   state.currentPhase = 1;
+  state.currentSessionId = null;   // 新規診断: 前回セッションの進捗・調整を引き継がない
   state.program = build30DayProgram(probKeys, state.selectedCourse, programOpts());
 
   hideSavedBanner();
   renderAll();
   saveCurrentSession();
+  renderToday(); renderProgram(state.currentPhase);   // 新セッションIDの進捗で描き直す
   showSimpleBanner();
   els.results.hidden = false;
   els.results.classList.add('fade-in');

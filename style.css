@@ -1691,3 +1691,47 @@ body{
 .nagara-title{ font-size:15px; font-weight:700; color:var(--ink); margin-bottom:4px }
 .nagara-how{ font-size:13px; line-height:1.6; color:var(--ink) }
 .nagara-meta{ font-size:12px; color:#7A5C52; margin-top:6px }
+
+/* ===== 2026-09-14 読みやすさ・タップ領域・コントラストの底上げ（40〜70代・スマホ） ===== */
+:root{ --muted:#86667A; }                 /* 補助文字: 白地で 5.0:1 */
+html{ font-size:16px; }
+body{ font-size:16px; }
+.muted, .symptom-head .muted{ font-size:14px; }
+.ex-purpose{ font-size:14px; }
+.ex-cat, .modal-ex-info .ex-cat{ font-size:12px; }
+.day-list li{ font-size:13px; }
+.phase-tab small{ font-size:11px; }
+.foot-disc{ font-size:12px; }
+.course-supervisor{ font-size:11px; }
+.pq-lead{ font-size:15px; }
+.pq-label{ font-size:14px; }
+.pq-opts button{ font-size:14px; min-height:44px; padding:8px 16px; }
+.chip span{ font-size:14px; min-height:44px; display:inline-flex; align-items:center; }
+.chip-divider{ flex-basis:100%; width:100%; font-size:13px; color:var(--muted); font-weight:700; margin-top:8px; }
+textarea, select, input[type="text"], input[type="search"], .symptom-note textarea, .md-name-edit input, .cmp-pick select{ font-size:16px; } /* iOS の自動ズーム防止 */
+.btn-primary{ color:var(--ink); }                       /* ピンク地に白は 2:1 → 濃色で 5.7:1 */
+.course-select-btn{ color:var(--ink); font-size:14px; min-height:44px; }
+.btn-ghost.sm{ min-height:40px; font-size:13px; }
+.md-del{ min-width:44px; min-height:44px; }
+.modal-close{ width:44px; height:44px; }
+.modal-panel{ max-height:90vh; max-height:90dvh; }     /* iOS のツールバーで下端が隠れない */
+.exercise-card:focus-visible{ outline:3px solid var(--rose); outline-offset:2px; }
+@media(max-width:640px){
+  .chip span{ font-size:14px; padding:10px 14px; }
+  .symptom-note textarea{ font-size:16px; }
+  .day-list li{ font-size:13px; }
+  .phase-tab small{ font-size:11px; }
+  .foot-disc{ font-size:12px; }
+  .pq-opts button{ padding:10px 16px; }
+  .modal-close{ width:44px; height:44px; }
+}
+/* 小さすぎる補助文字の底上げ（続き） */
+.hero-stats span, .hero-stats .stat-label{ font-size:12px; }
+.tip, .tip div{ font-size:13px; }
+.tip strong{ font-size:13px; }
+.drop-sub, .cta-sub{ font-size:13px; }
+.sg-hint{ font-size:13px; }
+.sg-col strong{ font-size:14px; }
+.symptom-note label{ font-size:14px; }
+.foot-links span, .foot-row{ font-size:13px; }
+.drop-required{ font-size:11px; }
