@@ -120,16 +120,17 @@ function setPainAvoidance(flags){
 }
 // 部位・状態ごとの高負荷/不適切種目（表示名・正式名・手順文で判定）
 const PAIN_EXCLUDE = {
-  knee:    /スクワット|ランジ|踏み込|踏み出|空気イス|立ち座り|ステップ|踏み台|しゃがん|ひざ立ち|もも上げ/,
+  knee:    /スクワット|ランジ|踏み込|踏み出|空気イス|立ち座り|ステップ|踏み台|しゃが|足を引いて|足を交差|交差して|ひざ立ち|もも上げ|深く曲げ/,
   lowBack: /上体起こし|起き上が|ロールアップ|レッグレイズ|両脚下ろし|下ろし上げ|Ｖ字|V字|ジャックナイフ|スーパーマン/,
   // 首: 頭の重さを支える/首を大きく動かす/頭を下げる系
   neck:    /首.*(回|まわ|ぐるぐる)|頭を持ち上げ|頭と肩を|クランチ|上体起こし|プランク|四つ這いで腕|うつ伏せ.*頭|ドルフィン|ダウンドッグ|前屈/,
   // 肩: 体重を腕で支える/頭上へ大きく上げる系
   shoulder:/腕立て|プランク|ディップ|ダウンドッグ|ドルフィン|四つ這いで腕|腕を頭の上|バンザイ|肩の高さより上/,
   // 妊娠中: うつ伏せ・強い腹圧・仰向け長時間・強いねじり
-  pregnant:/うつ伏せ|腹ばい|クランチ|上体起こし|レッグレイズ|プランク|ねじ(り|る)|ツイスト|Ｖ字|V字|腹筋/,
+  pregnant:/うつ伏せ|腹ばい|仰向け|あお向け|仰臥|クランチ|上体起こし|レッグレイズ|プランク|ねじ(り|る)|ツイスト|Ｖ字|V字|腹筋/,
   // 高血圧: 息こらえ・頭が心臓より下・逆位・強い等尺
-  bloodPressure:/ダウンドッグ|ドルフィン|前屈|逆立|頭を下げ|息を止め|カパラバティ|火の呼吸|空気イス|プランク/,
+  // 「息を止めずに」「息を止めない」は安全側の注意書きなので除外しない
+  bloodPressure:/ダウンドッグ|ドルフィン|前屈|逆立|頭を下げ|息を止め(?!ない|ず|ません|ること|る事)|カパラバティ|火の呼吸|空気イス|プランク/,
 };
 // ===== 主訴フォーカス（同じ問題キーでも「何に困って来たか」で重点部位を変える）=====
 // 例: 腰痛の人は腰まわり/体幹、下腹ぽっこりの人はお腹まわり を優先して当てる。
@@ -152,6 +153,8 @@ function passesPainRules(ex){
   for (const key of ['knee', 'lowBack']){
     if (PAIN_AVOID[key] && PAIN_EXCLUDE[key].test(name)) return false;
   }
+  // ひざ痛: 名前に出なくても手順文で「深くしゃがむ」「片脚に体重」などがあれば外す
+  if (PAIN_AVOID.knee && /深くしゃが|ひざを深く|片脚(で|に)(しゃが|体重)|ひざに体重/.test(deep)) return false;
   for (const key of ['neck', 'shoulder', 'pregnant', 'bloodPressure']){
     if (PAIN_AVOID[key] && PAIN_EXCLUDE[key].test(deep)) return false;
   }
@@ -247,6 +250,26 @@ function buildPoolForProblem(problemKey, course){
   };
 }
 
+// ===== 同一ポーズの判定 =====
+// 名前の表記ゆれ（全角/半角括弧・中黒・「のポーズ」）を吸収して同じ動きかを見る。
+// 名前が全く違う二重登録（サンスクリット名 vs 英名）は SAME_POSE で明示する。
+const SAME_POSE = [
+  ['yg_mountain', 'yg_mountain_pose'], ['yg_chair', 'yg_chair_pose'], ['yg_eagle', 'yg_eagle_pose'],
+  ['yg_butterfly_yoga', 'yg_butterfly_pose'], ['yg_hero', 'yg_hero_pose'], ['yg_locust', 'yg_locust_pose'],
+  ['yg_bow', 'yg_bow_pose'], ['yg_camel', 'yg_camel_pose'], ['yg_kapalbhati', 'yg_kapalabhati'],
+  ['yg_warrior3', 'yg_warrior_3'], ['pl_side_kick_circle', 'pl_side_kick_circles'], ['st_hip_circle', 'st_hip_circles'],
+];
+const POSE_ALIAS = new Map();
+SAME_POSE.forEach(([a, b]) => { POSE_ALIAS.set(a, a); POSE_ALIAS.set(b, a); });
+function poseKey(ex){
+  if (POSE_ALIAS.has(ex.id)) return 'alias:' + POSE_ALIAS.get(ex.id);
+  return 'name:' + String(ex.name || '')
+    .replace(/[（）]/g, m => (m === '（' ? '(' : ')'))
+    .replace(/のポーズ|ポーズ/g, '')
+    .replace(/[\s　・、,，.．]/g, '')
+    .toLowerCase();
+}
+
 // 複数の問題キーをマージしたプールを返す(コース指定可)
 function buildPrescriptionPool(problemKeys, course='mixed', sizing){
   const selfSet = new Map(); // id → exercise (重複排除)
@@ -306,6 +329,19 @@ function buildPrescriptionPool(problemKeys, course='mixed', sizing){
       if (isSelfcare(ex) && !selfSet.has(ex.id)) selfSet.set(ex.id, ex);
       else if (isTraining(ex) && !trainSet.has(ex.id)) trainSet.set(ex.id, ex);
     }
+  }
+
+  // ②'' 同じポーズの別ID（別DB由来の同名種目・サンスクリット名/英名の二重登録）を1つに絞る。
+  //    残すのは先に入った方（＝問題直結で引き込まれた方が優先）。30日に同じ動きが二重に入るのを防ぐ。
+  {
+    const seenPose = new Set();
+    const keepUnique = (map) => {
+      for (const [id, ex] of Array.from(map.entries())){
+        const k = poseKey(ex);
+        if (seenPose.has(k)) map.delete(id); else seenPose.add(k);
+      }
+    };
+    keepUnique(selfSet); keepUnique(trainSet);
   }
 
   // ③ コースの性格づけ: 中核種目を残しつつ、変化の幅(TARGET数)は確保する
