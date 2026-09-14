@@ -74,7 +74,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_walking_lunge', name:'ウォーキングランジ', displayName:"歩きながらのランジ", courses:['personal'],
-    targetProblems:['kneeValgus'],
+    targetProblems:['kneeValgus','lateralAsymmetry','posteriorPelvicTilt'],
     category:'training', technique:'strength', bodyPart:'leg', intensity:3,
     equipment:'なし', position:'standing', duration:'各10歩 × 3セット',
     illustration: SVG2.lungeStretch,
@@ -151,7 +151,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_fire_hydrant', name:'ファイアハイドラント', displayName:"四つん這いで脚を横に開く運動", courses:['personal'],
-    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus'],
+    targetProblems:['kneeValgus','lateralAsymmetry','kneeVarus','posteriorPelvicTilt'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:2,
     equipment:'マット', position:'quadruped', duration:'各15回 × 3セット',
     illustration: SVG2.fireHydrant,
@@ -452,7 +452,7 @@ const DB_PERSONAL = [
   },
   {
     id:'pt_russian_twist', beginnerSafe:false, name:'ロシアンツイスト', displayName:"ロシアンツイスト", courses:['personal'],
-    targetProblems:['lateralAsymmetry','scoliosis'],
+    targetProblems:['lateralAsymmetry','scoliosis','anteriorPelvicTilt'],
     category:'training', technique:'strength', bodyPart:'core', intensity:3,
     equipment:'マット', position:'sitting', duration:'各15回 × 3セット',
     illustration: SVG2.bicycleAb,
@@ -552,28 +552,6 @@ const DB_PERSONAL = [
     why:'股関節モビリティと脚力を一度に育てる。'
   },
   {
-    id:'pt_curtsy_lunge', beginnerSafe:false, name:'カーテシーランジ', displayName:"斜め後ろへ脚を引くランジ", courses:['personal'],
-    targetProblems:['lateralAsymmetry','kneeValgus'],
-    category:'training', technique:'strength', bodyPart:'leg', intensity:2,
-    equipment:'なし', position:'standing', duration:'各12回 × 3セット',
-    illustration: SVG2.curtseyLunge,
-    purpose:'中臀筋・内転筋を同時に。',
-    how:["体の横に椅子を置き、片手で背もたれをつかめるようにします。足はこぶし2つ分あけて立ち、背すじを伸ばします。片手は椅子の背、もう片方の手は腰へ。目線は前の壁の一点。","右足のかかとを上げ、右足を後ろへ、左足のかかとの後ろを通して運びます。","右足のつま先を、左足の外側の床へ着けます。着く位置は、左足のかかとから斜め後ろへ、自分の足2つ分ほど離れたところ。右足はかかとを上げたまま(つま先立ち)。","上体はまっすぐ立て、前を向いたまま、3秒かけて両ひざを曲げ、腰を真下へ落とします。右ひざは床へ近づけますが、下りるところまででかまいません。","左足で床を押して立ち姿勢に戻ります。左足のかかとが床から浮いたら、ひざが前へ出すぎた合図なので、それより沈みません。","左右を替えながら各12回で1セット。セットの間は90秒休み、合計3セット行います。"],
-    cues:{"do":"上体は前に倒さず、背すじを立てたまま腰を真下へ落とします。立っている足の裏は、親指の付け根・小指の付け根・かかとの3点を床につけたまま。","dont":"立っている足の小指の付け根が床から浮くのは、ひざが内側へ倒れた合図です。そのまま続けません。バランスを崩す、ひざに痛みが出たら中止します。"},
-    why:'脚を斜め後ろに引いてしゃがみ、お尻の横側を鍛えます。'
-  },
-  {
-    id:'pt_walking_lunge', name:'ウォーキングランジ', displayName:"歩きながらのランジ", courses:['personal'],
-    targetProblems:['lateralAsymmetry','posteriorPelvicTilt'],
-    category:'training', technique:'strength', bodyPart:'leg', intensity:2,
-    equipment:'なし', position:'standing', duration:'20歩 × 3セット',
-    illustration: SVG2.lungeStretch,
-    purpose:'歩きながら全身を鍛える。',
-    how:["前へまっすぐ6m以上進める場所(廊下やリビングの端から端)を用意します。足はこぶし2つ分あけて立ち、両手は腰、目線は前の壁へ。","右足を前へ大きく一歩踏み出します。歩幅は、ふだん歩くときの2倍(およそ1m)が目安です。","3秒かけて両ひざを曲げ、体を真下へ沈めます。後ろのひざが床からこぶし1個分の高さまでが目安ですが、そこまで下りなくてかまいません。上体は床に垂直のまま。","前足のかかとで床を押して立ち上がります。前足のかかとが床から浮いたら、ひざが前へ出すぎた合図なので、それより沈みません。","後ろの左足を前へ引き寄せて右足とそろえ、いったんまっすぐ立ってふらつきを整えます。次は左足を前へ踏み出し、同じように行います。","一歩ごとに声に出して数え、5歩で止まって向きを変えます。戻りは左足から踏み出して5歩(これで左右5歩ずつ)。2往復して左右各10歩で1セット。セットの間は90秒休み、合計3セット行います。"],
-    cues:{"do":"一歩ごとに両足をそろえてまっすぐ立ち、ふらつきが収まってから次の一歩へ進みます。","dont":"前足のかかとが浮くのは、前のひざが出すぎた合図です。そのまま続けません。ひざや腰に痛みが出たら中止します。"}, beginnerSafe:false,
-    why:'一歩ずつ踏み出してしゃがみ、脚全体とバランスを鍛えます。'
-  },
-  {
     id:'pt_single_leg_glute_bridge', easyOption:'上げる脚を浮かせず、両足の裏を床につけたまま行います。お尻の肉を真ん中へ寄せて硬くし、両足で床を押してお尻を持ち上げ、坂道のようにまっすぐ並んだら3秒かけて下ろします。12回×2セット行います。', name:'片脚グルートブリッジ', displayName:"片脚のお尻持ち上げ", courses:['personal'],
     targetProblems:['posteriorPelvicTilt','lateralAsymmetry'],
     category:'training', technique:'strength', bodyPart:'hip', intensity:2,
@@ -616,17 +594,6 @@ const DB_PERSONAL = [
     how:["マットの上で四つん這いになります。手は肩の真下(腕をまっすぐ床へ下ろした位置)、両ひざはお尻の真下(太ももが床にまっすぐ立つ位置)に置きます。目線は手の少し前の床へ。","背中の形を決めます。まず背中を思いきり丸め、次に思いきり反らせ、その中間で止めます。そこが平らな背中です。動作中はその形を保ちます。","平らな背中の腰のあたりに、たたんだタオルを1枚のせます。このタオルが落ちない範囲が、動いてよい範囲です。","右ひざを曲げた角度(およそ直角)を変えないまま、右の足の裏を天井へ向けて、右のももを後ろ上へ持ち上げます。タオルが落ちたら上げすぎなので、次からは低くします。","3秒かけて下ろし、ひざが床に触れる手前で次へ。これを15回。反対の脚でも15回、これを3セット行います。手首やひざが痛くなったら中止します。"],
     cues:{"do":"腰にのせたタオルが落ちない範囲で、ひざの曲がりを保ったまま持ち上げる。","dont":"体を横に傾けたり、腰を反らせて高く上げたりしない。手首やひざが痛くなったら中止する。"},
     why:'脚を後ろへ蹴り上げ、お尻の筋肉を鍛えます。'
-  },
-  {
-    id:'pt_fire_hydrant', name:'ファイアハイドラント', displayName:"四つん這いで脚を横に開く運動", courses:['personal'],
-    targetProblems:['kneeValgus','posteriorPelvicTilt','kneeVarus'],
-    category:'training', technique:'strength', bodyPart:'hip', intensity:1,
-    equipment:'マット', position:'kneeling', duration:'各15回 × 3セット',
-    illustration: SVG2.fireHydrant,
-    purpose:'中臀筋を直接刺激。',
-    how:["マットで四つん這いになります。両手は肩の真下、両ひざは腰の幅にひらきます。ひざが痛ければ、ひざの下にたたんだバスタオルを敷きます。","太ももが床からまっすぐ立つ位置にひざを置き、背中は平らにします。視線は手の少し前の床へ。","ひざを曲げたまま、片脚を真横へ3秒かけて開き上げます。ひざの曲がり具合は最初のまま変えません。","床についた手に体重が急に増えたら、体が反対へ傾いたサインです。その手前で止めます。高く上げる必要はありません。","3秒かけて戻し、ひざを床に軽くつけます。これで1回。片脚15回、脚を替えて15回。これを3セット。","ひざ・腰・手首に痛みが出たら中止します。"],
-    cues:{"do":"ひざの曲がり具合を変えないまま、床の手に体重が急に乗らない範囲で横へ開く。","dont":"脚を高く上げたくて体を反対側へ倒さない。上げながらひざを伸ばして脚を後ろへ流さない。"}, easyOption:"15回続かない、またはタオルがすぐ落ちるときは、持ち上げる高さを半分にして、各10回×2セットにする。",
-    why:'O脚改善・骨盤安定。'
   },
   {
     id:'pt_lateral_step', name:'ラテラルステップ', displayName:"横歩きステップ", courses:['personal'],
@@ -719,28 +686,6 @@ const DB_PERSONAL = [
     how:["マットに仰向けになります。ひざを軽く曲げたまま、片脚ずつ天井へ上げ、最後は両脚とも天井へ上げた形にします（片脚だけで終わらせず、両脚を上げます）。勢いはつけません。上げてから、伸ばせるところまでひざを伸ばします。曲がったままでも大丈夫です。","両腕を、天井へ上げたつま先に向けてまっすぐ伸ばします。目線はつま先。あごは胸に押しつけません。","息を吐きながら、頭と肩を床から浮かせ、両手をつま先の方へ近づけます。手が届かなくても、肩が床から浮けば1回です。","つま先が目線から外れて自分の顔の方へ倒れてきたら、いったん止めて脚を天井へ上げ直します。","息を吸いながら3秒かけて頭と肩を床に戻します。回数は声に出して数えます。数えにくいときは、あごを胸に近づけすぎです。10回くり返し、1分休んで、合計2セット行います。","首や腰に痛みが出たら、すぐ中止します。"],
     cues:{"do":"回数を声に出して数えられる首の角度のまま、息を吐いて肩を床から浮かせる。","dont":"首の後ろを手で引っ張らない。勢いをつけてガバッと起き上がらない。"},
     why:'手を足先へのばし、お腹の上部を使います。'
-  },
-  {
-    id:'pt_russian_twist', beginnerSafe:false, name:'ロシアンツイスト', displayName:"ロシアンツイスト", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
-    category:'core', technique:'core', bodyPart:'core', intensity:2,
-    equipment:'マット', position:'sitting', duration:'各15回 × 3セット',
-    illustration: SVG2.twist,
-    purpose:'腹斜筋を回旋で鍛える。',
-    how:["壁を背にして床に座り、両ひざを立てて足の裏を床につける。背中と壁の間はこぶし2つ分（約15cm）あける。","両手のひらを胸の前で合わせる。手はずっと胸の高さに置き、目線は手へ。","上体を後ろへ倒し、背中が壁に軽く触れたら、そこから手のひら1枚分（約5cm）だけ戻して止める。ここが開始の位置。","息を吐きながら、合わせた手を左へ向ける。頭・胸・おへそを一緒に左へ回す。ひざと足は動かさない。","息を吸って正面に戻り、同じように右へ回す。左右交互に各15回×3セット。","終わったら脚を伸ばして休む。腰が痛くなったらすぐ中止する。"],
-    cues:{"do":"手はずっと胸の高さ。背中と壁のすき間を保ったまま回す。","dont":"背中が壁に寄りかかったまま回すのは失敗。いったん座り直し、すき間を作ってから続ける。"},
-    why:'座って上体をひねり、脇腹(腹斜筋)を使います。'
-  },
-  {
-    id:'pt_bicycle_crunch', beginnerSafe:false, name:'バイシクルクランチ', displayName:"バイシクルクランチ", courses:['personal'],
-    targetProblems:['anteriorPelvicTilt','lateralAsymmetry','scoliosis'],
-    category:'core', technique:'core', bodyPart:'core', intensity:2,
-    equipment:'マット', position:'supine', duration:'各15回 × 3セット',
-    illustration: SVG2.bicycle,
-    purpose:'回旋と屈曲を同時。',
-    how:["マットにあお向けになり、両ひざを持ち上げて直角に曲げます。両手は指を組まずに、左右の耳の後ろへ軽く添えます。","天井のやや足寄りを見たまま、頭と肩を床から浮かせます。あごが胸につくほど引きません。","息を吐きながら、まず胸の真ん中を左ひざのほうへ向け、左ひざを胸へ引き寄せます。同時に右脚を斜め前へ伸ばします。","次に胸の真ん中を右ひざのほうへ向け、右ひざを引き寄せて左脚を伸ばします。左右の脚は入れ替わるように交互に動きます。","『イチ、ニ…』と声に出して数えながら、自転車をこぐように左右交互に各15回×3セット。セットの間は30秒、頭を床につけて休みます。","終わったら脚を下ろし、頭を床につけて休みます。首が痛くなったらすぐ中止します。"],
-    cues:{"do":"手で頭を引っ張らず、胸の真ん中を、近づけたいひざのほうへ向けます。まず左ひざから始めます。","dont":"あごが胸につくほど引きません。声に出して数えられなくなったら、そこでやめます。"},
-    why:'腹斜筋の代表種目。'
   },
   {
     id:'pt_reverse_plank', beginnerSafe:false, name:'リバースプランク', displayName:"あお向け一直線キープ", courses:['personal'],

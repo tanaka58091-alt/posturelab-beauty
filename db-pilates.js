@@ -694,17 +694,6 @@ const DB_PILATES = [
     why:'心肺と背筋を同時に。'
   },
   {
-    id:'pl_single_leg_kick', name:'シングルレッグキック', displayName:"うつ伏せ片脚かかと引き寄せ", courses:['pilates'],
-    targetProblems:['thoracicKyphosis','anteriorPelvicTilt'],
-    category:'mobility', technique:'pilates', bodyPart:'back', intensity:2,
-    equipment:'マット', position:'prone', duration:'各8回',
-    illustration: SVG2.bow,
-    purpose:'スフィンクス姿勢で片脚キック。',
-    how:["マットにうつ伏せになり、両ひじを肩の真下につき、ひじから手首までを床につけて上体を軽く起こします。両脚は伸ばして揃えます。","一度わざと肩を耳へ近づけてから、力を抜いて肩を足のほうへ下げます。この位置を動作中ずっと保ちます。","おへその下あたりを軽くへこませ、床とのあいだに紙1枚ぶんのすき間を作るつもりで力を入れます。これで腰が反るのを防げます。","1mほど先の床の一点を見つめます。この一点が動いて見えたら、上体が動いた合図です。動かないように保ちます。","右のかかとをお尻へ向けて、「イチ・ニ」と1秒に1回のペースで2回引き寄せます。かかとがお尻に軽く触れるところまで（届かなければ届くところまで）。勢いよく強くけりません。","右脚を伸ばして戻し、続けて左のかかとを同じように2回引き寄せます。左右交互に各8回。前ももやひざに痛みが出たら中止します。"],
-    cues:{"do":"床の一点を見つめたまま、上体を動かさずにかかとだけ動かす。","dont":"腰を反らせない。反動で勢いよくけらない。"}, easyOption:"30秒続かなければ、続ける時間を10秒に、セット数を2セットに減らし、間の休みを60秒とる。手足の動かし方と速さは同じ。",
-    why:'ハム強化と胸の開放。'
-  },
-  {
     id:'pl_side_kick_circles', name:'サイドキック・サークル', displayName:"横向き脚まわし", courses:['pilates'],
     targetProblems:['lateralAsymmetry','kneeValgus','kneeVarus'],
     category:'mobility', technique:'pilates', bodyPart:'hip', intensity:2,
