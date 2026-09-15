@@ -1735,3 +1735,333 @@ textarea, select, input[type="text"], input[type="search"], .symptom-note textar
 .symptom-note label{ font-size:14px; }
 .foot-links span, .foot-row{ font-size:13px; }
 .drop-required{ font-size:11px; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   2026-09-15 デザイン刷新 — 美容ブランドとしての「上質さ」を出す
+   方針: ①見出しは明朝でエレガントに（本文は読みやすい丸ゴシックのまま）
+         ②ゴールドを差し色にして、ピンク一色の単調さを解消
+         ③STEP見出しをエディトリアル体裁に（ラベル→明朝タイトル→金の罫）
+         ④余白・影・角丸のリズムを統一
+         ⑤スマホでの破綻をなくす（はみ出し・孤立行・詰まり）
+   ※ 2026-09-14 の読みやすさ（文字サイズ・タップ44px）は維持する
+   ══════════════════════════════════════════════════════════════════════ */
+:root{
+  --font-serif:'Shippori Mincho B1','Noto Serif JP',serif;
+  --gold-deep:#A8874A;      /* 白地で 4.6:1。テキストに使える金 */
+  --gold-soft:#EEE2C8;
+  --shadow-sm:0 1px 3px rgba(190,120,140,.05);
+  --shadow:0 6px 28px rgba(190,120,140,.09);
+  --shadow-lg:0 20px 56px rgba(190,120,140,.16);
+}
+
+/* ---------- 1. 見出しは明朝（18px以上の表示用のみ。本文には使わない） ---------- */
+.hero h1,
+.card h2,
+.symptom-head h3,
+.type-name,
+.rs-title,
+.problem-body h3,
+.modal-ex-info h2,
+.md-head h2,
+.cta-text h3,
+.wb-title,
+.done-title{
+  font-family:var(--font-serif);
+  font-weight:600;
+  letter-spacing:.03em;
+}
+
+/* ---------- 2. STEP見出しをエディトリアルに ---------- */
+.card-head{
+  display:block;
+  margin-bottom:24px;
+}
+.card-num{
+  display:inline-flex; gap:.28em; align-items:baseline;
+  background:none; box-shadow:none; border-radius:0;
+  padding:0; min-width:0; margin-bottom:10px;
+  font-family:var(--font-en); font-weight:600; font-size:10.5px;
+  letter-spacing:.24em; color:var(--gold-deep);
+}
+.card-num br{ width:0; margin:0 }   /* flex内では改行せず、gapで字間を作る */
+.card h2{
+  font-size:25px; line-height:1.5; margin:0;
+}
+/* 見出しの下に細い金の罫 */
+.card-head h2::after{
+  content:""; display:block;
+  width:44px; height:1px; margin:14px 0 0;
+  background:linear-gradient(90deg, var(--gold) 0%, rgba(201,168,106,0) 100%);
+}
+.card-head .muted{ margin-top:12px; line-height:1.85; }
+/* 見出し末尾の絵文字は外す（端末ごとに描画が変わり、質感が揃わないため） */
+.head-deco{display:none}
+
+/* ---------- 3. ヒーロー ---------- */
+.hero h1{
+  font-size:clamp(30px, 4.2vw, 50px);
+  line-height:1.45; letter-spacing:.04em;
+}
+.hero-eyebrow{
+  border-color:var(--gold-soft); color:var(--gold-deep);
+  letter-spacing:.08em; font-weight:600;
+}
+.hero-lead{ line-height:1.95; }
+/* 筆記体は写真の下へ（顔に重なっていた） */
+.hero-script{
+  position:static; transform:none; text-shadow:none;
+  grid-column:2; justify-self:center;
+  margin-top:-4px; font-size:30px; color:var(--rose);
+  opacity:.9; line-height:1.2;
+}
+/* 統計タイル: 金の細罫＋明朝の数字で「指標」らしく */
+.hero-stats > div{
+  border-radius:20px;
+  border-color:var(--line);
+  box-shadow:var(--shadow-sm);
+  padding:20px 12px;
+  gap:6px;
+}
+.hero-stats strong{
+  font-family:var(--font-serif); font-weight:600;
+  font-size:29px; color:var(--ink); letter-spacing:.02em;
+}
+.hero-stats span{ color:var(--muted); letter-spacing:.06em; }
+.stat-ico{ margin-bottom:4px; }
+
+/* ---------- 4. カード・面の質感 ---------- */
+.card{
+  border-radius:24px;
+  border-color:#FBEAEF;
+  box-shadow:var(--shadow);
+}
+.symptom-block{ border-radius:20px; }
+.symptom-head h3{ font-size:19px; letter-spacing:.03em; }
+
+/* ---------- 5. ボタン: 深いローズ＋白文字（白抜きで 4.8:1 以上） ---------- */
+.btn-primary{
+  background:linear-gradient(135deg, #B85068 0%, #9E3C54 100%);
+  color:#fff;
+  letter-spacing:.08em; font-weight:700;
+  box-shadow:0 8px 22px rgba(158,60,84,.28);
+}
+.btn-primary:hover:not(:disabled){ box-shadow:0 14px 30px rgba(158,60,84,.36); }
+.course-select-btn{
+  color:#fff;
+  background:linear-gradient(135deg, #B85068 0%, #9E3C54 100%);
+  letter-spacing:.06em;
+}
+
+/* ---------- 6. スコアと姿勢タイプ ---------- */
+.score-ring{ width:176px; height:176px; }
+.score-num{ font-family:var(--font-serif); font-weight:600; font-size:46px; }
+.score-num small{ font-family:var(--font-en); }
+.score-grade{
+  font-family:var(--font-jp); font-weight:700; letter-spacing:.1em;
+  color:var(--rose-deep); background:linear-gradient(135deg,#FFF3F6,#FFE3EA);
+  border:1px solid var(--pink-soft);
+}
+.type-card{
+  border-radius:22px; padding:26px 24px;
+  background:linear-gradient(140deg, #B8566F 0%, #9A3A52 58%, #8A3049 100%);
+  box-shadow:0 14px 36px rgba(183,80,104,.24);
+}
+.type-eyebrow{ letter-spacing:.2em; opacity:.92; }
+.type-name{ font-size:23px; line-height:1.5; margin:12px 0 10px; }
+.type-desc{ font-size:13.5px; opacity:1; }
+.type-tags span{ letter-spacing:.06em; }
+
+/* ---------- 7. 部位ごとの状態: 絵文字をやめ、金の通し番号に ---------- */
+.region-scores{ counter-reset:rs; border-radius:20px; padding:20px 18px; }
+.rs-title{ font-size:19px; font-weight:600; }
+.rs-item{ counter-increment:rs; }
+.rs-icon{ display:none }
+.rs-item > summary::before{
+  content:counter(rs, decimal-leading-zero);
+  flex:none; width:22px;
+  font-family:var(--font-en); font-size:10.5px; font-weight:600;
+  letter-spacing:.06em; color:var(--gold-deep);
+}
+.rs-item > summary{ padding:14px 4px; }
+.rs-bar{ height:6px; background:#F5F0F2; }
+.rs-score{ font-family:var(--font-serif); font-weight:600; font-size:19px; }
+
+/* ---------- 8. 気になる姿勢のポイント ---------- */
+.problem{ border-radius:22px; padding:24px 22px; border-color:#FBEAEF; }
+.problem-body h3{ font-size:18px; line-height:1.55; }
+.problem-sev{ border-radius:18px; width:62px; height:62px; }
+
+/* ---------- 9. 種目カード ---------- */
+.exercise-card{ border-radius:22px; border-color:#FBEAEF; padding:14px 14px 16px; }
+.ex-illust{
+  border:none; border-radius:16px;
+  background:linear-gradient(180deg,#FEFBF8 0%,#FBF3EE 100%);
+  box-shadow:inset 0 0 0 1px rgba(201,168,106,.14);
+  padding:6px;
+}
+.ex-info h4{ font-size:16px; line-height:1.5; letter-spacing:.02em; }
+.ex-cat{ font-family:var(--font-jp); letter-spacing:.08em; border-radius:999px; padding:5px 12px; }
+.ex-howhint{ border-radius:12px; background:#FFF4F7; }
+
+/* ---------- 10. モーダル ---------- */
+.modal-panel{ border-radius:26px; }
+.modal-ex-info h2{ letter-spacing:.03em; line-height:1.5; }
+
+/* ---------- 11. スマホ最終調整（~600px） ---------- */
+@media (max-width:600px){
+  .hero{ padding:24px 18px 14px; }
+  .hero h1{ font-size:clamp(25px, 7.4vw, 33px); line-height:1.5; letter-spacing:.03em; margin-bottom:16px; }
+  .hero-eyebrow{ font-size:11.5px; letter-spacing:.06em; }
+  .hero-lead{ font-size:14.5px; line-height:1.9; }
+  .hero-visual{ max-width:250px; }
+  .hero-script{ grid-column:1; font-size:23px; margin-top:2px; }
+  .hero-stats{ gap:10px; max-width:none; padding:0; }
+  .hero-stats > div{ padding:16px 8px; border-radius:18px; }
+  .hero-stats strong{ font-size:23px; }
+
+  .card{ padding:24px 18px; margin:14px 0; border-radius:20px; }
+  .card h2{ font-size:21px; line-height:1.55; }
+  .card-num{ font-size:10px; letter-spacing:.2em; margin-bottom:8px; }
+  .card-head h2::after{ margin-top:12px; }
+  .card-head{ margin-bottom:20px; }
+
+  .symptom-block{ padding:20px 16px; }
+  .symptom-head h3{ font-size:17px; }
+
+  .score-ring{ width:158px; height:158px; }
+  .score-num{ font-size:40px; }
+  .type-card{ padding:22px 20px; border-radius:20px; }
+  .type-name{ font-size:20px; }
+
+  .region-scores{ padding:18px 14px; }
+  .rs-title{ font-size:17px; }
+  .rs-item > summary::before{ width:19px; font-size:10px; }
+  .rs-score{ font-size:17px; }
+
+  .problem{ padding:20px 16px; border-radius:20px; }
+  .problem-body h3{ font-size:16.5px; }
+  .problem-sev{ width:54px; height:54px; border-radius:16px; }
+
+  .exercise-card{ padding:12px 12px 14px; border-radius:20px; }
+  .ex-info h4{ font-size:15.5px; }
+  .btn-primary{ padding:15px 26px; letter-spacing:.06em; }
+}
+
+/* ---------- 12. 極小スマホ（~380px）で文字が詰まらないように ---------- */
+@media (max-width:380px){
+  .hero h1{ font-size:24px; }
+  .card{ padding:20px 15px; }
+  .card h2{ font-size:19.5px; }
+  .hero-stats strong{ font-size:21px; }
+  .ex-info h4{ font-size:15px; }
+}
+
+/* ---------- 13. 写真アップロード枠を上質に（点線を細く・シルエットを主役に） ---------- */
+.upload-drop{
+  border:1.5px dashed var(--pink-3);
+  border-radius:20px;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FFF7F9 100%);
+  padding:26px 20px; min-height:0;
+  gap:0;
+}
+.upload-drop:hover{ border-color:var(--rose); background:linear-gradient(180deg,#FFFFFF 0%,#FFEFF3 100%); }
+.drop-illust{ width:92px; height:124px; margin-bottom:16px; }
+.drop-title{ font-family:var(--font-serif); font-weight:600; font-size:16.5px; letter-spacing:.04em; color:var(--ink); }
+.drop-required{ color:var(--gold-deep); border-color:var(--gold-soft); letter-spacing:.06em; }
+.upload-icon-circle{
+  width:48px; height:48px; margin-bottom:12px;
+  background:linear-gradient(135deg,#C5687E,#A8445C);
+  box-shadow:0 6px 16px rgba(168,68,92,.3);
+}
+.drop-sub{ letter-spacing:.03em; }
+@media (max-width:600px){
+  .upload-drop{ padding:22px 16px; }
+  .drop-illust{ width:80px; height:108px; margin-bottom:12px; }
+  .drop-title{ font-size:15.5px; }
+}
+
+/* ---------- 14. 細部の仕上げ ---------- */
+/* 「見たところ／これから整えていくこと」を、囲み枠から左罫のブロックへ（紙面のような落ち着き） */
+.evidence{ gap:10px; margin-top:16px; }
+.ev-block{
+  border:none; border-left:2px solid var(--pink-3);
+  border-radius:0 12px 12px 0;
+  padding:12px 16px;
+  background:#FFF8FA;
+}
+.ev-block strong{ font-size:12px; letter-spacing:.08em; margin-bottom:6px; }
+.ev-seen{ background:#FFF4F8; border-left-color:var(--rose); }
+.ev-dir{ background:#F2FAF6; border-left-color:#7FC7A6; }
+.ev-unknown{ background:var(--surface-2); border-left-color:var(--line); }
+
+/* 「効く: 〇〇」タグ */
+.ex-links{ gap:6px; margin-top:10px; }
+.ex-links > *{ letter-spacing:.04em; }
+
+/* お悩みの帯 */
+.focus-note{ border-radius:14px; }
+
+/* 長い見出しが不格好に折れないように（DAY 01 などが単独行になるのを防ぐ） */
+.card h2{ overflow-wrap:anywhere; }
+@media (max-width:600px){
+  .card h2{ font-size:20px; letter-spacing:.02em; }
+  .ev-block{ padding:11px 14px; }
+}
+
+/* ---------- 15. コントラスト・タップ領域の最終調整（実測値にもとづく） ---------- */
+:root{
+  --gold-deep:#8C7038;   /* 白地 4.68:1（旧 #A8874A は 3.37:1 で小さい文字に不足） */
+  --rose-text:#B84A63;   /* 白地 5.00:1。ピンク系の「文字」はすべてこれを使う */
+}
+.symptom-head h3{ color:var(--ink); }          /* ローズ 2.87:1 → 濃色。明朝で十分に華やぐ */
+.symptom-note label,
+.btn-ghost,
+.btn-mydata,
+.pq-lead,
+.rs-item[open] > summary,
+.metric-bar ~ .metric-value,
+.ex-meta strong,
+.drop-title{ color:var(--rose-text); }
+.hero-script{ color:#C1697E; }
+.hero-eyebrow{ font-size:12px; }
+.score-desc{ font-size:13px; }
+.result-disclaimer{ font-size:13px; }
+/* タップ領域 40px 以上 */
+.btn-mydata{ min-height:42px; display:inline-flex; align-items:center; }
+.timer-btn, .guide-nav button, .rec-btn, .btn-ghost{ min-height:40px; }
+/* 残っていたピンク文字（3:1前後）を、白地 5.0:1 の --rose-text に統一 */
+.shoot-guide > summary,
+.tip strong,
+.cta-script,
+.score-grade,
+.symptom-summary strong,
+.symptom-summary .ss-tags span,
+.problem-meta span strong,
+.drop-title-row .drop-title{ color:var(--rose-text); }
+/* アサイドの見出しも明朝＋濃色に揃える */
+.aside-card h3{ font-family:var(--font-serif); font-weight:600; color:var(--ink); letter-spacing:.03em; font-size:16.5px; }
+/* 保存トーストのボタンもタップしやすく */
+#save-toast button{ min-height:40px; padding:9px 16px; font-size:13px; }
+
+/* ---------- 16. 小さなバッジ・タグの可読性（淡い地に淡い文字をやめる） ---------- */
+:root{ --rose-deeper:#A33E56; }   /* ピンクの地（#FFE0E6）に載せて 5.0:1 */
+.ex-cat.training{ color:var(--rose-deeper); background:#FFE0E6; }
+.ex-cat.selfcare{ color:#8A5E10; background:#FFEEDF; }
+.ex-cat.toning{ color:var(--rose-deeper); }
+.ex-howhint-badge{ background:var(--rose-text); font-size:10px; padding:3px 7px; }
+.phase-tab{ color:var(--ink-2); }
+.phase-tab.on{ color:var(--rose-text); }
+.phase-tab small{ color:var(--muted); }
+.day-badge{ color:var(--rose-deeper); font-size:10px; }
+.day-card.rest .day-badge{ color:#3E7B55; }
+.ss-tags span{ color:var(--rose-deeper); }
+.metric-name strong, .problem-meta strong, .ex-repeat strong{ color:var(--rose-text); }
+/* 元ルールの詳細度に合わせて当て直し */
+.phase-tab.active, .phase-tab:hover{ color:var(--rose-text); }
+.phase-tab.active small{ color:var(--rose-text); opacity:1; }
+.day-card .day-badge{ color:var(--rose-deeper); font-size:10px; }
+.day-card.rest .day-badge{ color:#3E7B55; }
+.day-card .day-today-tag{ color:#fff; background:var(--rose-text); }
+.symptom-summary strong{ color:var(--rose-deeper); }
+.ev-seen strong{ color:var(--rose-deeper); }
+.save-toast button{ background:var(--rose-text); color:#fff; border:none; border-radius:999px; }
