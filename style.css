@@ -2065,3 +2065,19 @@ textarea, select, input[type="text"], input[type="search"], .symptom-note textar
 .symptom-summary strong{ color:var(--rose-deeper); }
 .ev-seen strong{ color:var(--rose-deeper); }
 .save-toast button{ background:var(--rose-text); color:#fff; border:none; border-radius:999px; }
+
+/* ---------- 17. フッターの説明（ダミーリンクの置き換え）・印刷 ---------- */
+.foot-links{ display:flex; flex-direction:column; gap:6px; align-items:center; }
+.foot-detail{ max-width:640px; width:100%; text-align:left; }
+.foot-detail > summary{ cursor:pointer; text-align:center; font-size:13px; color:var(--rose-text); font-weight:700; padding:6px; list-style:none; }
+.foot-detail > summary::-webkit-details-marker{ display:none }
+.foot-detail > summary::after{ content:" ▾"; font-size:11px; }
+.foot-detail[open] > summary::after{ content:" ▴"; }
+.foot-detail p{ margin:6px 0 10px; font-size:13px; line-height:1.85; color:var(--ink-2); background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+.cmp-delta.flat{ color:var(--muted); }
+@media print{
+  body.printing .phase-tabs, body.printing .program-progress, body.printing #btn-print, body.printing .today-actions{ display:none !important; }
+  body.printing #program-grid{ display:grid !important; grid-template-columns:1fr 1fr; gap:8px; }
+  body.printing .day-card{ page-break-inside:avoid; border:1px solid #ddd; }
+  body.printing .ex-art-img{ max-height:120px; }
+}

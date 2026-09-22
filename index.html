@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PostureLab Beauty｜姿勢から、私をもっと美しく。</title>
-<link rel="stylesheet" href="style.css?v=22" />
+<link rel="stylesheet" href="style.css?v=23" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700&family=Allura&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -463,14 +463,14 @@
       <div class="card-num">STEP 06</div>
       <div>
         <h2>30日間 美姿勢プログラム <span class="head-deco">👑</span></h2>
-        <p class="muted">Phase 1: 解放（Day1-10）／ Phase 2: 活性化（Day11-20）／ Phase 3: 美姿勢の定着（Day21-30）</p>
+        <p class="muted">第1期: ほぐす（1〜10日目）／ 第2期: 目覚めさせる（11〜20日目）／ 第3期: 美姿勢を定着させる（21〜30日目）</p>
       </div>
     </div>
     <div class="program-progress" id="program-progress"></div>
     <div class="phase-tabs" id="phase-tabs">
-      <button class="phase-tab active" data-phase="1">Phase 1<small>解放 Day1-10</small></button>
-      <button class="phase-tab" data-phase="2">Phase 2<small>活性化 Day11-20</small></button>
-      <button class="phase-tab" data-phase="3">Phase 3<small>定着 Day21-30</small></button>
+      <button class="phase-tab active" data-phase="1">第1期<small>ほぐす 1〜10日目</small></button>
+      <button class="phase-tab" data-phase="2">第2期<small>目覚めさせる 11〜20日目</small></button>
+      <button class="phase-tab" data-phase="3">第3期<small>定着 21〜30日目</small></button>
     </div>
     <div class="program-grid" id="program-grid"></div>
 
@@ -485,7 +485,7 @@
 </main>
 
 <!-- ============ MODAL ============ -->
-<div class="modal" id="modal" hidden>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="エクササイズの詳細" hidden>
   <div class="modal-backdrop" data-close></div>
   <div class="modal-panel">
     <button class="modal-close" data-close aria-label="閉じる">×</button>
@@ -506,18 +506,19 @@
 <footer class="site-footer">
   <div class="foot-row">© 2026 PostureLab Beauty. All rights reserved.</div>
   <div class="foot-links">
-    <span>プライバシーポリシー</span>
-    <i>|</i>
-    <span>利用規約</span>
-    <i>|</i>
-    <span>免責事項</span>
+    <details class="foot-detail"><summary>プライバシーについて</summary>
+      <p>写真・診断結果・記録はすべて<strong>お使いの端末の中だけ</strong>に保存されます。サーバーへの送信や外部への共有は一切行いません。ブラウザのデータを消去すると記録も消えるため、残したい場合は「マイデータ」から書き出しをご利用ください。</p>
+    </details>
+    <details class="foot-detail"><summary>ご利用にあたって</summary>
+      <p>本ツールは無料のセルフケア支援ツールです。写真からの姿勢の見え方をもとに一般的なケアをご提案するもので、医療行為・診断ではありません。運動中に痛み・しびれ・めまいを感じたときはすぐに中止し、医療機関にご相談ください。</p>
+    </details>
   </div>
   <div class="foot-disc">
     本ツールは教育・セルフケア目的の参考情報を提供するものであり、医師・理学療法士による診断・治療を代替するものではありません。痛みや既往症がある場合は専門家にご相談ください。
   </div>
 </footer>
 
-<script type="module" src="app.js?v=18"></script>
+<script type="module" src="app.js?v=19"></script>
 
 </body>
 </html>

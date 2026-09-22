@@ -109,6 +109,11 @@ function toggleDayDone(sessionId, day){
 }
 // その日の記録: status='full'|'partial'|'none' / feel='easy'|'ok'|'hard'|null
 // full・partial は「進んだ」扱い(done入り)。none は記録だけ残して日は進めない。
+// 端末のローカル日付 YYYY-MM-DD（toISOString は UTC になり、日本では朝9時前の記録が前日扱いになる）
+function localDate(d){
+  const p = (x) => String(x).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
 function logDay(sessionId, day, status, feel){
   const p = getProgress(sessionId);
   const prev = p.logs[day] || {};
@@ -116,7 +121,7 @@ function logDay(sessionId, day, status, feel){
     status: status || prev.status || 'full',
     feel: feel !== undefined ? feel : (prev.feel || null),
     at: prev.at || new Date().toISOString(),
-    date: prev.date || new Date().toISOString().slice(0, 10),
+    date: prev.date || localDate(new Date()),
   };
   const advanced = p.logs[day].status !== 'none';
   const i = p.done.indexOf(day);
@@ -157,8 +162,7 @@ function currentStreak(sessionId){
   if (!days.length) return 0;
   const set = new Set(days);
   const today = new Date();
-  const iso = (d) => d.toISOString().slice(0, 10);
-  const shift = (n) => { const d = new Date(today); d.setDate(d.getDate() - n); return iso(d); };
+  const shift = (n) => { const d = new Date(today); d.setDate(d.getDate() - n); return localDate(d); };
   if (!set.has(shift(0)) && !set.has(shift(1))) return 0;   // 2日以上空いたら途切れ
   let n = set.has(shift(0)) ? 0 : 1;
   let streak = 0;

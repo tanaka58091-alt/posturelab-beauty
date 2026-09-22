@@ -230,6 +230,12 @@ function setupFileInput(input, canvas, preview, key){
     if (!f) return;
     const url = URL.createObjectURL(f);
     const img = new Image();
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      preview.hidden = true; state[key] = null; updateAnalyzeBtn();
+      showAnalyzeError('imgload');
+      input.value = '';
+    };
     img.onload = () => {
       // Canvasにフィット
       const maxW = 600;
@@ -242,6 +248,7 @@ function setupFileInput(input, canvas, preview, key){
       // 元画像も保持(解析用)
       state[key] = img;
       updateAnalyzeBtn();
+      URL.revokeObjectURL(url);
     };
     img.src = url;
   });
@@ -533,7 +540,13 @@ function showAnalyzeError(kind){
   if (!box) return;
   const t = document.getElementById('ae-title');
   const d = document.getElementById('ae-desc');
-  if (kind === 'nopose'){
+  if (kind === 'imgload'){
+    t.textContent = 'この写真を読み込めませんでした';
+    d.textContent = '写真の形式に対応していない可能性があります。iPhoneの方は「設定 → カメラ → フォーマット」を「互換性優先」にして撮り直すか、スクリーンショットを撮ってその画像を選んでみてください。';
+  } else if (kind === 'nosymptom'){
+    t.textContent = 'お悩みを1つ以上選んでください';
+    d.textContent = '写真なしの簡易プランは、選んでいただいたお悩みをもとに作ります。上の「気になる症状・お悩み」から当てはまるものを選ぶか、自由記入欄にご記入ください。';
+  } else if (kind === 'nopose'){
     t.textContent = '写真から人物を見つけられませんでした';
     d.textContent = '頭から足まで全身が写っているか、明るい場所で撮った写真かをご確認ください。体が大きめに写る縦向きの写真だと見つけやすくなります。';
   } else {
@@ -1588,7 +1601,7 @@ function dayCard(d, doneSet, curDay){
   const isToday = curDay === d.day;
   return `
     <div class="day-card ${d.isRest?'rest':''} ${done?'done':''} ${isToday?'today':''}" data-day="${d.day}">
-      <span class="day-badge">${done ? '✓ DONE' : (d.isRest?'REST':'WORK')}</span>
+      <span class="day-badge">${done ? '✓ できた' : (d.isRest?'お休み':'運動日')}</span>
       ${isToday ? '<span class="day-today-tag">今日</span>' : ''}
       <div class="day-num">DAY ${String(d.day).padStart(2,'0')}</div>
       <div class="day-theme">${d.theme}</div>
@@ -1859,7 +1872,7 @@ function openDayModal(d){
   const all = [...(d.selfcare||[]), ...(d.training||[])];
   els.modalBody.innerHTML = `
     <div style="margin-bottom:24px">
-      <div style="font-family:'Inter',sans-serif; font-size:12px; color:var(--brand); letter-spacing:.1em; font-weight:700">PHASE ${d.phase} · DAY ${d.day} ${d.isRest?'· REST':''}</div>
+      <div style="font-family:'Inter',sans-serif; font-size:12px; color:var(--brand); letter-spacing:.1em; font-weight:700">第${d.phase}期 · ${d.day}日目${d.isRest?' · お休みの日':''}</div>
       <h2 style="margin:6px 0 4px; font-size:26px">${d.theme}</h2>
       <p style="color:var(--muted); font-size:13px; margin:0">${d.isRest ? '今日は身体を労わる日。呼吸とゆっくりしたストレッチに集中しましょう。' : `この日のメニュー${all.length}種。各エクササイズをタップで詳細表示。`}</p>
     </div>
@@ -1871,17 +1884,23 @@ function openDayModal(d){
   showModal();
 }
 
+let _modalOpener = null;
 function showModal(){
+  _modalOpener = document.activeElement;   // 閉じたときに元の位置へ戻す
   els.modal.hidden = false;
   document.body.style.overflow = 'hidden';
   // 「次へ」でエクササイズを切り替えた時も必ず先頭から読めるように
   els.modal.scrollTop = 0;
   const panel = els.modal.querySelector('.modal-panel');
   if (panel) panel.scrollTop = 0;
+  const closeBtn = els.modal.querySelector('.modal-close');
+  if (closeBtn) closeBtn.focus({ preventScroll: true });
 }
 function closeModal(){
   els.modal.hidden = true;
   document.body.style.overflow = '';
+  if (_modalOpener && typeof _modalOpener.focus === 'function') _modalOpener.focus({ preventScroll: true });
+  _modalOpener = null;
 }
 els.modal.addEventListener('click', e => {
   if (e.target.matches('[data-close]')) closeModal();
@@ -1985,7 +2004,7 @@ function closeMyData(){
 // ===== 保存済みプランを写真なしで復元表示 =====
 function openSavedSession(id){
   const s = Store.getSession(id);
-  if (!s){ alert('この記録が見つかりませんでした。'); return; }
+  if (!s){ showRecordToast('この記録が見つかりませんでした。'); return; }
 
   // 問題オブジェクトをキーから復元（severityは保存があれば使う）
   state.problems = (s.problems || []).map(p => {
@@ -2084,7 +2103,7 @@ function runSimpleDiagnosis(){
   computeFocus();       // 主訴の重点部位を処方に反映
   const entries = buildSymptomProblems();
   if (!entries.length){
-    alert('お悩みを1つ以上選ぶか、自由記入欄にご記入ください。\n（簡易プランはお悩みをもとに作成します）');
+    showAnalyzeError('nosymptom');
     return;
   }
   state.problems = sortProblemsBySeverity(entries.map(e => makeSymptomProblem(e.key, e.votes)));
@@ -2219,8 +2238,8 @@ function renderMyData(){
   const imp = document.getElementById('md-import-file');
   if (imp) imp.onchange = async () => {
     const f = imp.files[0]; if (!f) return;
-    try { Store.importData(await f.text(), true); alert('データを読み込みました。'); renderMyData(); }
-    catch(err){ alert('読み込みに失敗しました：' + err.message); }
+    try { Store.importData(await f.text(), true); showRecordToast('データを読み込みました。'); renderMyData(); }
+    catch(err){ showRecordToast('読み込みに失敗しました：' + err.message); }
   };
 }
 
@@ -2229,7 +2248,8 @@ function renderComparison(idA, idB){
   const box = document.getElementById('cmp-result'); if (!box) return;
   const A = Store.getSession(idA), B = Store.getSession(idB);
   if (!A || !B){ box.innerHTML = ''; return; }
-  const diff = (B.score||0) - (A.score||0);
+  const hasBoth = A.score != null && B.score != null;
+  const diff = hasBoth ? B.score - A.score : null;
   // 指標の変化（名前一致で比較）
   const mapA = Object.fromEntries((A.metrics||[]).map(m=>[m.name,m]));
   const rows = (B.metrics||[]).filter(m=>mapA[m.name]).map(m => {
@@ -2242,14 +2262,14 @@ function renderComparison(idA, idB){
   }).join('');
   box.innerHTML = `
     <div class="cmp-photos">
-      <figure>${A.thumbSide?`<img src="${A.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>Before ${fmtDate(A.date)}<br><strong>${A.score!=null?A.score+'点':'簡易'}</strong></figcaption></figure>
+      <figure>${A.thumbSide?`<img src="${A.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>前回 ${fmtDate(A.date)}<br><strong>${A.score!=null?A.score+'点':'簡易'}</strong></figcaption></figure>
       <div class="cmp-arrow">
-        <div class="cmp-delta ${diff>=0?'up':'down'}">${diff>=0?'+':''}${diff}<small>点</small></div>
+        ${hasBoth ? `<div class="cmp-delta ${diff>=0?'up':'down'}">${diff>=0?'+':''}${diff}<small>点</small></div>` : '<div class="cmp-delta flat">→</div>'}
       </div>
-      <figure>${B.thumbSide?`<img src="${B.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>After ${fmtDate(B.date)}<br><strong>${B.score!=null?B.score+'点':'簡易'}</strong></figcaption></figure>
+      <figure>${B.thumbSide?`<img src="${B.thumbSide}">`:'<div class="md-thumb ph big">📷</div>'}<figcaption>今回 ${fmtDate(B.date)}<br><strong>${B.score!=null?B.score+'点':'簡易'}</strong></figcaption></figure>
     </div>
     ${regionCompare(A, B)}
-    ${rows?`<details class="cmp-detail"><summary>くわしい数値で見る</summary><table class="cmp-table"><thead><tr><th>指標</th><th>Before</th><th></th><th>After</th><th>変化</th></tr></thead><tbody>${rows}</tbody></table></details>`:''}
+    ${rows?`<details class="cmp-detail"><summary>くわしい数値で見る</summary><table class="cmp-table"><thead><tr><th>見たところ</th><th>前回</th><th></th><th>今回</th><th>変化</th></tr></thead><tbody>${rows}</tbody></table></details>`:''}
   `;
 }
 
@@ -2290,7 +2310,17 @@ els.btnRestart.addEventListener('click', () => {
   els.results.hidden = true;
   jumpTo('#upload-section');
 });
-els.btnPrint.addEventListener('click', () => window.print());
+els.btnPrint.addEventListener('click', () => {
+  // 印刷中だけ30日すべてを描画し、終わったら表示中のフェーズに戻す
+  const grid = els.programGrid;
+  const keep = grid.innerHTML;
+  const doneSet = new Set(Store.getProgress(progressKey()).done);
+  grid.innerHTML = (state.program || []).map(d => dayCard(d, doneSet, currentDayNumber())).join('');
+  document.body.classList.add('printing');
+  const restore = () => { grid.innerHTML = keep; document.body.classList.remove('printing'); renderProgram(state.currentPhase); window.removeEventListener('afterprint', restore); };
+  window.addEventListener('afterprint', restore);
+  setTimeout(() => { window.print(); setTimeout(restore, 1500); }, 50);
+});
 
 // ===== MY DATA open/close =====
 if (els.btnMyData) els.btnMyData.addEventListener('click', openMyData);
