@@ -50,20 +50,47 @@ export function fixedBlock(withRef){
 - 真横または斜め前からの分かりやすいアングルで、全身が切れずに入る。`;
 }
 
+// 本体の動き（＝絵にすべき瞬間）がどの手順にあるかを推定する。
+// 準備姿勢だけの手順1〜3を描いて「腕上げの絵」になる事故（ハンドレッド・デッドバグ等）を防ぐ。
+const ACT = /持ち上げ|浮かせ|伸ば|ねじ|ひね|引き|引い|押し|開き|開い|閉じ|倒し|反ら|曲げ|振り|振っ|回し|蹴|寄せ|沈め|起こ|踏み|歩|こぐ|滑らせ|すべらせ|近づけ|離し|傾け|丸め/;
+// 片付け・終了・反対側の手順は除外し、「最後に出てくる動作の手順」を本体とみなす（クライマックスは後半にある）
+const WRAPUP = /^(反対側|反対の|逆側|戻|合計|最後に|終わ|ゆっくり戻|元の位置|同じように左右|左右を入れ替え)/;
+const ENDING = /(下ろします|戻します|戻ります|ほどきます|ゆるめます|休みます|終わります)。?$/;
+export function mainActionIndex(ex){
+  const how = ex.how || [];
+  let last = -1;
+  for (let i = 1; i < how.length; i++){
+    const t = String(how[i]).trim();
+    if (!ACT.test(t)) continue;
+    if (WRAPUP.test(t) || ENDING.test(t)) continue;
+    last = i;
+  }
+  if (last >= 0) return last;
+  for (let i = 1; i < how.length; i++){ if (ACT.test(how[i])) return i; }
+  return Math.min(1, how.length - 1);
+}
+const clip = (s, n) => String(s).replace(/\s+/g, ' ').replace(/（[^）]*）/g, '').slice(0, n);
+
 export function variableBlock(ex){
   const comp = composition(ex);
-  const how = (ex.how||[]).slice(0, 3).map((s,i)=>`手順${i+1}: ${String(s).replace(/\s+/g,' ').slice(0, 110)}`).join('／');
+  const how = ex.how || [];
+  const mi = mainActionIndex(ex);
+  const steps = how.slice(0, 7).map((s,i)=>`手順${i+1}${i===mi ? '★本体の動き' : ''}: ${clip(s, 90)}`).join('／');
+  const prep = clip(how[0] || '', 110);
+  const main = clip(how[mi] || how[how.length-1] || '', 130);
   const body = BODY_JA[ex.bodyPart] || ex.bodyPart || '';
+  const feel = ex.cues?.do ? `効いている感覚: ${clip(ex.cues.do, 70)}` : '';
   const pos = POS_JA[String(ex.position||'').toLowerCase()] || '';
+  const side = /右/.test(main) && !/左/.test(main) ? '右側で行っている形で描く。' : /左/.test(main) && !/右/.test(main) ? '左側で行っている形で描く。' : '';
   const compText = comp === 'two'
-    ? '2パネル構成。左パネル＝開始姿勢（手順1）、右パネル＝動いた後の姿勢（手順2〜3）。2枚のあいだに左→右の赤い点線矢印を置く。人物・服・背景は左右で完全に同一。'
+    ? `2パネル構成。左パネル＝準備姿勢「${prep}」。右パネル＝本体の動きをやり切った瞬間「${main}」。右パネルは準備姿勢の繰り返しではなく、必ず本体の動きが見て分かる形にする。2枚のあいだに左→右の赤い点線矢印。人物・服・背景は左右で完全に同一。`
     : comp === 'circle'
-    ? '1パネルで完成ポーズを大きく1つ。動かす部位のまわりに円形（回転）の赤い矢印を添える。'
-    : '1パネルで完成ポーズを大きく1つ。効いている部位を淡いピンクで示し、伸びる／力が入る方向に赤い矢印を1本添える。';
+    ? `1パネル。本体の動き「${main}」の最中の姿勢を大きく1つ。動かす部位のまわりに円形（回転）の赤い矢印を添える。`
+    : `1パネル。本体の動き「${main}」をやり切った完成姿勢を大きく1つ（準備姿勢ではない）。効いている部位を淡いピンクで示し、伸びる／力が入る方向に赤い矢印を1本添える。`;
   return `【この種目の内容】
-${ex.displayName || ex.name}。${pos ? `姿勢: ${pos}。` : ''}${EQUIP_JA(ex.equipment)}
-${how}
-主に効かせる部位: ${body}（ここを淡いピンクでハイライト）。
+${ex.displayName || ex.name}。${pos ? `姿勢: ${pos}。` : ''}${EQUIP_JA(ex.equipment)}${side}
+${steps}
+主に効かせる部位: ${body}（ここだけを淡いピンクでハイライト。他の部位は塗らない）。${feel}
 
 【構図】
 ${compText}
